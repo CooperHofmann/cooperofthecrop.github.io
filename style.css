@@ -1,74 +1,65 @@
+/* Global Body */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Bebas Neue', sans-serif; /* Geometric, impactful font */
   margin: 0;
-  background-color: #f9f9f9 !important;  /* Ensures the color is applied */
-}
-
+  background-color: #f9f9f9;
   color: #111;
+  line-height: 1.4;   /* More readable with enough line spacing */
 }
 
+/* Header */
 header {
   background: #ffffff;
-  padding: 1.5rem;
+  padding: 2rem;
   text-align: center;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 2px solid #111;  /* Bolder, sharper edge */
 }
 
 h1 {
-  font-size: 1.8rem;
+  font-size: 3rem;          /* Larger header */
+  font-weight: bold;        /* Bold weight for emphasis */
   margin: 0;
+  letter-spacing: 2px;      /* Adds a little extra space between letters for that bold impact */
+  text-transform: uppercase; /* Uppercase for a brute graphic style */
+  color: #111;              /* Darker text for contrast */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for extra depth */
 }
 
+/* Navigation */
 nav {
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 
 nav a {
-  color: #333;
-  margin: 0 10px;
+  color: #111;
+  font-weight: bold;
+  margin: 0 15px;
   text-decoration: none;
-  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;  /* Adds space between links for a cleaner look */
 }
 
-nav a.active {
-  border-bottom: 2px solid #333;
+nav a:hover {
+  color: #e10000;  /* Brutalist red for hover effect */
 }
 
+/* Main Content */
 main {
-  padding: 2rem 1rem;
+  padding: 4rem 1.5rem;
   max-width: 1000px;
   margin: 0 auto;
   text-align: center;
 }
 
-h2 {
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
-}
-
+/* Gallery */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
 
 .gallery img {
   width: 100%;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease;
-}
-
-.gallery img:hover {
-  transform: scale(1.02);
-}
-
-footer {
-  text-align: center;
-  padding: 1rem;
-  color: #777;
-  font-size: 0.9rem;
-  border-top: 1px solid #eaeaea;
-  margin-top: 3rem;
-}
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.
