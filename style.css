@@ -23,6 +23,16 @@ h1 {
   text-transform: uppercase; /* Uppercase for a brute graphic style */
   color: #111;              /* Darker text for contrast */
 }
+/* Category Section Titles */
+h2 {
+  font-size: 6rem;  /* Makes each section title massive */
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #111;
+  margin-bottom: 3rem;
+  letter-spacing: 2px;
+  text-align: center;
+}
 
 /* Navigation */
 nav {
