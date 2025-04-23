@@ -16,13 +16,12 @@ header {
 }
 
 h1 {
-  font-size: 3rem;          /* Larger header */
+  font-size: 5rem;          /* Larger header */
   font-weight: bold;        /* Bold weight for emphasis */
   margin: 0;
-  letter-spacing: 2px;      /* Adds a little extra space between letters for that bold impact */
+  letter-spacing: 3px;      /* Adds a little extra space between letters for that bold impact */
   text-transform: uppercase; /* Uppercase for a brute graphic style */
   color: #111;              /* Darker text for contrast */
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for extra depth */
 }
 
 /* Navigation */
