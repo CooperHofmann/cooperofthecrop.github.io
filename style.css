@@ -93,22 +93,22 @@ main {
 
 @keyframes carousel {
   0% {
-    background-image: url('images/track1.jpg');
+    background-image: url('images'/TRACK SN DONE (5 of 303).jpg');
   }
   20% {
-    background-image: url('images/track2.jpg');
+    background-image: url('images'/TRACK SN DONE (5 of 303).jpg');
   }
   40% {
-    background-image: url('images/track3.jpg');
+    background-image: url('images'/TRACK SN DONE (5 of 303).jpg');
   }
   60% {
-    background-image: url('images/track4.jpg');
+    background-image: url('images'/TRACK SN DONE (5 of 303).jpg');
   }
   80% {
-    background-image: url('images/track5.jpg');
+    background-image: url('images'/TRACK SN DONE (5 of 303).jpg');
   }
   100% {
-    background-image: url('images/track1.jpg');
+    background-image: url('images'/TRACK SN DONE (5 of 303).jpg');
   }
 }
 html {
