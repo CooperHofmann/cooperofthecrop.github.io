@@ -1,0 +1,8 @@
+/your-project
+  ├── index.html
+  ├── style.css
+  ├── images/
+      ├── track1.jpg
+      ├── track2.jpg
+      ├── soccer1.jpg
+      └── nature1.jpg
