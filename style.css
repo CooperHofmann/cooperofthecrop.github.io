@@ -72,3 +72,45 @@ main {
   height: auto;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.
+.category-section {
+  position: relative;
+  height: 100vh;  /* Full screen height */
+  background-color: #f9f9f9; /* Background color */
+  padding: 0;
+  overflow: hidden;
+}
+
+.category-section .carousel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center center;
+  animation: carousel 5s infinite linear;
+}
+
+@keyframes carousel {
+  0% {
+    background-image: url('images/track1.jpg');
+  }
+  20% {
+    background-image: url('images/track2.jpg');
+  }
+  40% {
+    background-image: url('images/track3.jpg');
+  }
+  60% {
+    background-image: url('images/track4.jpg');
+  }
+  80% {
+    background-image: url('images/track5.jpg');
+  }
+  100% {
+    background-image: url('images/track1.jpg');
+  }
+}
+html {
+  scroll-behavior: smooth; /* Enables smooth scrolling */
+}
