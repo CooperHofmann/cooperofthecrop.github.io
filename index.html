@@ -3,396 +3,302 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siri - Apple</title>
+    <title>COOPEROFTHECROP | Photography</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom CSS for animations and effects */
-        .gradient-bg {
-            background: linear-gradient(180deg, #2C2C2E 0%, #1C1C1E 100%);
+        html {
+            scroll-behavior: smooth;
         }
-        
-        .siri-wave {
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .image-hover {
+            transition: transform 0.3s ease;
+        }
+        .image-hover:hover {
+            transform: scale(1.02);
+        }
+        .nav-link {
             position: relative;
-            height: 80px;
-            width: 100%;
-            overflow: hidden;
         }
-        
-        .wave {
+        .nav-link:after {
+            content: '';
             position: absolute;
+            width: 0;
+            height: 1px;
             bottom: 0;
             left: 0;
+            background-color: black;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover:after {
             width: 100%;
-            height: 100px;
-            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 120" xmlns="http://www.w3.org/2000/svg"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="%23A3A3A3"/><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="%23A3A3A3"/><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="%23A3A3A3"/></svg>');
-            background-size: cover;
-            background-repeat: no-repeat;
-            animation: wave 15s linear infinite;
         }
-        
-        @keyframes wave {
-            0% { background-position-x: 0; }
-            100% { background-position-x: 1200px; }
+        .hero-text {
+            font-size: clamp(2rem, 8vw, 6rem);
+            line-height: 0.9;
         }
-        
-        .pulse {
-            animation: pulse 2s infinite;
+        .grid-item {
+            transition: all 0.3s ease;
         }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-            100% { transform: scale(1); opacity: 1; }
+        .grid-item:hover {
+            z-index: 10;
         }
-        
-        .fade-in {
-            animation: fadeIn 1.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .typewriter {
-            overflow: hidden;
-            border-right: .15em solid #fff;
-            white-space: nowrap;
-            margin: 0 auto;
-            letter-spacing: .15em;
-            animation: 
-                typing 3.5s steps(40, end),
-                blink-caret .75s step-end infinite;
-        }
-        
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-        
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #fff; }
+        @media (max-width: 768px) {
+            .hero-text {
+                font-size: clamp(1.5rem, 10vw, 3rem);
+            }
         }
     </style>
 </head>
-<body class="gradient-bg text-white min-h-screen font-sans">
+<body class="bg-white text-black antialiased">
     <!-- Navigation -->
-    <nav class="container mx-auto px-6 py-4">
-        <div class="flex justify-between items-center">
-            <a href="#" class="text-2xl font-semibold">
-                <i class="fab fa-apple"></i>
-            </a>
+    <nav class="fixed w-full bg-white bg-opacity-90 z-50 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-medium tracking-tight">COOPEROFTHECROP</a>
             <div class="hidden md:flex space-x-8">
-                <a href="#" class="hover:text-gray-300">Store</a>
-                <a href="#" class="hover:text-gray-300">Mac</a>
-                <a href="#" class="hover:text-gray-300">iPad</a>
-                <a href="#" class="hover:text-gray-300">iPhone</a>
-                <a href="#" class="hover:text-gray-300">Watch</a>
-                <a href="#" class="hover:text-gray-300">AirPods</a>
-                <a href="#" class="hover:text-gray-300">TV & Home</a>
-                <a href="#" class="hover:text-gray-300">Entertainment</a>
-                <a href="#" class="hover:text-gray-300">Accessories</a>
-                <a href="#" class="hover:text-gray-300">Support</a>
+                <a href="#work" class="nav-link">Work</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#contact" class="nav-link">Contact</a>
             </div>
-            <div class="flex items-center space-x-4">
-                <a href="#"><i class="fas fa-search hover:text-gray-300"></i></a>
-                <a href="#"><i class="fas fa-shopping-bag hover:text-gray-300"></i></a>
-            </div>
+            <button class="md:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="container mx-auto px-6 py-20 text-center">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-6xl md:text-7xl font-bold mb-6 fade-in">Siri</h1>
-            <p class="text-2xl md:text-3xl mb-12 fade-in" style="animation-delay: 0.3s;">Your wish is its command.</p>
-            
-            <div class="flex justify-center mb-20 fade-in" style="animation-delay: 0.6s;">
-                <div class="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center pulse">
-                    <i class="fas fa-microphone text-white text-4xl md:text-5xl"></i>
-                    <div class="absolute inset-0 rounded-full border-4 border-white opacity-20 animate-ping"></div>
-                </div>
-            </div>
-            
-            <div class="siri-wave mb-20 fade-in" style="animation-delay: 0.9s;">
-                <div class="wave"></div>
-            </div>
-            
-            <div class="max-w-2xl mx-auto bg-black bg-opacity-30 rounded-2xl p-6 mb-16 fade-in" style="animation-delay: 1.2s;">
-                <p class="text-xl md:text-2xl typewriter">Hi, I'm Siri. What can I help you with today?</p>
-            </div>
-            
-            <button class="bg-white text-black px-8 py-3 rounded-full text-lg font-semibold hover:bg-opacity-90 transition duration-300 transform hover:scale-105 fade-in" style="animation-delay: 1.5s;">
-                Learn more about Siri
-            </button>
+    <section class="min-h-screen flex items-center justify-center px-6 pt-24 pb-16">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="hero-text font-medium tracking-tight">
+                <span class="block">CAPTURING</span>
+                <span class="block">ESSENCE</span>
+                <span class="block">THROUGH LENS</span>
+            </h1>
+            <p class="mt-8 max-w-2xl mx-auto text-lg text-gray-600">
+                Brutalist photography that reveals the raw beauty in the ordinary.
+            </p>
+            <a href="#work" class="mt-12 inline-block px-8 py-3 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-300">
+                View Work
+            </a>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="bg-black bg-opacity-20 py-20">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl font-bold text-center mb-16">Do more with just your voice.</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <!-- Feature 1 -->
-                <div class="bg-gray-900 bg-opacity-50 rounded-2xl p-8 hover:bg-opacity-70 transition duration-300 transform hover:-translate-y-2">
-                    <div class="bg-blue-500 bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-music text-2xl text-blue-400"></i>
+    <!-- Work Grid -->
+    <section id="work" class="py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-medium mb-12">Selected Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Project 1 -->
+                <div class="grid-item overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Project 1" 
+                         class="w-full h-96 object-cover image-hover">
+                    <div class="mt-4">
+                        <h3 class="text-xl">Urban Decay</h3>
+                        <p class="text-gray-600">2023</p>
                     </div>
-                    <h3 class="text-2xl font-semibold mb-4">Play music</h3>
-                    <p class="text-gray-300">"Play the latest hits" or "Play my workout playlist"</p>
                 </div>
                 
-                <!-- Feature 2 -->
-                <div class="bg-gray-900 bg-opacity-50 rounded-2xl p-8 hover:bg-opacity-70 transition duration-300 transform hover:-translate-y-2">
-                    <div class="bg-green-500 bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-calendar-check text-2xl text-green-400"></i>
+                <!-- Project 2 -->
+                <div class="grid-item overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Project 2" 
+                         class="w-full h-96 object-cover image-hover">
+                    <div class="mt-4">
+                        <h3 class="text-xl">Concrete Dreams</h3>
+                        <p class="text-gray-600">2023</p>
                     </div>
-                    <h3 class="text-2xl font-semibold mb-4">Set reminders</h3>
-                    <p class="text-gray-300">"Remind me to call mom at 5pm" or "Remind me when I get home"</p>
                 </div>
                 
-                <!-- Feature 3 -->
-                <div class="bg-gray-900 bg-opacity-50 rounded-2xl p-8 hover:bg-opacity-70 transition duration-300 transform hover:-translate-y-2">
-                    <div class="bg-purple-500 bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-                        <i class="fas fa-map-marker-alt text-2xl text-purple-400"></i>
+                <!-- Project 3 -->
+                <div class="grid-item overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Project 3" 
+                         class="w-full h-96 object-cover image-hover">
+                    <div class="mt-4">
+                        <h3 class="text-xl">Industrial Light</h3>
+                        <p class="text-gray-600">2022</p>
                     </div>
-                    <h3 class="text-2xl font-semibold mb-4">Get directions</h3>
-                    <p class="text-gray-300">"Give me directions to the nearest coffee shop"</p>
+                </div>
+                
+                <!-- Project 4 -->
+                <div class="grid-item overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1517438476312-10d79c077509?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Project 4" 
+                         class="w-full h-96 object-cover image-hover">
+                    <div class="mt-4">
+                        <h3 class="text-xl">Monochrome</h3>
+                        <p class="text-gray-600">2022</p>
+                    </div>
+                </div>
+                
+                <!-- Project 5 -->
+                <div class="grid-item overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1506260408121-e353d10b87c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Project 5" 
+                         class="w-full h-96 object-cover image-hover">
+                    <div class="mt-4">
+                        <h3 class="text-xl">Silent Structures</h3>
+                        <p class="text-gray-600">2021</p>
+                    </div>
+                </div>
+                
+                <!-- Project 6 -->
+                <div class="grid-item overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1500382018108-8a57f0a21143?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                         alt="Project 6" 
+                         class="w-full h-96 object-cover image-hover">
+                    <div class="mt-4">
+                        <h3 class="text-xl">Rural Geometry</h3>
+                        <p class="text-gray-600">2021</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Demo Section -->
-    <section class="py-20">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
-                    <h2 class="text-4xl font-bold mb-6">Ask Siri to help you get things done.</h2>
-                    <p class="text-xl text-gray-300 mb-8">Siri is the intelligent assistant that helps you do the things you do every day. All you have to do is ask.</p>
-                    
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <div class="bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center mr-4">
-                                <i class="fas fa-lightbulb text-yellow-400"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-lg">"What's the weather today?"</h4>
-                                <p class="text-gray-400">Get your daily forecast</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start">
-                            <div class="bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center mr-4">
-                                <i class="fas fa-lightbulb text-yellow-400"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-lg">"Set a timer for 10 minutes"</h4>
-                                <p class="text-gray-400">Perfect for cooking or workouts</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start">
-                            <div class="bg-gray-800 rounded-full w-10 h-10 flex items-center justify-center mr-4">
-                                <i class="fas fa-lightbulb text-yellow-400"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-lg">"Send a message to John"</h4>
-                                <p class="text-gray-400">Hands-free texting</p>
-                            </div>
-                        </div>
-                    </div>
+    <!-- About Section -->
+    <section id="about" class="py-20 px-6 bg-gray-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="md:flex items-center">
+                <div class="md:w-1/2 mb-12 md:mb-0 md:pr-12">
+                    <h2 class="text-3xl font-medium mb-8">About COOPEROFTHECROP</h2>
+                    <p class="text-lg mb-6 text-gray-600">
+                        Founded in 2018, COOPEROFTHECROP is a photography studio specializing in brutalist and minimalist compositions that highlight the raw essence of subjects.
+                    </p>
+                    <p class="text-lg mb-6 text-gray-600">
+                        Our approach strips away the unnecessary, focusing on form, texture, and the interplay of light and shadow.
+                    </p>
+                    <p class="text-lg text-gray-600">
+                        Based in New York, working worldwide.
+                    </p>
                 </div>
-                
                 <div class="md:w-1/2">
-                    <div class="relative">
-                        <div class="bg-gray-900 rounded-3xl overflow-hidden shadow-2xl">
-                            <div class="bg-gray-800 h-10 flex items-center px-4">
-                                <div class="flex space-x-2">
-                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                </div>
-                            </div>
-                            <div class="p-6">
-                                <div class="flex items-center mb-6">
-                                    <div class="bg-blue-500 rounded-full w-12 h-12 flex items-center justify-center mr-4">
-                                        <i class="fas fa-microphone text-white"></i>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold">Siri</h3>
-                                        <p class="text-gray-400 text-sm">Active</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-gray-800 rounded-xl p-4 mb-4">
-                                    <p class="text-gray-300">"Hey Siri, what's 15% of $29.99?"</p>
-                                </div>
-                                
-                                <div class="bg-blue-500 bg-opacity-20 rounded-xl p-4 mb-6">
-                                    <p>$29.99 * 15% = $4.50</p>
-                                </div>
-                                
-                                <div class="flex items-center">
-                                    <div class="bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center mr-3">
-                                        <i class="fas fa-microphone text-gray-400"></i>
-                                    </div>
-                                    <div class="flex-1 bg-gray-700 rounded-full h-10 flex items-center px-4 text-gray-400">
-                                        <p>Ask Siri...</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="absolute -bottom-6 -right-6 w-32 h-32 rounded-full bg-blue-500 opacity-20 blur-2xl"></div>
-                    </div>
+                    <img src="https://images.unsplash.com/photo-1526666923125-b297ddbb7b0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" 
+                         alt="About" 
+                         class="w-full h-auto object-cover">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Privacy Section -->
-    <section class="bg-black bg-opacity-30 py-20">
-        <div class="container mx-auto px-6 max-w-4xl text-center">
-            <i class="fas fa-lock text-4xl text-green-500 mb-6"></i>
-            <h2 class="text-4xl font-bold mb-6">Privacy. That's iPhone.</h2>
-            <p class="text-xl text-gray-300 mb-8">Siri is designed to protect your privacy. Your requests are associated with a random identifier, not your Apple ID. And what you ask Siri isn't used to build a marketing profile or sell to advertisers.</p>
-            <a href="#" class="text-blue-400 hover:text-blue-300 font-semibold text-lg">Learn more about privacy</a>
+    <!-- Clients/Features -->
+    <section class="py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-medium mb-12">Featured In</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
+                <div class="text-center text-xl font-light">VOGUE</div>
+                <div class="text-center text-xl font-light">NY TIMES</div>
+                <div class="text-center text-xl font-light">MONOCLE</div>
+                <div class="text-center text-xl font-light">WIRED</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 px-6 bg-black text-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl font-medium mb-12">Get In Touch</h2>
+            <div class="md:flex">
+                <div class="md:w-1/2 mb-12 md:mb-0">
+                    <p class="text-xl mb-6 text-gray-300">
+                        For commissions, collaborations, or print inquiries.
+                    </p>
+                    <p class="text-xl mb-6 text-gray-300">
+                        studio@cooperofthecrop.com
+                    </p>
+                    <p class="text-xl text-gray-300">
+                        +1 212 555 0199
+                    </p>
+                </div>
+                <div class="md:w-1/2">
+                    <form class="space-y-6">
+                        <div>
+                            <input type="text" placeholder="Name" class="w-full bg-transparent border-b border-gray-600 py-3 px-2 focus:outline-none focus:border-white placeholder-gray-500">
+                        </div>
+                        <div>
+                            <input type="email" placeholder="Email" class="w-full bg-transparent border-b border-gray-600 py-3 px-2 focus:outline-none focus:border-white placeholder-gray-500">
+                        </div>
+                        <div>
+                            <textarea placeholder="Message" rows="4" class="w-full bg-transparent border-b border-gray-600 py-3 px-2 focus:outline-none focus:border-white placeholder-gray-500"></textarea>
+                        </div>
+                        <button type="submit" class="mt-6 px-8 py-3 border border-white rounded-full hover:bg-white hover:text-black transition-colors duration-300">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-black py-12">
-        <div class="container mx-auto px-6">
-            <div class="border-b border-gray-800 pb-8 mb-8">
-                <p class="text-gray-400 text-sm">Siri is available on iPhone, iPad, Mac, Apple Watch, AirPods, HomePod, and CarPlay. Some features may not be available in all languages or all areas.</p>
-            </div>
-            
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
-                <div>
-                    <h4 class="text-gray-400 font-semibold mb-4">Shop and Learn</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Store</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Mac</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">iPad</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">iPhone</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Watch</a></li>
-                    </ul>
+    <footer class="py-12 px-6 bg-gray-900 text-gray-400">
+        <div class="max-w-7xl mx-auto">
+            <div class="md:flex justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <p class="text-xl font-medium text-white mb-2">COOPEROFTHECROP</p>
+                    <p>© 2023 All rights reserved</p>
                 </div>
-                
-                <div>
-                    <h4 class="text-gray-400 font-semibold mb-4">Services</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Apple Music</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Apple TV+</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Apple Fitness+</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">iCloud</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Apple One</a></li>
-                    </ul>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-white transition-colors duration-300">Instagram</a>
+                    <a href="#" class="hover:text-white transition-colors duration-300">Twitter</a>
+                    <a href="#" class="hover:text-white transition-colors duration-300">Behance</a>
                 </div>
-                
-                <div>
-                    <h4 class="text-gray-400 font-semibold mb-4">Apple Store</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Find a Store</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Genius Bar</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Today at Apple</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Apple Camp</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Apple Trade In</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="text-gray-400 font-semibold mb-4">For Business</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Apple and Business</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Shop for Business</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="text-gray-400 font-semibold mb-4">Apple Values</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Accessibility</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Environment</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Privacy</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-gray-300 text-sm">Supplier Responsibility</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="text-gray-500 text-sm">
-                <p>Copyright © 2023 Apple Inc. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // Simple animation trigger on scroll
+        // Mobile menu toggle functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const fadeElements = document.querySelectorAll('.fade-in');
+            const mobileMenuButton = document.querySelector('button.md\\:hidden');
+            const navLinks = document.querySelector('.hidden.md\\:flex');
             
-            const fadeObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('opacity-100');
-                        fadeObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            fadeElements.forEach(element => {
-                element.classList.add('opacity-0', 'transition-opacity', 'duration-1000');
-                fadeObserver.observe(element);
+            mobileMenuButton.addEventListener('click', function() {
+                navLinks.classList.toggle('hidden');
+                navLinks.classList.toggle('flex');
+                navLinks.classList.toggle('flex-col');
+                navLinks.classList.toggle('absolute');
+                navLinks.classList.toggle('top-16');
+                navLinks.classList.toggle('left-0');
+                navLinks.classList.toggle('right-0');
+                navLinks.classList.toggle('bg-white');
+                navLinks.classList.toggle('p-4');
+                navLinks.classList.toggle('space-y-4');
+                navLinks.classList.toggle('space-x-8');
+                navLinks.classList.toggle('border-b');
+                navLinks.classList.toggle('border-gray-100');
             });
             
-            // Wave animation control
-            const wave = document.querySelector('.wave');
-            let isWaveActive = true;
-            
-            function toggleWave() {
-                if (isWaveActive) {
-                    wave.style.animationPlayState = 'paused';
-                } else {
-                    wave.style.animationPlayState = 'running';
-                }
-                isWaveActive = !isWaveActive;
-            }
-            
-            // Toggle wave animation every 5 seconds
-            setInterval(toggleWave, 5000);
-            
-            // Microphone pulse effect
-            const micBtn = document.querySelector('.pulse');
-            micBtn.addEventListener('click', function() {
-                this.classList.add('animate-pulse');
-                setTimeout(() => {
-                    this.classList.remove('animate-pulse');
-                }, 1000);
-                
-                // Simulate Siri response
-                const responseBox = document.querySelector('.typewriter');
-                const responses = [
-                    "How can I help you today?",
-                    "I'm listening...",
-                    "What can I do for you?",
-                    "Yes?",
-                    "Tell me what you need"
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                
-                responseBox.classList.remove('typewriter');
-                responseBox.textContent = randomResponse;
-                
-                // Re-add animation after a delay
-                setTimeout(() => {
-                    responseBox.classList.add('typewriter');
-                    responseBox.style.animation = 'none';
-                    void responseBox.offsetWidth; // Trigger reflow
-                    responseBox.style.animation = null;
-                }, 100);
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (!navLinks.classList.contains('hidden')) {
+                            mobileMenuButton.click();
+                        }
+                    }
+                });
             });
         });
     </script>
