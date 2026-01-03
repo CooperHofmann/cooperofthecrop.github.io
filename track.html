@@ -1,38 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Track | Cooper of the Crop</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Track | COOPEROFTHECROP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+        
+        nav {
+            backdrop-filter: blur(10px) saturate(180%);
+            background-color: rgba(255, 255, 255, 0.75);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        
+        .nav-link:hover {
+            color: #667eea;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05) translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 1;
+        }
+        
+        .gallery-item:hover::before {
+            opacity: 1;
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.5s ease;
+            z-index: 2;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in:nth-child(1) { animation-delay: 0.1s; }
+        .fade-in:nth-child(2) { animation-delay: 0.2s; }
+        .fade-in:nth-child(3) { animation-delay: 0.3s; }
+        .fade-in:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* Masonry-style grid */
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-auto-rows: 200px;
+            gap: 1.5rem;
+        }
+        
+        .gallery-item:nth-child(3n+1) {
+            grid-row: span 2;
+        }
+        
+        .gallery-item:nth-child(4n+2) {
+            grid-row: span 3;
+        }
+        
+        @media (max-width: 768px) {
+            .masonry-grid {
+                grid-template-columns: 1fr;
+            }
+            .gallery-item {
+                grid-row: span 2 !important;
+            }
+        }
+    </style>
 </head>
-<body>
-  <header>
-    <h1>Cooper of the Crop</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="track.html" class="active">Track</a>
-      <a href="soccer.html">Soccer</a>
-      <a href="football.html">Football</a>
-      <a href="basketball.html">Basketball</a>
-      <a href="nature.html">Nature</a>
-      <a href="urban.html">Urban</a>
-      <a href="contact.html">Contact</a>
+<body class="text-black antialiased">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 border-b border-white border-opacity-20">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-xl font-medium tracking-tight">COOPEROFTHECROP</a>
+            <div class="hidden md:flex space-x-8">
+                <a href="index.html#work" class="nav-link">Work</a>
+                <a href="index.html#about" class="nav-link">About</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+        </div>
     </nav>
-  </header>
 
-  <main>
-    <h2>Track</h2>
-    <div class="gallery">
-      <img src="images/TRACK SN DONE (5 of 303).jpg" alt="Track 1">
-      <img src="images/track2.jpg" alt="Track 2">
-      <img src="images/track3.jpg" alt="Track 3">
-    </div>
-  </main>
+    <!-- Header Section -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4" style="background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                Track Photography
+            </h1>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Capturing the speed, intensity, and raw emotion of track and field athletics
+            </p>
+        </div>
+    </section>
 
-  <footer>
-    <p>&copy; 2025 Cooper Hofmann</p>
-  </footer>
+    <!-- Gallery -->
+    <section class="pb-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="masonry-grid">
+                <div class="gallery-item fade-in">
+                    <img src="images/TRACK SN DONE (5 of 303).jpg" alt="Track Photo 1" onerror="this.src='https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&q=80'">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-semibold">The Start</h3>
+                        <p class="text-sm opacity-90">Explosive energy at the starting line</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item fade-in">
+                    <img src="images/track2.jpg" alt="Track Photo 2" onerror="this.src='https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&q=80'">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-semibold">In Motion</h3>
+                        <p class="text-sm opacity-90">Pure speed and determination</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item fade-in">
+                    <img src="images/track3.jpg" alt="Track Photo 3" onerror="this.src='https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=800&q=80'">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-semibold">Victory Moment</h3>
+                        <p class="text-sm opacity-90">Crossing the finish line</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item fade-in">
+                    <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80" alt="Track Photo 4">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-semibold">Team Spirit</h3>
+                        <p class="text-sm opacity-90">Athletes supporting each other</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item fade-in">
+                    <img src="https://images.unsplash.com/photo-1566932769119-7a1fb6d7ce23?w=800&q=80" alt="Track Photo 5">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-semibold">Focus</h3>
+                        <p class="text-sm opacity-90">Mental preparation before the race</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item fade-in">
+                    <img src="https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?w=800&q=80" alt="Track Photo 6">
+                    <div class="gallery-overlay">
+                        <h3 class="text-xl font-semibold">The Jump</h3>
+                        <p class="text-sm opacity-90">Defying gravity in long jump</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 text-white" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+        <div class="max-w-7xl mx-auto">
+            <div class="md:flex justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <p class="text-xl font-medium mb-2">COOPEROFTHECROP</p>
+                    <p class="text-white opacity-75">© 2025 Cooper Hofmann</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="index.html" class="hover:opacity-75 transition-opacity duration-300">Home</a>
+                    <a href="contact.html" class="hover:opacity-75 transition-opacity duration-300">Contact</a>
+                    <a href="#" class="hover:opacity-75 transition-opacity duration-300">Instagram</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
