@@ -1,38 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Track | Cooper of the Crop</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track | COOPEROFTHECROP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --gray: #808080;
+            --light-gray: #E0E0E0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--white);
+            color: var(--black);
+            line-height: 1.2;
+            overflow-x: hidden;
+        }
+        
+        /* Brutalist Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--black);
+            color: var(--white);
+            padding: 20px 40px;
+            z-index: 1000;
+            border-bottom: 4px solid var(--black);
+        }
+        
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        nav .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+        
+        nav a:hover {
+            color: var(--gray);
+        }
+        
+        /* Gallery Section */
+        .gallery-main {
+            margin-top: 80px;
+            padding: 100px 40px;
+            background: var(--light-gray);
+            min-height: calc(100vh - 80px);
+        }
+        
+        .gallery-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .gallery-main h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(48px, 10vw, 120px);
+            font-weight: 700;
+            line-height: 0.85;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            margin-bottom: 80px;
+        }
+        
+        /* Brutalist Masonry Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            background: var(--white);
+            border: 4px solid var(--black);
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        /* Varying heights for brutalist asymmetry */
+        .gallery-item:nth-child(3n+1) {
+            min-height: 500px;
+        }
+        
+        .gallery-item:nth-child(3n+2) {
+            min-height: 350px;
+        }
+        
+        .gallery-item:nth-child(3n+3) {
+            min-height: 600px;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-item .caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--black);
+            color: var(--white);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .caption {
+            transform: translateY(0);
+        }
+        
+        .gallery-item .caption h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .gallery-item .caption p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        /* Featured Image - Full Width */
+        .gallery-featured {
+            grid-column: 1 / -1;
+            min-height: 600px !important;
+            margin-bottom: 20px;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--black);
+            color: var(--white);
+            padding: 40px;
+            border-top: 4px solid var(--white);
+            text-align: center;
+        }
+        
+        footer p {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: 2px solid var(--white);
+            color: var(--white);
+            padding: 10px 15px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: var(--black);
+                flex-direction: column;
+                padding: 20px 40px;
+                gap: 20px;
+                border-top: 2px solid var(--white);
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .gallery-main {
+                padding: 60px 20px;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-item {
+                min-height: 400px !important;
+            }
+            
+            nav {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Cooper of the Crop</h1>
+    <!-- Navigation -->
     <nav>
-      <a href="index.html">Home</a>
-      <a href="track.html" class="active">Track</a>
-      <a href="soccer.html">Soccer</a>
-      <a href="football.html">Football</a>
-      <a href="basketball.html">Basketball</a>
-      <a href="nature.html">Nature</a>
-      <a href="urban.html">Urban</a>
-      <a href="contact.html">Contact</a>
+        <div class="container">
+            <div class="logo">COOPEROFTHECROP</div>
+            <ul id="nav-menu">
+                <li><a href="index.html">Work</a></li>
+                <li><a href="track.html">Track</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">MENU</button>
+        </div>
     </nav>
-  </header>
 
-  <main>
-    <h2>Track</h2>
-    <div class="gallery">
-      <img src="images/TRACK SN DONE (5 of 303).jpg" alt="Track 1">
-      <img src="images/track2.jpg" alt="Track 2">
-      <img src="images/track3.jpg" alt="Track 3">
-    </div>
-  </main>
+    <!-- Gallery Main -->
+    <section class="gallery-main">
+        <div class="gallery-container">
+            <h1>TRACK<br>RECORD</h1>
+            
+            <div class="gallery-grid">
+                <!-- Featured Image -->
+                <div class="gallery-item gallery-featured">
+                    <img src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80" alt="Featured Work">
+                    <div class="caption">
+                        <h3>Urban Landscape</h3>
+                        <p>New York, 2023</p>
+                    </div>
+                </div>
+                
+                <!-- Regular Gallery Items -->
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 1">
+                    <div class="caption">
+                        <h3>Concrete Forms</h3>
+                        <p>Series 01</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 2">
+                    <div class="caption">
+                        <h3>Industrial</h3>
+                        <p>Series 02</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1517438476312-10d79c077509?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 3">
+                    <div class="caption">
+                        <h3>Monochrome</h3>
+                        <p>Series 03</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1506260408121-e353d10b87c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 4">
+                    <div class="caption">
+                        <h3>Structures</h3>
+                        <p>Series 04</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1500382018108-8a57f0a21143?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 5">
+                    <div class="caption">
+                        <h3>Rural</h3>
+                        <p>Series 05</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1526666923125-b297ddbb7b0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 6">
+                    <div class="caption">
+                        <h3>Texture Study</h3>
+                        <p>Series 06</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1518893063132-36e46dbe2428?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 7">
+                    <div class="caption">
+                        <h3>Abstract</h3>
+                        <p>Series 07</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1514905552197-0610a4d8fd73?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 8">
+                    <div class="caption">
+                        <h3>Shadows</h3>
+                        <p>Series 08</p>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1481349518771-20055b2a7b24?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Gallery 9">
+                    <div class="caption">
+                        <h3>Cityscape</h3>
+                        <p>Series 09</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <footer>
-    <p>&copy; 2025 Cooper Hofmann</p>
-  </footer>
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 COOPEROFTHECROP. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('nav-menu').classList.toggle('active');
+        }
+    </script>
 </body>
 </html>
