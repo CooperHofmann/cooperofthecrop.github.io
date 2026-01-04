@@ -59,6 +59,8 @@
             font-size: 24px;
             font-weight: 700;
             letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--white);
         }
         
         nav ul {
@@ -141,32 +143,31 @@
             border: 4px solid var(--black);
             overflow: hidden;
             cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
         }
         
         .work-item:nth-child(1) {
-            grid-column: span 8;
+            grid-column: span 6;
             grid-row: span 2;
         }
         
         .work-item:nth-child(2) {
-            grid-column: span 4;
+            grid-column: span 6;
         }
         
         .work-item:nth-child(3) {
-            grid-column: span 4;
+            grid-column: span 6;
         }
         
         .work-item:nth-child(4) {
-            grid-column: span 5;
+            grid-column: span 6;
             grid-row: span 2;
         }
         
         .work-item:nth-child(5) {
-            grid-column: span 7;
-        }
-        
-        .work-item:nth-child(6) {
-            grid-column: span 7;
+            grid-column: span 6;
         }
         
         .work-item img {
@@ -376,10 +377,14 @@
     <!-- Navigation -->
     <nav>
         <div class="container">
-            <div class="logo">COOPEROFTHECROP</div>
+            <a href="index.html" class="logo">COOPEROFTHECROP</a>
             <ul id="nav-menu">
-                <li><a href="index.html">Work</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="track.html">Track</a></li>
+                <li><a href="soccer.html">Soccer</a></li>
+                <li><a href="football.html">Football</a></li>
+                <li><a href="basketball.html">Basketball</a></li>
+                <li><a href="best-of.html">Best Of</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <button class="mobile-menu-btn" onclick="toggleMenu()">MENU</button>
@@ -390,65 +395,56 @@
     <section class="hero">
         <div class="hero-content">
             <h1>
-                CAPTURING<br>
-                ESSENCE<br>
-                THROUGH<br>
-                LENS
+                COOPER<br>
+                OF THE<br>
+                CROP
             </h1>
-            <p class="subtitle">Brutalist photography that reveals the raw beauty in the ordinary. Professional, uncompromising, honest.</p>
+            <p class="subtitle">Sports & Creative Photography</p>
         </div>
     </section>
 
     <!-- Work Grid -->
     <section class="work-section">
         <div class="work-grid">
-            <div class="work-item">
-                <img src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Urban Decay">
+            <a href="track.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&q=80" alt="Track & Field">
                 <div class="overlay">
-                    <h3>Urban Decay</h3>
-                    <p class="year">2023</p>
+                    <h3>Track & Field</h3>
+                    <p class="year">View Gallery</p>
                 </div>
-            </div>
+            </a>
             
-            <div class="work-item">
-                <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Concrete Dreams">
+            <a href="soccer.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80" alt="Soccer">
                 <div class="overlay">
-                    <h3>Concrete Dreams</h3>
-                    <p class="year">2023</p>
+                    <h3>Soccer</h3>
+                    <p class="year">View Gallery</p>
                 </div>
-            </div>
+            </a>
             
-            <div class="work-item">
-                <img src="https://images.unsplash.com/photo-1504208434309-cb69f4fe52b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Industrial Light">
+            <a href="football.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1566577134770-3d85bb3a9cc4?w=800&q=80" alt="Football">
                 <div class="overlay">
-                    <h3>Industrial Light</h3>
-                    <p class="year">2022</p>
+                    <h3>Football</h3>
+                    <p class="year">View Gallery</p>
                 </div>
-            </div>
+            </a>
             
-            <div class="work-item">
-                <img src="https://images.unsplash.com/photo-1517438476312-10d79c077509?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="Monochrome">
+            <a href="basketball.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1000&q=80" alt="Basketball">
                 <div class="overlay">
-                    <h3>Monochrome</h3>
-                    <p class="year">2022</p>
+                    <h3>Basketball</h3>
+                    <p class="year">View Gallery</p>
                 </div>
-            </div>
+            </a>
             
-            <div class="work-item">
-                <img src="https://images.unsplash.com/photo-1506260408121-e353d10b87c7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Silent Structures">
+            <a href="best-of.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=1200&q=80" alt="Best Of">
                 <div class="overlay">
-                    <h3>Silent Structures</h3>
-                    <p class="year">2021</p>
+                    <h3>Best Of</h3>
+                    <p class="year">View Gallery</p>
                 </div>
-            </div>
-            
-            <div class="work-item">
-                <img src="https://images.unsplash.com/photo-1500382018108-8a57f0a21143?ixlib=rb-1.2.1&auto=format&fit=crop&w=1200&q=80" alt="Rural Geometry">
-                <div class="overlay">
-                    <h3>Rural Geometry</h3>
-                    <p class="year">2021</p>
-                </div>
-            </div>
+            </a>
         </div>
     </section>
 
@@ -457,9 +453,9 @@
         <div class="about-content">
             <div>
                 <h2>ABOUT</h2>
-                <p>Founded in 2018, COOPEROFTHECROP is a photography studio specializing in brutalist and minimalist compositions that highlight the raw essence of subjects.</p>
-                <p>Our approach strips away the unnecessary, focusing on form, texture, and the interplay of light and shadow.</p>
-                <p><strong>Based in New York, working worldwide.</strong></p>
+                <p>Cooper of the Crop specializes in sports and creative photography, capturing the raw energy and emotion of athletic performance.</p>
+                <p>Our brutalist approach strips away the unnecessary, focusing on the decisive moment, powerful composition, and authentic storytelling.</p>
+                <p><strong>Sports photography that hits different.</strong></p>
             </div>
             <div class="about-image">
                 <img src="https://images.unsplash.com/photo-1526666923125-b297ddbb7b0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="About">

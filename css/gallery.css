@@ -1,0 +1,320 @@
+/**
+ * SHARED STYLES
+ * Brutalist design system - raw, bold, minimal
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --black: #000000;
+    --white: #FFFFFF;
+    --gray: #808080;
+    --light-gray: #E0E0E0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--white);
+    color: var(--black);
+    line-height: 1.2;
+    overflow-x: hidden;
+}
+
+/* Brutalist Navigation */
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--black);
+    color: var(--white);
+    padding: 20px 40px;
+    z-index: 1000;
+    border-bottom: 4px solid var(--black);
+}
+
+nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+nav .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    color: var(--white);
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+}
+
+nav a {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+
+nav a:hover {
+    color: var(--gray);
+}
+
+/* Gallery Section */
+.gallery-main {
+    margin-top: 80px;
+    padding: 100px 40px;
+    background: var(--light-gray);
+    min-height: calc(100vh - 80px);
+}
+
+.gallery-container {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.gallery-main h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(48px, 10vw, 120px);
+    font-weight: 700;
+    line-height: 0.85;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin-bottom: 80px;
+}
+
+/* Brutalist Masonry Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.gallery-item {
+    position: relative;
+    background: var(--white);
+    border: 4px solid var(--black);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-4px);
+}
+
+/* Varying heights for brutalist asymmetry */
+.gallery-item:nth-child(3n+1) {
+    min-height: 500px;
+}
+
+.gallery-item:nth-child(3n+2) {
+    min-height: 350px;
+}
+
+.gallery-item:nth-child(3n+3) {
+    min-height: 600px;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Featured Image - Full Width */
+.gallery-featured {
+    grid-column: 1 / -1;
+    min-height: 600px !important;
+    margin-bottom: 20px;
+}
+
+/* Lightbox Styles */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border: 4px solid var(--white);
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    background: var(--white);
+    color: var(--black);
+    border: none;
+    font-family: 'Space Mono', monospace;
+    font-size: 40px;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+}
+
+.lightbox-close {
+    top: 20px;
+    right: 20px;
+}
+
+.lightbox-close:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+.lightbox-prev {
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lightbox-next {
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background: var(--black);
+    color: var(--white);
+}
+
+.lightbox-counter {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--white);
+    color: var(--black);
+    padding: 10px 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    border: 2px solid var(--black);
+}
+
+/* Footer */
+footer {
+    background: var(--black);
+    color: var(--white);
+    padding: 40px;
+    border-top: 4px solid var(--white);
+    text-align: center;
+}
+
+footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+/* Mobile Menu */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: 2px solid var(--white);
+    color: var(--white);
+    padding: 10px 15px;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    nav ul {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: var(--black);
+        flex-direction: column;
+        padding: 20px 40px;
+        gap: 20px;
+        border-top: 2px solid var(--white);
+    }
+    
+    nav ul.active {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .gallery-main {
+        padding: 60px 20px;
+    }
+    
+    .gallery-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .gallery-item {
+        min-height: 400px !important;
+    }
+    
+    nav {
+        padding: 20px;
+    }
+
+    .lightbox-prev,
+    .lightbox-next {
+        width: 50px;
+        height: 50px;
+        font-size: 30px;
+    }
+
+    .lightbox-close {
+        width: 50px;
+        height: 50px;
+    }
+}
