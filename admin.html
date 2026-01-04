@@ -603,11 +603,11 @@
             <!-- Sidebar -->
             <aside class="admin-sidebar">
                 <ul class="sidebar-menu">
-                    <li><a onclick="showPanel('overview')" class="active">📊 Overview</a></li>
-                    <li><a onclick="showPanel('upload')">⬆️ Upload Photos</a></li>
-                    <li><a onclick="showPanel('manage')">🖼️ Manage Photos</a></li>
-                    <li><a onclick="showPanel('config')">⚙️ Configuration</a></li>
-                    <li><a onclick="showPanel('help')">❓ Help</a></li>
+                    <li><a onclick="showPanel('overview', event)" class="active">📊 Overview</a></li>
+                    <li><a onclick="showPanel('upload', event)">⬆️ Upload Photos</a></li>
+                    <li><a onclick="showPanel('manage', event)">🖼️ Manage Photos</a></li>
+                    <li><a onclick="showPanel('config', event)">⚙️ Configuration</a></li>
+                    <li><a onclick="showPanel('help', event)">❓ Help</a></li>
                 </ul>
             </aside>
 
@@ -657,11 +657,11 @@
 
                     <h3 style="font-family: 'Space Mono', monospace; margin-bottom: 15px;">Select Category</h3>
                     <div class="category-selector">
-                        <button class="category-btn active" data-category="track" onclick="selectCategory('track')">📸 TRACK</button>
-                        <button class="category-btn" data-category="soccer" onclick="selectCategory('soccer')">⚽ SOCCER</button>
-                        <button class="category-btn" data-category="football" onclick="selectCategory('football')">🏈 FOOTBALL</button>
-                        <button class="category-btn" data-category="basketball" onclick="selectCategory('basketball')">🏀 BASKETBALL</button>
-                        <button class="category-btn" data-category="bestOf" onclick="selectCategory('bestOf')">⭐ BEST OF</button>
+                        <button class="category-btn active" data-category="track" onclick="selectCategory('track', event)">📸 TRACK</button>
+                        <button class="category-btn" data-category="soccer" onclick="selectCategory('soccer', event)">⚽ SOCCER</button>
+                        <button class="category-btn" data-category="football" onclick="selectCategory('football', event)">🏈 FOOTBALL</button>
+                        <button class="category-btn" data-category="basketball" onclick="selectCategory('basketball', event)">🏀 BASKETBALL</button>
+                        <button class="category-btn" data-category="bestOf" onclick="selectCategory('bestOf', event)">⭐ BEST OF</button>
                     </div>
 
                     <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
@@ -781,6 +781,9 @@
     <script src="js/config.js"></script>
     <script>
         // Admin PIN (change this to your desired PIN)
+        // SECURITY NOTE: This is client-side authentication only and provides basic access control.
+        // Anyone with access to the source code can see or bypass this PIN.
+        // For production use with sensitive data, implement server-side authentication.
         const ADMIN_PIN = '1234';
         
         // Current selected category for upload
@@ -858,7 +861,7 @@
         }
 
         // Panel Navigation
-        function showPanel(panelName) {
+        function showPanel(panelName, clickEvent) {
             // Hide all panels
             document.querySelectorAll('.panel-section').forEach(panel => {
                 panel.classList.remove('active');
@@ -871,7 +874,9 @@
             document.querySelectorAll('.sidebar-menu a').forEach(link => {
                 link.classList.remove('active');
             });
-            event.target.classList.add('active');
+            if (clickEvent && clickEvent.target) {
+                clickEvent.target.classList.add('active');
+            }
 
             // Refresh data for specific panels
             if (panelName === 'manage') {
@@ -882,12 +887,14 @@
         }
 
         // Category Selection
-        function selectCategory(category) {
+        function selectCategory(category, clickEvent) {
             currentCategory = category;
             document.querySelectorAll('.category-btn[data-category]').forEach(btn => {
                 btn.classList.remove('active');
             });
-            event.target.classList.add('active');
+            if (clickEvent && clickEvent.target) {
+                clickEvent.target.classList.add('active');
+            }
         }
 
         // File Upload
@@ -994,14 +1001,24 @@
                 return;
             }
 
-            galleryGrid.innerHTML = photos.map(photo => `
+            // Helper function to escape HTML
+            const escapeHtml = (str) => {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            };
+
+            galleryGrid.innerHTML = photos.map(photo => {
+                const safeFilename = escapeHtml(photo.filename);
+                return `
                 <div class="photo-item">
-                    <img src="${photo.dataUrl}" alt="${photo.filename}">
+                    <img src="${photo.dataUrl}" alt="${safeFilename}">
                     <div class="overlay">
-                        <button onclick="deletePhoto('${gallery}', '${photo.filename}')">🗑️ Delete</button>
+                        <button onclick="deletePhoto('${gallery}', '${safeFilename}')">🗑️ Delete</button>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         // Stats Update
@@ -1076,10 +1093,20 @@ const placeholderImages = [
         }
 
         function copyConfig() {
-            const configCode = document.getElementById('configCode');
-            configCode.select();
-            document.execCommand('copy');
-            showNotification('✓ Configuration copied to clipboard!', 'success');
+            const configCode = document.getElementById('configCode').value;
+            navigator.clipboard.writeText(configCode).then(() => {
+                showNotification('✓ Configuration copied to clipboard!', 'success');
+            }).catch(err => {
+                // Fallback for older browsers
+                const textarea = document.getElementById('configCode');
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showNotification('✓ Configuration copied to clipboard!', 'success');
+                } catch (e) {
+                    showNotification('❌ Failed to copy. Please copy manually.', 'error');
+                }
+            });
         }
 
         function downloadConfig() {
