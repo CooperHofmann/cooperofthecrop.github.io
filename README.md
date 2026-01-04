@@ -156,12 +156,14 @@ Open [http://localhost:3000](http://localhost:3000) to see your site.
 **Direct Browser-to-Supabase Upload**:
 - Files upload directly from browser to Supabase Storage
 - No server proxy (Vercel API routes not used)
-- No artificial file size limits
-- Support for large files up to Supabase free tier limits
+- **Automatic image optimization** to save storage space
+- Images compressed to max 2048px (85% JPEG quality)
+- Typical 70-90% file size reduction while maintaining quality
 
 **Features**:
 - ✅ Drag & drop
 - ✅ Batch uploads
+- ✅ **Client-side image compression** (no backend needed)
 - ✅ Upload progress bars
 - ✅ Retry on failure
 - ✅ Cancel upload

@@ -73,20 +73,30 @@ export default function UploadPage() {
           return updated;
         });
 
-        // Get image dimensions
-        const dimensions = await getImageDimensions(file);
+        // Compress image to save storage space
+        const { blob, width, height } = await compressImage(file);
+
+        // Update progress after compression
+        setUploads(prev => {
+          const updated = [...prev];
+          updated[uploadIndex] = { ...updated[uploadIndex], progress: 25 };
+          return updated;
+        });
 
         // Generate unique filename
         const timestamp = Date.now();
         const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        const filePath = `${selectedCategory}/${timestamp}_${safeFileName}`;
+        // Change extension to .jpg since we're converting to JPEG
+        const fileNameWithoutExt = safeFileName.replace(/\.[^/.]+$/, '');
+        const filePath = `${selectedCategory}/${timestamp}_${fileNameWithoutExt}.jpg`;
 
-        // Upload directly to Supabase Storage (no server proxy)
+        // Upload compressed image directly to Supabase Storage (no server proxy)
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('images')
-          .upload(filePath, file, {
+          .upload(filePath, blob, {
             cacheControl: '3600',
             upsert: false,
+            contentType: 'image/jpeg',
           });
 
         if (uploadError) throw uploadError;
@@ -104,8 +114,8 @@ export default function UploadPage() {
           .insert({
             storage_path: uploadData.path,
             category: selectedCategory,
-            width: dimensions.width,
-            height: dimensions.height,
+            width: width,
+            height: height,
             order: 0,
             visibility: 'draft',
           });
@@ -134,14 +144,65 @@ export default function UploadPage() {
     }
   };
 
-  const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
+  const compressImage = (file: File): Promise<{ blob: Blob; width: number; height: number }> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       const url = URL.createObjectURL(file);
       
       img.onload = () => {
         URL.revokeObjectURL(url);
-        resolve({ width: img.width, height: img.height });
+        
+        // Configuration for compression
+        const MAX_WIDTH = 2048;  // Maximum width in pixels
+        const MAX_HEIGHT = 2048; // Maximum height in pixels
+        const QUALITY = 0.85;    // JPEG quality (0.0 - 1.0)
+        
+        let width = img.width;
+        let height = img.height;
+        
+        // Calculate new dimensions while maintaining aspect ratio
+        if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+          const aspectRatio = width / height;
+          
+          if (width > height) {
+            width = MAX_WIDTH;
+            height = width / aspectRatio;
+          } else {
+            height = MAX_HEIGHT;
+            width = height * aspectRatio;
+          }
+        }
+        
+        // Create canvas and draw resized image
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+        
+        // Use better image smoothing
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Draw the image
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convert to blob (JPEG for better compression)
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve({ blob, width: Math.round(width), height: Math.round(height) });
+            } else {
+              reject(new Error('Failed to compress image'));
+            }
+          },
+          'image/jpeg',
+          QUALITY
+        );
       };
       
       img.onerror = () => {
@@ -172,7 +233,7 @@ export default function UploadPage() {
       {/* Page Header */}
       <div className="mb-12">
         <h1 className="text-5xl font-bold mb-2">UPLOAD</h1>
-        <p className="text-gray text-lg">Upload photos directly to Supabase Storage</p>
+        <p className="text-gray text-lg">Upload photos with automatic optimization to save storage</p>
       </div>
 
       {/* Category Selection */}
@@ -216,7 +277,8 @@ export default function UploadPage() {
         <h3 className="text-2xl font-bold mb-2">DRAG & DROP FILES HERE</h3>
         <p className="text-gray mb-4">or click to browse</p>
         <p className="text-sm text-gray">Supports: JPG, PNG, GIF, WebP</p>
-        <p className="text-sm text-gray">Upload directly to Supabase (no size limit)</p>
+        <p className="text-sm text-gray">Images auto-compressed to max 2048px (85% quality)</p>
+        <p className="text-sm text-gray font-medium">Upload directly to Supabase - 100% free</p>
         <input
           ref={fileInputRef}
           type="file"
