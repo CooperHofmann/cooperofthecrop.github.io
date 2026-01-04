@@ -81,6 +81,25 @@ This site is automatically deployed to GitHub Pages. After pushing changes:
 - **best-of.html** - Best Of gallery
 - **contact.html** - Contact information
 - **edit.html** - Portfolio management page (local use)
+- **admin.html** - 🔐 Admin panel with PIN authentication (see ADMIN_GUIDE.md)
+
+## 🔐 Admin Panel
+
+A powerful admin panel is now available for managing your portfolio:
+
+### Quick Access:
+- Look for the secret button (•) at the bottom of any page
+- Or navigate directly to `admin.html`
+- Default PIN: `1234`
+
+### Features:
+- 📊 Dashboard with photo statistics
+- ⬆️ Drag & drop photo uploads
+- 🖼️ Gallery management (view/delete photos)
+- ⚙️ Auto-generate configuration code
+- 💾 Browser-based photo storage
+
+**For detailed instructions, see [ADMIN_GUIDE.md](ADMIN_GUIDE.md)**
 
 ## 🎨 Design Philosophy
 
