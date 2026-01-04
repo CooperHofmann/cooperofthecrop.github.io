@@ -1,171 +1,269 @@
-# Cooper of the Crop - Photography Portfolio
+# Cooper of the Crop - Admin Dashboard & Upload System
 
-A brutalist photography portfolio website showcasing sports and creative photography.
+A free, Next.js-based photography portfolio with admin dashboard and direct browser-to-Supabase upload system.
 
-## 🎯 Overview
+## 🎯 Project Philosophy
 
-This is a static website designed for easy image management with a bold, minimal brutalist aesthetic. The site is deployed via GitHub Pages and features dynamic image loading from organized folders.
+This project is built with **strict free-tier constraints**:
+- ✅ 100% free forever
+- ✅ No paid plans, trials, or credits
+- ✅ No credit card requirements
+- ✅ Only free-tier services
 
-## 📁 Folder Structure
+## 🛠️ Tech Stack
 
-```
-/images/
-  /track/        - Track & Field photos
-  /soccer/       - Soccer photos
-  /football/     - Football photos
-  /basketball/   - Basketball photos
-  /best-of/      - Best of all categories
+- **Framework**: Next.js 15 (App Router)
+- **Hosting**: Vercel (free tier)
+- **Styling**: Tailwind CSS v4
+- **Database**: Supabase (free tier)
+- **Storage**: Supabase Storage (free tier)
+- **Auth**: Supabase Auth (free tier)
 
-/js/
-  config.js      - Image configuration file (edit this!)
-  gallery.js     - Gallery functionality
+## 🚀 Getting Started
 
-/css/
-  gallery.css    - Shared styles
-```
+### 1. Prerequisites
 
-## 🖼️ How to Add/Remove/Reorder Images
+- Node.js 18+ installed
+- A Supabase account (free tier)
+- A Vercel account (free tier)
 
-### Method 1: Quick Steps
+### 2. Clone the Repository
 
-1. **Add your photos** to the appropriate folder in `/images/`
-   - Example: Add `my-photo.jpg` to `/images/track/`
-
-2. **Edit the config file** at `/js/config.js`
-   - Find the category (track, soccer, football, basketball, bestOf)
-   - Add your filename to the `images` array
-   ```javascript
-   track: {
-       images: [
-           "existing-photo.jpg",
-           "my-photo.jpg"  // Add your new photo here
-       ]
-   }
-   ```
-
-3. **Reorder by changing the order** in the array
-   - First image becomes the featured (full-width) image
-   - Images appear in the order they're listed
-
-4. **Remove by deleting** the filename from the array
-
-5. **Save and push** to GitHub
-   ```bash
-   git add .
-   git commit -m "Update portfolio images"
-   git push
-   ```
-
-### Method 2: Use the Edit Page
-
-1. Open `edit.html` in your browser (works locally)
-2. Follow the step-by-step instructions
-3. Use the Quick Config Editor to manage your images
-4. Copy the config and paste into `/js/config.js`
-
-## 🚀 Deployment
-
-This site is automatically deployed to GitHub Pages. After pushing changes:
-
-1. Changes appear in 1-2 minutes
-2. Visit your site at: `https://cooperhofmann.github.io/cooperofthecrop.github.io/`
-3. Clear browser cache if changes don't appear immediately
-
-## 📄 Pages
-
-- **index.html** - Home page with category grid
-- **track.html** - Track & Field gallery
-- **soccer.html** - Soccer gallery
-- **football.html** - Football gallery
-- **basketball.html** - Basketball gallery
-- **best-of.html** - Best Of gallery
-- **contact.html** - Contact information
-- **edit.html** - Portfolio management page (local use)
-- **admin.html** - 🔐 Admin panel with PIN authentication (see ADMIN_GUIDE.md)
-
-## 🔐 Admin Panel
-
-A powerful admin panel is now available for managing your portfolio:
-
-### Quick Access:
-- Look for the secret button (•) at the bottom of any page
-- Or navigate directly to `admin.html`
-- Default PIN: `1234`
-
-### Features:
-- 📊 Dashboard with photo statistics
-- ⬆️ Drag & drop photo uploads
-- 🖼️ Gallery management (view/delete photos)
-- ⚙️ Auto-generate configuration code
-- 💾 Browser-based photo storage
-
-**For detailed instructions, see [ADMIN_GUIDE.md](ADMIN_GUIDE.md)**
-
-## 🎨 Design Philosophy
-
-**Brutalist Design Principles:**
-- Bold, oversized typography
-- Visible grid system
-- Black, white, and gray only
-- Raw layout over polish
-- No rounded corners
-- No gradients or shadows
-
-## 💻 Technical Details
-
-- **Static HTML/CSS/JavaScript** - No build process required
-- **Vanilla JavaScript** - No frameworks, easy to understand
-- **Responsive Design** - Works on mobile and desktop
-- **Lightbox Gallery** - Click images to view fullscreen
-- **Lazy Loading** - Images load as needed for performance
-
-## 🔧 Customization
-
-### Update Site Title/Branding
-Edit the `<title>` tags and `.logo` content in each HTML file.
-
-### Change Colors
-Edit CSS variables in `/css/gallery.css`:
-```css
-:root {
-    --black: #000000;
-    --white: #FFFFFF;
-    --gray: #808080;
-    --light-gray: #E0E0E0;
-}
+```bash
+git clone https://github.com/CooperHofmann/cooperofthecrop.github.io.git
+cd cooperofthecrop.github.io
+npm install
 ```
 
-### Modify Grid Layout
-Edit grid settings in `/css/gallery.css` under `.gallery-grid`
+### 3. Set Up Supabase
 
-## 📝 Tips
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Go to **Project Settings** → **API**
+3. Copy your Project URL and anon key
 
-- **Image naming**: Use descriptive names without spaces (use hyphens or underscores)
-- **Image format**: JPEG recommended for photos (smaller file size)
-- **Image size**: Recommended max width 2000px for web
-- **First image**: The first image in each category appears full-width
-- **Empty galleries**: Will show placeholder images until you add your own
+#### Create Database Tables
+
+Run this SQL in the Supabase SQL Editor:
+
+```sql
+-- Images table
+CREATE TABLE images (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  storage_path TEXT NOT NULL,
+  category TEXT NOT NULL CHECK (category IN ('track', 'soccer', 'football', 'basketball', 'best-of')),
+  width INTEGER NOT NULL,
+  height INTEGER NOT NULL,
+  "order" INTEGER DEFAULT 0,
+  visibility TEXT DEFAULT 'draft' CHECK (visibility IN ('public', 'draft')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Featured images (Best Of references)
+CREATE TABLE featured_images (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  image_id UUID REFERENCES images(id) ON DELETE CASCADE,
+  "order" INTEGER DEFAULT 0,
+  enabled BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for performance
+CREATE INDEX idx_images_category ON images(category);
+CREATE INDEX idx_images_visibility ON images(visibility);
+CREATE INDEX idx_images_order ON images("order");
+CREATE INDEX idx_featured_images_order ON featured_images("order");
+```
+
+#### Create Storage Bucket
+
+1. Go to **Storage** in Supabase
+2. Create a new bucket called `images`
+3. Set it to **Public** (so images can be viewed)
+4. Configure RLS policies:
+
+```sql
+-- Allow public read access
+CREATE POLICY "Public Access"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'images');
+
+-- Allow authenticated uploads (if you add auth later)
+CREATE POLICY "Authenticated Upload"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'images');
+```
+
+### 4. Configure Environment Variables
+
+Create `.env.local` in the root directory:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### 5. Run Development Server
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to see your site.
+
+### 6. Deploy to Vercel
+
+1. Push your code to GitHub
+2. Go to [vercel.com](https://vercel.com)
+3. Import your repository
+4. Add environment variables (same as `.env.local`)
+5. Deploy!
+
+## 📁 Project Structure
+
+```
+/app
+  /admin              # Admin dashboard
+    /dashboard        # Stats and overview
+    /upload           # Photo upload page
+    /galleries        # Gallery management
+    /best-of          # Best Of curation
+    /settings         # Settings
+  /gallery
+    /[category]       # Public gallery pages
+  page.tsx            # Public home page
+/components
+  /admin              # Admin UI components
+/lib
+  /supabase           # Supabase client & types
+/public
+  /images             # Static images
+```
+
+## 🎨 Design System
+
+**Brutalist Aesthetic**:
+- White/off-white backgrounds
+- Near-black text (#0A0A0A)
+- Strong typography hierarchy
+- Large spacing
+- Borders instead of shadows
+- No glassmorphism or gradients
+- Minimal animations only
+
+## 📤 Upload Architecture
+
+**Direct Browser-to-Supabase Upload**:
+- Files upload directly from browser to Supabase Storage
+- No server proxy (Vercel API routes not used)
+- No artificial file size limits
+- Support for large files up to Supabase free tier limits
+
+**Features**:
+- ✅ Drag & drop
+- ✅ Batch uploads
+- ✅ Upload progress bars
+- ✅ Retry on failure
+- ✅ Cancel upload
+- ✅ Instant previews
+- ✅ Editable metadata
+
+## 🖼️ Image Categories
+
+- **Track & Field** - Track & field photography
+- **Soccer** - Soccer photography
+- **Football** - Football photography
+- **Basketball** - Basketball photography
+- **Best Of** - Featured collection (references existing images, no duplicates)
+
+## 🔐 Security Notes
+
+- Currently no authentication implemented
+- Add Supabase Auth for production use
+- RLS policies should be configured for your use case
+- Don't commit `.env.local` to git
+
+## 📊 Database Schema
+
+### `images` table
+- `id` - Unique image ID
+- `storage_path` - Path in Supabase Storage
+- `category` - Image category
+- `width` / `height` - Image dimensions
+- `order` - Display order
+- `visibility` - public or draft
+- `created_at` - Upload timestamp
+
+### `featured_images` table
+- `id` - Unique ID
+- `image_id` - References images table
+- `order` - Display order in Best Of
+- `enabled` - Show/hide toggle
+- `created_at` - Creation timestamp
+
+## 🚫 Do NOT
+
+- ❌ Use paid services
+- ❌ Store images in GitHub
+- ❌ Proxy files through Vercel
+- ❌ Add artificial file size limits
+- ❌ Use heavy UI libraries
+- ❌ Add drop shadows or glassmorphism
+- ❌ Over-animate the UI
+
+## 📝 Development
+
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+```
 
 ## 🆘 Troubleshooting
 
-**Images not showing?**
-- Check the filename exactly matches in config.js (case-sensitive)
-- Verify the image is in the correct folder
-- Clear browser cache
+**Images not uploading?**
+- Check Supabase environment variables
+- Verify Storage bucket exists and is public
+- Check browser console for errors
 
-**Changes not appearing on live site?**
-- Wait 1-2 minutes after pushing to GitHub
-- Check GitHub Actions for deployment status
-- Try hard refresh (Ctrl+Shift+R or Cmd+Shift+R)
+**Database errors?**
+- Verify tables are created
+- Check RLS policies
+- Ensure anon key has correct permissions
 
-**Need to test locally?**
-- Open any HTML file directly in your browser
-- Or use a simple local server: `python -m http.server`
+**Build errors?**
+- Clear `.next` folder: `rm -rf .next`
+- Reinstall dependencies: `rm -rf node_modules && npm install`
+- Check Node.js version (18+ required)
 
-## 📧 Questions?
+## 📄 License
 
-For technical support or customization help, contact the developer who set this up for you.
+MIT
+
+## 🙏 Credits
+
+Built with:
+- Next.js
+- Supabase
+- Tailwind CSS
+- TypeScript
+
+Design inspired by:
+- [Botronics](https://www.botronics.be/)
+- Apple editorial UI
+- Modern brutalism
 
 ---
 
-**Built with simplicity in mind. No complex frameworks. Easy to edit. Built to last.**
+**Built to be free forever. No subscriptions. No paid plans. Just photography.**
