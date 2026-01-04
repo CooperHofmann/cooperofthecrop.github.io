@@ -20,7 +20,7 @@ const portfolioConfig = {
         title: "TRACK &<br>FIELD",
         description: "Track & Field Photography",
         images: [
-            "TRACK SN DONE (5 of 303).jpg"
+            "TRACK SN DONE (5 of 303).jpg",
             // Add more track images here
             // Example: "track-image-1.jpg",
             // Example: "track-image-2.jpg",
