@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+/* Brutalist Design System - Cooper of the Crop */
+:root {
+  /* Colors - White/Off-white backgrounds, Near-black text */
+  --white: #FFFFFF;
+  --off-white: #FAFAFA;
+  --near-black: #0A0A0A;
+  --gray: #666666;
+  --light-gray: #E5E5E5;
+  --border: #0A0A0A;
+  
+  /* Spacing - Large, editorial spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+  --spacing-xl: 6rem;
+  
+  /* Typography - Use system fonts */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+@theme inline {
+  --color-white: var(--white);
+  --color-off-white: var(--off-white);
+  --color-near-black: var(--near-black);
+  --color-gray: var(--gray);
+  --color-light-gray: var(--light-gray);
+  --color-border: var(--border);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--white);
+  color: var(--near-black);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Remove default dark mode behavior */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Keep light theme even in dark mode */
+    background: var(--white);
+    color: var(--near-black);
+  }
+}
+
+/* Brutalist Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* No rounded corners, no shadows */
+button, input, select, textarea {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Focus states with borders, not shadows */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--near-black);
+  outline-offset: 2px;
+}
