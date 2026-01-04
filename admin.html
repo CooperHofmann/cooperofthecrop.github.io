@@ -781,8 +781,10 @@
     <script src="js/config.js"></script>
     <script>
         // Admin PIN (change this to your desired PIN)
-        // SECURITY NOTE: This is client-side authentication only and provides basic access control.
+        // ⚠️ IMPORTANT SECURITY WARNING:
+        // This is CLIENT-SIDE authentication only and provides basic access control.
         // Anyone with access to the source code can see or bypass this PIN.
+        // The default PIN '1234' MUST be changed before deploying to production.
         // For production use with sensitive data, implement server-side authentication.
         const ADMIN_PIN = '1234';
         
@@ -1010,11 +1012,12 @@
 
             galleryGrid.innerHTML = photos.map(photo => {
                 const safeFilename = escapeHtml(photo.filename);
+                const safeGallery = escapeHtml(gallery);
                 return `
                 <div class="photo-item">
                     <img src="${photo.dataUrl}" alt="${safeFilename}">
                     <div class="overlay">
-                        <button onclick="deletePhoto('${gallery}', '${safeFilename}')">🗑️ Delete</button>
+                        <button onclick="deletePhoto('${safeGallery}', '${safeFilename}')">🗑️ Delete</button>
                     </div>
                 </div>
             `;
