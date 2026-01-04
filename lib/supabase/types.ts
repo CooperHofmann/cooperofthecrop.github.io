@@ -1,7 +1,8 @@
-// Database types for type-safe queries
-
 export type Category = 'track' | 'soccer' | 'football' | 'basketball' | 'best-of';
 export type Visibility = 'public' | 'draft';
+
+// Special category constants
+export const BEST_OF_CATEGORY: Category = 'best-of';
 
 export interface Image {
   id: string;

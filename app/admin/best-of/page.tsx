@@ -154,9 +154,8 @@ export default function BestOfPage() {
   }
 
   // Filter out images already in featured
-  const availableImages = allImages.filter(
-    img => !featuredImages.some(f => f.image_id === img.id)
-  );
+  const featuredImageIds = new Set(featuredImages.map(f => f.image_id));
+  const availableImages = allImages.filter(img => !featuredImageIds.has(img.id));
 
   return (
     <div>

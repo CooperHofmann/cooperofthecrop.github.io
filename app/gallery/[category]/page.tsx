@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
-import { Image as ImageType } from '@/lib/supabase/types';
+import { Image as ImageType, BEST_OF_CATEGORY } from '@/lib/supabase/types';
 
 const categories = {
   'track': { title: 'TRACK & FIELD', description: 'Track & field photography' },
@@ -38,7 +38,7 @@ export default function GalleryPage({
     try {
       setLoading(true);
 
-      if (cat === 'best-of') {
+      if (cat === BEST_OF_CATEGORY) {
         // For Best Of, load featured images
         const { data, error } = await supabase
           .from('featured_images')
