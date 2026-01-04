@@ -12,6 +12,13 @@ const categories: { value: Category; label: string }[] = [
   { value: 'best-of', label: 'Best Of' },
 ];
 
+// Image compression configuration
+const IMAGE_COMPRESSION = {
+  MAX_WIDTH: 2048,   // Maximum width in pixels
+  MAX_HEIGHT: 2048,  // Maximum height in pixels
+  QUALITY: 0.85,     // JPEG quality (0.0 - 1.0)
+} as const;
+
 export default function UploadPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category>('track');
   const [uploads, setUploads] = useState<UploadProgress[]>([]);
@@ -87,7 +94,10 @@ export default function UploadPage() {
         const timestamp = Date.now();
         const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
         // Change extension to .jpg since we're converting to JPEG
-        const fileNameWithoutExt = safeFileName.replace(/\.[^/.]+$/, '');
+        const lastDotIndex = safeFileName.lastIndexOf('.');
+        const fileNameWithoutExt = lastDotIndex !== -1 
+          ? safeFileName.substring(0, lastDotIndex) 
+          : safeFileName;
         const filePath = `${selectedCategory}/${timestamp}_${fileNameWithoutExt}.jpg`;
 
         // Upload compressed image directly to Supabase Storage (no server proxy)
@@ -114,8 +124,8 @@ export default function UploadPage() {
           .insert({
             storage_path: uploadData.path,
             category: selectedCategory,
-            width: width,
-            height: height,
+            width,
+            height,
             order: 0,
             visibility: 'draft',
           });
@@ -152,10 +162,8 @@ export default function UploadPage() {
       img.onload = () => {
         URL.revokeObjectURL(url);
         
-        // Configuration for compression
-        const MAX_WIDTH = 2048;  // Maximum width in pixels
-        const MAX_HEIGHT = 2048; // Maximum height in pixels
-        const QUALITY = 0.85;    // JPEG quality (0.0 - 1.0)
+        // Use compression configuration
+        const { MAX_WIDTH, MAX_HEIGHT, QUALITY } = IMAGE_COMPRESSION;
         
         let width = img.width;
         let height = img.height;
@@ -195,7 +203,7 @@ export default function UploadPage() {
         canvas.toBlob(
           (blob) => {
             if (blob) {
-              resolve({ blob, width: Math.round(width), height: Math.round(height) });
+              resolve({ blob, width: Math.floor(width), height: Math.floor(height) });
             } else {
               reject(new Error('Failed to compress image'));
             }
