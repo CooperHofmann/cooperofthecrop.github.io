@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football | Cooper of the Crop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/gallery.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">COOPEROFTHECROP</a>
+            <ul id="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="track.html">Track</a></li>
+                <li><a href="soccer.html">Soccer</a></li>
+                <li><a href="football.html">Football</a></li>
+                <li><a href="basketball.html">Basketball</a></li>
+                <li><a href="best-of.html">Best Of</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">MENU</button>
+        </div>
+    </nav>
+
+    <!-- Gallery Main -->
+    <section class="gallery-main">
+        <div class="gallery-container">
+            <h1>FOOTBALL</h1>
+            
+            <!-- Gallery items will be dynamically inserted here -->
+            <div class="gallery-grid"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 COOPER OF THE CROP. All Rights Reserved.</p>
+        <!-- Secret Admin Button -->
+        <div style="margin-top: 20px;">
+            <a href="admin.html" style="color: var(--gray); font-size: 10px; text-decoration: none; opacity: 0.3; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.3'">•</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/gallery.js"></script>
+    <script>
+        // Initialize football gallery on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initGallery('football');
+        });
+    </script>
+</body>
+</html>
