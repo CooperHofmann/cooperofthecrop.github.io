@@ -975,11 +975,17 @@
                     
                     // Calculate compression ratio
                     const originalSize = (file.size / 1024).toFixed(2);
-                    const compressedSize = (compressedDataUrl.length * 0.75 / 1024).toFixed(2); // Approximate size
-                    const compressionRatio = ((1 - compressedSize / originalSize) * 100).toFixed(0);
+                    // Base64 encoding adds ~33% overhead, so multiply by 0.75 to estimate actual data size
+                    const compressedSize = (compressedDataUrl.length * 0.75 / 1024).toFixed(2);
+                    const compressionRatio = Math.max(0, ((1 - compressedSize / originalSize) * 100).toFixed(0));
                     
                     savePhoto(currentCategory, file.name, compressedDataUrl);
-                    showNotification(`✓ ${file.name} compressed (${compressionRatio}% smaller) and uploaded to ${currentCategory}!`, 'success');
+                    
+                    if (compressionRatio > 0) {
+                        showNotification(`✓ ${file.name} compressed (${compressionRatio}% smaller) and uploaded to ${currentCategory}!`, 'success');
+                    } else {
+                        showNotification(`✓ ${file.name} uploaded to ${currentCategory}!`, 'success');
+                    }
                     updateStats();
                 } catch (error) {
                     console.error('Compression error:', error);
