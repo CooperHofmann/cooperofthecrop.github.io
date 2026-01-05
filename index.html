@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COOPEROFTHECROP | Photography</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --black: #000000;
+            --white: #FFFFFF;
+            --gray: #808080;
+            --light-gray: #E0E0E0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--white);
+            color: var(--black);
+            line-height: 1.2;
+            overflow-x: hidden;
+        }
+        
+        /* Brutalist Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--black);
+            color: var(--white);
+            padding: 20px 40px;
+            z-index: 1000;
+            border-bottom: 4px solid var(--black);
+        }
+        
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        nav .logo {
+            font-family: 'Space Mono', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--white);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+        
+        nav a:hover {
+            color: var(--gray);
+        }
+        
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 100px 40px;
+            background: var(--white);
+            border-bottom: 4px solid var(--black);
+        }
+        
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(48px, 10vw, 140px);
+            font-weight: 700;
+            line-height: 0.85;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+        
+        .hero .subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            max-width: 600px;
+            font-weight: 400;
+            line-height: 1.4;
+            color: var(--gray);
+        }
+        
+        /* Work Grid */
+        .work-section {
+            padding: 80px 40px;
+            background: var(--light-gray);
+        }
+        
+        .work-section h2 {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            letter-spacing: -0.02em;
+        }
+        
+        .work-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .work-item {
+            position: relative;
+            background: var(--white);
+            border: 4px solid var(--black);
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .work-item:nth-child(1) {
+            grid-column: span 6;
+            grid-row: span 2;
+        }
+        
+        .work-item:nth-child(2) {
+            grid-column: span 6;
+        }
+        
+        .work-item:nth-child(3) {
+            grid-column: span 6;
+        }
+        
+        .work-item:nth-child(4) {
+            grid-column: span 6;
+            grid-row: span 2;
+        }
+        
+        .work-item:nth-child(5) {
+            grid-column: span 6;
+        }
+        
+        .work-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+            min-height: 300px;
+        }
+        
+        .work-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .work-item .overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--black);
+            color: var(--white);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .work-item:hover .overlay {
+            transform: translateY(0);
+        }
+        
+        .work-item h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .work-item .year {
+            font-size: 14px;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        /* About Section */
+        .about-section {
+            padding: 80px 40px;
+            background: var(--white);
+            border-top: 4px solid var(--black);
+        }
+        
+        .about-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+        
+        .about-section h2 {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            letter-spacing: -0.02em;
+        }
+        
+        .about-section p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--black);
+        }
+        
+        .about-image {
+            border: 4px solid var(--black);
+            overflow: hidden;
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            padding: 80px 40px;
+            background: var(--black);
+            color: var(--white);
+        }
+        
+        .contact-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .contact-section h2 {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            letter-spacing: -0.02em;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+        
+        .contact-item {
+            border: 2px solid var(--white);
+            padding: 30px;
+        }
+        
+        .contact-item h3 {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 15px;
+            color: var(--gray);
+        }
+        
+        .contact-item p {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--black);
+            color: var(--white);
+            padding: 40px;
+            border-top: 4px solid var(--white);
+            text-align: center;
+        }
+        
+        footer p {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: 2px solid var(--white);
+            color: var(--white);
+            padding: 10px 15px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: var(--black);
+                flex-direction: column;
+                padding: 20px 40px;
+                gap: 20px;
+                border-top: 2px solid var(--white);
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .work-item {
+                grid-column: span 12 !important;
+                grid-row: span 1 !important;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .hero {
+                padding: 60px 20px;
+            }
+            
+            nav {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">COOPEROFTHECROP</a>
+            <ul id="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="track.html">Track</a></li>
+                <li><a href="soccer.html">Soccer</a></li>
+                <li><a href="football.html">Football</a></li>
+                <li><a href="basketball.html">Basketball</a></li>
+                <li><a href="best-of.html">Best Of</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">MENU</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>
+                COOPER<br>
+                OF THE<br>
+                CROP
+            </h1>
+            <p class="subtitle">Sports & Creative Photography</p>
+        </div>
+    </section>
+
+    <!-- Work Grid -->
+    <section class="work-section">
+        <div class="work-grid">
+            <a href="track.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&q=80" alt="Track & Field">
+                <div class="overlay">
+                    <h3>Track & Field</h3>
+                    <p class="year">View Gallery</p>
+                </div>
+            </a>
+            
+            <a href="soccer.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80" alt="Soccer">
+                <div class="overlay">
+                    <h3>Soccer</h3>
+                    <p class="year">View Gallery</p>
+                </div>
+            </a>
+            
+            <a href="football.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1566577134770-3d85bb3a9cc4?w=800&q=80" alt="Football">
+                <div class="overlay">
+                    <h3>Football</h3>
+                    <p class="year">View Gallery</p>
+                </div>
+            </a>
+            
+            <a href="basketball.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1000&q=80" alt="Basketball">
+                <div class="overlay">
+                    <h3>Basketball</h3>
+                    <p class="year">View Gallery</p>
+                </div>
+            </a>
+            
+            <a href="best-of.html" class="work-item">
+                <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=1200&q=80" alt="Best Of">
+                <div class="overlay">
+                    <h3>Best Of</h3>
+                    <p class="year">View Gallery</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="about-content">
+            <div>
+                <h2>ABOUT</h2>
+                <p>Cooper of the Crop specializes in sports and creative photography, capturing the raw energy and emotion of athletic performance.</p>
+                <p>Our brutalist approach strips away the unnecessary, focusing on the decisive moment, powerful composition, and authentic storytelling.</p>
+                <p><strong>Sports photography that hits different.</strong></p>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1526666923125-b297ddbb7b0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="About">
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="contact-content">
+            <h2>CONTACT</h2>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <h3>Email</h3>
+                    <p>studio@cooperofthecrop.com</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Phone</h3>
+                    <p>+1 212 555 0199</p>
+                </div>
+                <div class="contact-item">
+                    <h3>Location</h3>
+                    <p>New York, USA</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 COOPEROFTHECROP. All Rights Reserved.</p>
+        <!-- Secret Admin Button -->
+        <div style="margin-top: 20px;">
+            <a href="admin.html" style="color: var(--gray); font-size: 10px; text-decoration: none; opacity: 0.3; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.3'">•</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('nav-menu').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
