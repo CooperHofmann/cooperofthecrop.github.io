@@ -947,6 +947,10 @@
                         
                         // Convert to JPEG with specified quality
                         canvas.toBlob((blob) => {
+                            if (!blob) {
+                                reject(new Error('Failed to create blob from canvas'));
+                                return;
+                            }
                             const compressedReader = new FileReader();
                             compressedReader.onload = (event) => {
                                 resolve(event.target.result);
@@ -977,10 +981,13 @@
                     const compressedDataUrl = await compressImage(file, IMAGE_MAX_WIDTH, IMAGE_QUALITY);
                     
                     // Calculate compression ratio
-                    const originalSize = (file.size / 1024).toFixed(2);
-                    // Base64 encoding adds ~33% overhead, so multiply by BASE64_OVERHEAD to estimate actual data size
-                    const compressedSize = (compressedDataUrl.length * BASE64_OVERHEAD / 1024).toFixed(2);
-                    const compressionRatio = Math.max(0, ((1 - compressedSize / originalSize) * 100).toFixed(0));
+                    const originalSize = file.size / 1024; // Original size in KB
+                    // Remove data URL prefix to get just the Base64 data
+                    const base64Data = compressedDataUrl.split(',')[1];
+                    // Base64 encoding: each character represents 6 bits but takes 8 bits to store
+                    // So actual binary data size = base64Length * 0.75
+                    const compressedSize = (base64Data.length * BASE64_OVERHEAD / 1024);
+                    const compressionRatio = Math.max(0, Math.round((1 - compressedSize / originalSize) * 100));
                     
                     savePhoto(currentCategory, file.name, compressedDataUrl);
                     
