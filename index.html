@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COOPEROFTHECROP | Photography</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -16,7 +14,8 @@
         
         :root {
             --black: #000000;
-            --white: #FFFFFF;
+            --white: #FAF9F6;
+            --accent: #FF462E;
             --gray: #808080;
             --light-gray: #E0E0E0;
         }
@@ -26,7 +25,7 @@
         }
         
         body {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: Helvetica, Arial, sans-serif;
             background: var(--white);
             color: var(--black);
             line-height: 1.2;
@@ -55,7 +54,7 @@
         }
         
         nav .logo {
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 24px;
             font-weight: 700;
             letter-spacing: -0.02em;
@@ -80,7 +79,7 @@
         }
         
         nav a:hover {
-            color: var(--gray);
+            color: var(--accent);
         }
         
         /* Hero Section */
@@ -97,13 +96,20 @@
         }
         
         .hero h1 {
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: clamp(48px, 10vw, 140px);
             font-weight: 700;
             line-height: 0.85;
             letter-spacing: -0.03em;
             text-transform: uppercase;
             margin-bottom: 40px;
+            transition: transform 0.3s ease, color 0.3s ease;
+            cursor: default;
+        }
+        
+        .hero h1:hover {
+            transform: translateX(10px);
+            color: var(--accent);
         }
         
         .hero .subtitle {
@@ -121,12 +127,19 @@
         }
         
         .work-section h2 {
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: clamp(36px, 6vw, 72px);
             font-weight: 700;
             text-transform: uppercase;
             margin-bottom: 60px;
             letter-spacing: -0.02em;
+            transition: transform 0.3s ease, color 0.3s ease;
+            cursor: default;
+        }
+        
+        .work-section h2:hover {
+            transform: scale(1.05);
+            color: var(--accent);
         }
         
         .work-grid {
@@ -200,7 +213,7 @@
         }
         
         .work-item h3 {
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 20px;
             font-weight: 700;
             text-transform: uppercase;
@@ -229,12 +242,19 @@
         }
         
         .about-section h2 {
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: clamp(36px, 6vw, 72px);
             font-weight: 700;
             text-transform: uppercase;
             margin-bottom: 40px;
             letter-spacing: -0.02em;
+            transition: transform 0.3s ease, color 0.3s ease;
+            cursor: default;
+        }
+        
+        .about-section h2:hover {
+            transform: translateY(-5px);
+            color: var(--accent);
         }
         
         .about-section p {
@@ -268,12 +288,19 @@
         }
         
         .contact-section h2 {
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: clamp(36px, 6vw, 72px);
             font-weight: 700;
             text-transform: uppercase;
             margin-bottom: 60px;
             letter-spacing: -0.02em;
+            transition: transform 0.3s ease, color 0.3s ease;
+            cursor: default;
+        }
+        
+        .contact-section h2:hover {
+            transform: rotate(-2deg) scale(1.05);
+            color: var(--accent);
         }
         
         .contact-info {
@@ -289,7 +316,7 @@
         }
         
         .contact-item h3 {
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -312,7 +339,7 @@
         }
         
         footer p {
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
@@ -325,7 +352,7 @@
             border: 2px solid var(--white);
             color: var(--white);
             padding: 10px 15px;
-            font-family: 'Space Mono', monospace;
+            font-family: Helvetica, Arial, sans-serif;
             font-size: 14px;
             cursor: pointer;
             text-transform: uppercase;
