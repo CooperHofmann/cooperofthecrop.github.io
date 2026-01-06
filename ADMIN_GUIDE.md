@@ -65,29 +65,50 @@ The dashboard shows:
 
 To make your changes live on the website:
 
-### Method 1: Using the Configuration Panel
+### Method 1: Download Photos Package (Recommended - NEW! 🎉)
+1. Upload photos using the **"Upload Photos"** panel
+2. Organize your photos in the **"Manage Photos"** panel
+3. Click **"Configuration"** in the sidebar
+4. Click **"Download Photos Package"** button
+5. Extract the downloaded ZIP file
+6. Copy the `images/` and `js/` folders to your repository (replace when prompted)
+7. Commit and push to GitHub:
+   ```bash
+   git add .
+   git commit -m "Update portfolio images"
+   git push
+   ```
+8. Wait 1-2 minutes for GitHub Pages to deploy
+
+**Benefits:** All photos and configuration in one download - no code editing required!
+
+### Method 2: Using the Configuration Panel (Manual)
 1. Click **"Configuration"** in the sidebar
 2. Review the generated JavaScript configuration code
 3. Click **"Copy to Clipboard"** or **"Download as File"**
 4. Open your local copy of the repository
 5. Navigate to `js/config.js`
 6. Replace the entire content with the copied configuration
-7. **Upload actual image files** to the appropriate folders:
+7. **Manually download photos** from the "Manage Photos" section:
+   - Click on each category
+   - Right-click each photo and save, OR
+   - Click "Download All Photos in This Category" button
+8. **Upload actual image files** to the appropriate folders:
    - `/images/track/` - for track photos
    - `/images/soccer/` - for soccer photos
    - `/images/football/` - for football photos
    - `/images/basketball/` - for basketball photos
    - `/images/best-of/` - for best of photos
-8. Make sure filenames in the config match your uploaded files exactly
-9. Commit and push to GitHub:
-   ```bash
-   git add .
-   git commit -m "Update portfolio images"
-   git push
-   ```
-10. Wait 1-2 minutes for GitHub Pages to deploy
+9. Make sure filenames in the config match your uploaded files exactly
+10. Commit and push to GitHub:
+    ```bash
+    git add .
+    git commit -m "Update portfolio images"
+    git push
+    ```
+11. Wait 1-2 minutes for GitHub Pages to deploy
 
-### Method 2: Manual Configuration
+### Method 3: Manual Configuration
 1. Add image files to the appropriate `/images/` folder
 2. Open `js/config.js` in a text editor
 3. Add filenames to the appropriate category array:
@@ -122,12 +143,15 @@ To make your changes live on the website:
 - Responsive grid layout
 - Hover effects for better UX
 - Quick delete functionality
+- **NEW:** Individual photo download buttons
+- **NEW:** Download all photos in category button
 
 ### Configuration Generator
 - Automatically generates deployment code
 - One-click copy to clipboard
 - Download as file option
 - Includes proper formatting and comments
+- **NEW:** Download Photos Package - One-click ZIP with all photos + config!
 
 ### Help Documentation
 - Built-in help section
@@ -146,6 +170,18 @@ To make your changes live on the website:
 - Modern browsers with localStorage support
 - Chrome, Firefox, Safari, Edge
 - Mobile browsers supported
+- JSZip library loaded from CDN for photo package feature
+- Fallback to individual downloads if CDN is blocked
+
+### Download Photos Package Feature
+- Uses JSZip library (free, open-source) to create ZIP files
+- All processing happens in your browser - no server uploads
+- If JSZip fails to load, fallback options are available:
+  - Download config file separately
+  - Download photos individually from Manage Photos section
+  - Download all photos in a category at once
+- **100% Free** - No costs, no limits, no external services
+- Works entirely client-side with browser localStorage
 
 ### Security Considerations
 - PIN is stored in the HTML file (client-side only)
@@ -182,6 +218,20 @@ To make your changes live on the website:
 - Delete some photos from the admin panel
 - Clear browser localStorage
 - Reduce image file sizes before uploading
+
+### Download Photos Package not working?
+- Check if JSZip library loaded (look for error in browser console)
+- If JSZip fails to load:
+  - Use the "Download Config File" button instead
+  - Download photos individually from "Manage Photos" section
+  - Use "Download All Photos in This Category" button
+- Browser may block multiple downloads - allow when prompted
+- Check your browser's download settings
+
+### ZIP file extraction issues?
+- Use a modern ZIP extraction tool (7-Zip, WinRAR, or built-in OS tools)
+- Make sure you have write permissions in the extraction location
+- Verify the ZIP file downloaded completely (check file size)
 
 ## 📝 Best Practices
 
