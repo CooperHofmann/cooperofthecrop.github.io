@@ -616,21 +616,24 @@
                     <h2>Welcome to Your Admin Panel</h2>
                     
                     <div class="instructions-box">
-                        <h3>⚠️ Important Information</h3>
+                        <h3>🎉 New: Easy Photo Deployment!</h3>
                         <ol>
-                            <li>This admin panel helps you manage photos <strong>locally</strong></li>
-                            <li>Upload photos to preview and organize them</li>
-                            <li>To publish changes, you need to update <code>js/config.js</code> and push to GitHub</li>
-                            <li>Use the Configuration panel to get the code to copy into your config file</li>
-                            <li>Your photos are stored in browser localStorage (not on the server yet)</li>
+                            <li>Upload photos using the <strong>Upload Photos</strong> panel</li>
+                            <li>Organize and preview your photos in the <strong>Manage Photos</strong> panel</li>
+                            <li>Go to <strong>Configuration</strong> panel and click <strong>"Download Photos Package"</strong></li>
+                            <li>Extract the ZIP file and copy the folders to your repository</li>
+                            <li>Commit and push to GitHub - No code editing required!</li>
                         </ol>
+                        <p style="margin-top: 15px; padding: 15px; background: rgba(0, 170, 0, 0.1); border: 2px solid var(--success);">
+                            <strong>💡 Tip:</strong> The Photos Package includes everything ready to deploy - just extract, copy, and push!
+                        </p>
                     </div>
 
                     <h3 style="font-family: Helvetica, Arial, sans-serif; font-size: 20px; margin: 30px 0 20px;">Quick Actions</h3>
                     <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                         <button class="btn btn-blue" onclick="showPanel('upload')">⬆️ Upload New Photos</button>
                         <button class="btn" onclick="showPanel('manage')">🖼️ Browse Galleries</button>
-                        <button class="btn btn-success" onclick="showPanel('config')">⚙️ View Configuration</button>
+                        <button class="btn btn-success" onclick="showPanel('config')">📦 Download Photos Package</button>
                     </div>
 
                     <h3 style="font-family: Helvetica, Arial, sans-serif; font-size: 20px; margin: 30px 0 20px;">Recent Activity</h3>
@@ -684,6 +687,13 @@
                         <button class="category-btn" data-gallery="basketball" onclick="showGallery('basketball')">🏀 BASKETBALL</button>
                         <button class="category-btn" data-gallery="bestOf" onclick="showGallery('bestOf')">⭐ BEST OF</button>
                     </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <button class="btn btn-blue" onclick="downloadAllCategoryPhotos()">💾 Download All Photos in This Category</button>
+                        <p style="margin-top: 10px; color: var(--gray); font-size: 14px;">
+                            Download all photos from the currently selected category. You can also download individual photos by hovering over them.
+                        </p>
+                    </div>
 
                     <div id="galleryGrid" class="photo-grid"></div>
                 </section>
@@ -713,7 +723,19 @@
 
                     <div style="margin-top: 20px;">
                         <button class="btn btn-success" onclick="copyConfig()">📋 Copy to Clipboard</button>
-                        <button class="btn" onclick="downloadConfig()">💾 Download as File</button>
+                        <button class="btn" onclick="downloadConfig()">💾 Download Config File</button>
+                        <button class="btn btn-blue" onclick="downloadPhotosPackage()">📦 Download Photos Package</button>
+                    </div>
+                    
+                    <div class="instructions-box" style="margin-top: 30px;">
+                        <h3>📦 Download Photos Package</h3>
+                        <p style="margin-bottom: 10px;">Click "Download Photos Package" to get a ZIP file containing:</p>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li>All photos organized in their category folders (track, soccer, football, basketball, best-of)</li>
+                            <li>Updated <code>config.js</code> file</li>
+                            <li>README with deployment instructions</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>To deploy:</strong> Extract the ZIP, copy files to your repository, commit and push!</p>
                     </div>
                 </section>
 
@@ -751,15 +773,19 @@
                     <div style="margin-bottom: 30px;">
                         <h3 style="font-family: Helvetica, Arial, sans-serif; font-size: 20px; margin-bottom: 15px;">🚀 Publishing Changes</h3>
                         <p style="line-height: 1.8; margin-bottom: 15px;">
-                            To make your changes live:
+                            <strong>NEW: Easy one-click deployment!</strong>
                         </p>
                         <ol style="margin-left: 30px; line-height: 1.8;">
                             <li>Go to the Configuration panel</li>
-                            <li>Copy the generated configuration code</li>
-                            <li>Paste it into <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">js/config.js</code></li>
-                            <li>Upload actual image files to the appropriate <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">images/</code> folders</li>
-                            <li>Commit and push to GitHub</li>
+                            <li>Click <strong>"Download Photos Package"</strong> button</li>
+                            <li>Extract the downloaded ZIP file</li>
+                            <li>Copy the <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">images/</code> and <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">js/</code> folders to your repository (replace when prompted)</li>
+                            <li>Commit and push to GitHub: <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">git add . && git commit -m "Update photos" && git push</code></li>
+                            <li>Wait 1-2 minutes for GitHub Pages to deploy</li>
                         </ol>
+                        <p style="margin-top: 15px; padding: 15px; background: rgba(0, 170, 0, 0.1); border: 2px solid var(--success);">
+                            <strong>💡 New Feature:</strong> The Photos Package includes all your photos AND the updated config file. No manual code editing required!
+                        </p>
                     </div>
 
                     <div style="background: var(--light-gray); padding: 25px; border: 3px solid var(--black);">
@@ -776,6 +802,10 @@
     <!-- Notification -->
     <div id="notification" class="notification"></div>
 
+    <!-- JSZip for creating ZIP files (loaded from CDN) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" crossorigin="anonymous"></script>
+    <!-- Fallback notice will be shown in the downloadPhotosPackage function if JSZip fails to load -->
+    
     <script src="js/config.js"></script>
     <script>
         // Admin PIN (change this to your desired PIN)
@@ -1080,15 +1110,62 @@
             galleryGrid.innerHTML = photos.map(photo => {
                 const safeFilename = escapeHtml(photo.filename);
                 const safeGallery = escapeHtml(gallery);
+                // Create a unique ID for each photo to use in onclick
+                const photoId = `photo_${safeGallery}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
                 return `
                 <div class="photo-item">
-                    <img src="${photo.dataUrl}" alt="${safeFilename}">
+                    <img src="${photo.dataUrl}" alt="${safeFilename}" id="${photoId}">
                     <div class="overlay">
+                        <button onclick="downloadPhoto('${photoId}', '${safeFilename}')">💾 Download</button>
                         <button onclick="deletePhoto('${safeGallery}', '${safeFilename}')">🗑️ Delete</button>
                     </div>
                 </div>
             `;
             }).join('');
+        }
+
+        // Download individual photo
+        function downloadPhoto(photoId, filename) {
+            const img = document.getElementById(photoId);
+            if (!img) {
+                showNotification('❌ Photo not found', 'error');
+                return;
+            }
+            const dataUrl = img.src;
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showNotification(`✓ ${filename} downloaded!`, 'success');
+        }
+
+        // Download all photos from current category
+        function downloadAllCategoryPhotos() {
+            const photos = getPhotos(currentGallery);
+            if (photos.length === 0) {
+                showNotification('❌ No photos in this category to download.', 'error');
+                return;
+            }
+
+            showNotification(`📥 Downloading ${photos.length} photo${photos.length !== 1 ? 's' : ''}...`, 'success');
+            
+            // Download each photo with a slight delay to avoid browser blocking
+            photos.forEach((photo, index) => {
+                setTimeout(() => {
+                    const a = document.createElement('a');
+                    a.href = photo.dataUrl;
+                    a.download = photo.filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    if (index === photos.length - 1) {
+                        showNotification(`✓ All ${photos.length} photo${photos.length !== 1 ? 's' : ''} downloaded!`, 'success');
+                    }
+                }, index * 200); // 200ms delay between downloads
+            });
         }
 
         // Stats Update
@@ -1191,6 +1268,241 @@ const placeholderImages = [
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             showNotification('✓ Configuration downloaded!', 'success');
+        }
+
+        // Download Photos Package as ZIP
+        async function downloadPhotosPackage() {
+            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            
+            // Check if there are any photos
+            const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+            if (totalPhotos === 0) {
+                showNotification('❌ No photos to download. Please upload some photos first.', 'error');
+                return;
+            }
+
+            // Check if JSZip is available
+            if (typeof JSZip === 'undefined') {
+                // Fallback: Download files individually
+                const proceed = confirm('JSZip library is not available. Would you like to download the config file and instructions instead?\n\n(Note: You will need to save photos manually from the Manage Photos section)');
+                if (proceed) {
+                    downloadConfig();
+                    downloadDeploymentInstructions();
+                    showNotification('⚠️ Config downloaded. Please save photos manually from Manage Photos section.', 'error');
+                }
+                return;
+            }
+
+            showNotification('📦 Creating package... This may take a moment.', 'success');
+
+            try {
+                const zip = new JSZip();
+                
+                // Add photos to appropriate folders
+                const categories = {
+                    track: 'track',
+                    soccer: 'soccer',
+                    football: 'football',
+                    basketball: 'basketball',
+                    bestOf: 'best-of'
+                };
+
+                for (const [category, folderName] of Object.entries(categories)) {
+                    const categoryPhotos = photos[category] || [];
+                    if (categoryPhotos.length > 0) {
+                        const folder = zip.folder(`images/${folderName}`);
+                        for (const photo of categoryPhotos) {
+                            // Convert base64 to blob
+                            const base64Data = photo.dataUrl.split(',')[1];
+                            folder.file(photo.filename, base64Data, {base64: true});
+                        }
+                    }
+                }
+
+                // Add config.js file
+                const configCode = document.getElementById('configCode').value;
+                zip.folder('js').file('config.js', configCode);
+
+                // Add README with instructions
+                const readme = `# Photo Package - Ready to Deploy
+
+## What's in this package?
+
+This ZIP file contains:
+- All your photos organized in the images/ folders
+- Updated config.js file
+- This README with deployment instructions
+
+## How to deploy these changes:
+
+### Option 1: Quick Deploy (Recommended)
+1. Extract this ZIP file
+2. Copy the \`images/\` and \`js/\` folders to your repository
+3. When prompted, choose to replace/merge existing folders
+4. Open terminal/command prompt in your repository folder
+5. Run these commands:
+   \`\`\`
+   git add .
+   git commit -m "Update portfolio photos"
+   git push
+   \`\`\`
+6. Wait 1-2 minutes for GitHub Pages to deploy
+7. Visit your site to see the changes!
+
+### Option 2: Manual Verification
+1. Extract this ZIP file
+2. Copy each image file to its corresponding folder in your repo:
+   - images/track/ → Track photos
+   - images/soccer/ → Soccer photos
+   - images/football/ → Football photos
+   - images/basketball/ → Basketball photos
+   - images/best-of/ → Best Of photos
+3. Replace js/config.js with the new config.js file
+4. Verify files are in the correct locations
+5. Commit and push:
+   \`\`\`
+   git add .
+   git commit -m "Update portfolio photos"
+   git push
+   \`\`\`
+
+## Photo Summary
+
+Generated on: ${new Date().toLocaleString()}
+
+${Object.entries(categories).map(([category, folderName]) => {
+    const count = (photos[category] || []).length;
+    return `- ${folderName}: ${count} photo${count !== 1 ? 's' : ''}`;
+}).join('\n')}
+
+Total: ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''}
+
+## Need Help?
+
+If you encounter any issues:
+1. Make sure you're in your repository folder
+2. Check that Git is installed (\`git --version\`)
+3. Verify you have access to push to the repository
+4. See ADMIN_GUIDE.md in your repository for more details
+
+---
+
+Generated by Cooper of the Crop Admin Panel
+`;
+                
+                zip.file('README-DEPLOYMENT.txt', readme);
+
+                // Generate ZIP file
+                const content = await zip.generateAsync({
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                });
+
+                // Download the ZIP file
+                const url = URL.createObjectURL(content);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `portfolio-photos-${new Date().toISOString().split('T')[0]}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showNotification(`✓ Package downloaded! Contains ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''}.`, 'success');
+            } catch (error) {
+                console.error('Error creating ZIP:', error);
+                showNotification('❌ Failed to create package. Try downloading config and photos separately.', 'error');
+            }
+        }
+
+        // Download deployment instructions as a fallback
+        function downloadDeploymentInstructions() {
+            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+            
+            const categories = {
+                track: 'track',
+                soccer: 'soccer',
+                football: 'football',
+                basketball: 'basketball',
+                bestOf: 'best-of'
+            };
+
+            const instructions = `# Photo Deployment Instructions
+
+## Overview
+You have ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''} ready to deploy to your portfolio.
+
+## Photo Summary
+${Object.entries(categories).map(([category, folderName]) => {
+    const count = (photos[category] || []).length;
+    return `- ${folderName}: ${count} photo${count !== 1 ? 's' : ''}`;
+}).join('\n')}
+
+## Deployment Steps
+
+### Step 1: Save Photos
+1. Go to the "Manage Photos" section in the admin panel
+2. For each category with photos:
+   - Click on the category tab
+   - Right-click each photo and select "Save Image As..."
+   - Save to a folder on your computer (organize by category)
+
+### Step 2: Copy Photos to Repository
+1. Open your repository folder on your computer
+2. Navigate to the images/ folder
+3. Copy your saved photos to the appropriate subfolders:
+   - Track photos → images/track/
+   - Soccer photos → images/soccer/
+   - Football photos → images/football/
+   - Basketball photos → images/basketball/
+   - Best Of photos → images/best-of/
+
+### Step 3: Update Configuration
+The config.js file has already been downloaded separately.
+1. Replace your repository's js/config.js with the downloaded file
+
+### Step 4: Deploy to GitHub
+1. Open terminal/command prompt in your repository folder
+2. Run these commands:
+   \`\`\`
+   git add .
+   git commit -m "Update portfolio photos"
+   git push
+   \`\`\`
+3. Wait 1-2 minutes for GitHub Pages to deploy
+4. Visit your website to see the changes
+
+## Filenames
+Make sure the filenames match exactly (case-sensitive):
+
+${Object.entries(categories).map(([category, folderName]) => {
+    const categoryPhotos = photos[category] || [];
+    if (categoryPhotos.length === 0) return '';
+    return `### ${folderName}:\n${categoryPhotos.map(p => `- ${p.filename}`).join('\n')}`;
+}).filter(Boolean).join('\n\n')}
+
+## Need Help?
+- Check that filenames match exactly (including extensions)
+- Verify photos are in the correct folders
+- Make sure you have permission to push to the repository
+- See ADMIN_GUIDE.md in your repository for more details
+
+---
+
+Generated by Cooper of the Crop Admin Panel on ${new Date().toLocaleString()}
+`;
+
+            const blob = new Blob([instructions], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'DEPLOYMENT-INSTRUCTIONS.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         // Notification System
