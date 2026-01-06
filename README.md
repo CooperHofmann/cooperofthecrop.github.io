@@ -98,6 +98,7 @@ A powerful admin panel is now available for managing your portfolio:
 - 🖼️ Gallery management (view/delete photos)
 - ⚙️ Auto-generate configuration code
 - 💾 Browser-based photo storage
+- 📦 **NEW: One-click photo package download** - Get all photos + config in a ready-to-deploy ZIP file!
 
 **For detailed instructions, see [ADMIN_GUIDE.md](ADMIN_GUIDE.md)**
 
