@@ -56,6 +56,9 @@ function initGallery(category) {
 
     // Initialize lightbox with all images (including first one)
     initLightbox();
+    
+    // Apply justified layout after gallery is built
+    initJustifiedLayout();
 }
 
 // Create a single gallery item element
@@ -73,32 +76,25 @@ function createGalleryItem(imagePath, index, isFeatured) {
     img.alt = `Gallery image ${index + 1}`;
     img.loading = 'lazy'; // Native lazy loading
     
-    // Function to set aspect ratio and orientation based on image dimensions
-    const setAspectRatioAndOrientation = function() {
-        // Force featured image to 16:9 landscape
+    // Store aspect ratio as data attribute for justified layout
+    const setAspectRatioData = function() {
         if (isFeatured) {
-            item.style.aspectRatio = '16 / 9';
+            item.setAttribute('data-aspect-ratio', '1.777'); // 16:9
             item.setAttribute('data-orientation', 'featured');
         } else if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-            // Calculate aspect ratio
             const aspectRatio = img.naturalWidth / img.naturalHeight;
-            item.style.aspectRatio = `${aspectRatio}`;
+            item.setAttribute('data-aspect-ratio', aspectRatio.toString());
             
-            // Determine orientation for better grid placement
+            // Store orientation for reference
             if (aspectRatio < 0.7) {
-                // Very tall portrait
                 item.setAttribute('data-orientation', 'tall-portrait');
             } else if (aspectRatio < 0.9) {
-                // Portrait
                 item.setAttribute('data-orientation', 'portrait');
             } else if (aspectRatio < 1.1) {
-                // Square
                 item.setAttribute('data-orientation', 'square');
             } else if (aspectRatio < 1.8) {
-                // Landscape
                 item.setAttribute('data-orientation', 'landscape');
             } else {
-                // Wide landscape
                 item.setAttribute('data-orientation', 'wide-landscape');
             }
         }
@@ -106,9 +102,9 @@ function createGalleryItem(imagePath, index, isFeatured) {
     
     // Handle both immediate load (cached) and delayed load cases
     if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-        setAspectRatioAndOrientation();
+        setAspectRatioData();
     } else {
-        img.onload = setAspectRatioAndOrientation;
+        img.onload = setAspectRatioData;
     }
     
     // Error handling for broken images
@@ -206,4 +202,179 @@ function updateLightboxCounter() {
 // Mobile menu toggle (shared across all pages)
 function toggleMenu() {
     document.getElementById('nav-menu').classList.toggle('active');
+}
+
+/**
+ * JUSTIFIED LAYOUT ALGORITHM
+ * 
+ * Implements a justified masonry-style layout that:
+ * - Dynamically groups images into rows
+ * - Fills 100% of container width
+ * - Preserves original aspect ratios
+ * - Averages 3-4 images per row on desktop
+ * - Eliminates dead space
+ */
+
+// Default aspect ratio for images that fail to load (3:2 landscape)
+const DEFAULT_ASPECT_RATIO = 1.5;
+
+// Track resize timeout to prevent multiple simultaneous layout calculations
+let resizeTimeout = null;
+
+function applyJustifiedLayout() {
+    const galleryGrid = document.querySelector('.gallery-grid');
+    if (!galleryGrid) return;
+    
+    // Get all non-featured gallery items
+    const items = Array.from(galleryGrid.querySelectorAll('.gallery-item:not(.gallery-featured)'));
+    if (items.length === 0) return;
+    
+    // Wait for all images to load before calculating layout
+    const images = items.map(item => item.querySelector('img'));
+    const allImagesLoaded = Promise.all(
+        images.map(img => {
+            if (img.complete && img.naturalWidth > 0) {
+                return Promise.resolve();
+            }
+            return new Promise(resolve => {
+                img.onload = resolve;
+                img.onerror = resolve; // Continue even if image fails
+            });
+        })
+    );
+    
+    allImagesLoaded.then(() => {
+        const containerWidth = galleryGrid.offsetWidth;
+        if (containerWidth === 0) return;
+        
+        // Get breakpoint settings
+        const windowWidth = window.innerWidth;
+        let targetRowHeight, gutter, idealImagesPerRow;
+        
+        if (windowWidth <= 768) {
+            // Mobile: 1-2 images per row
+            targetRowHeight = 280;
+            gutter = 12;
+            idealImagesPerRow = 1.5;
+        } else if (windowWidth <= 1200) {
+            // Tablet: 2-3 images per row
+            targetRowHeight = 300;
+            gutter = 16;
+            idealImagesPerRow = 2.5;
+        } else {
+            // Desktop: 3-4 images per row
+            targetRowHeight = 340;
+            gutter = 20;
+            idealImagesPerRow = 3.5;
+        }
+        
+        // Calculate justified layout
+        const rows = buildJustifiedRows(items, containerWidth, gutter, idealImagesPerRow, targetRowHeight);
+        
+        // Apply calculated dimensions to items
+        rows.forEach(row => {
+            row.items.forEach(itemData => {
+                const item = itemData.element;
+                item.style.width = `${itemData.width}px`;
+                item.style.height = `${row.height}px`;
+                item.style.flexShrink = '0';
+            });
+        });
+    });
+}
+
+function buildJustifiedRows(items, containerWidth, gutter, idealImagesPerRow, targetRowHeight) {
+    const rows = [];
+    let currentRow = [];
+    let currentRowAspectSum = 0;
+    
+    // Define min and max row heights to keep rows more consistent
+    const minRowHeight = targetRowHeight * 0.65;
+    const maxRowHeight = targetRowHeight * 1.35;
+    
+    items.forEach((item, index) => {
+        const aspectRatio = parseFloat(item.getAttribute('data-aspect-ratio')) || DEFAULT_ASPECT_RATIO;
+        
+        // Add to current row
+        currentRow.push({
+            element: item,
+            aspectRatio: aspectRatio
+        });
+        currentRowAspectSum += aspectRatio;
+        
+        // Calculate what the row height would be if we finalize now
+        const totalGutterWidth = (currentRow.length - 1) * gutter;
+        const availableWidth = containerWidth - totalGutterWidth;
+        const potentialRowHeight = availableWidth / currentRowAspectSum;
+        
+        // Check if we should finalize this row
+        let shouldFinalizeRow = false;
+        
+        // Last item - must finalize
+        if (index === items.length - 1) {
+            shouldFinalizeRow = true;
+        }
+        // We've reached minimum images and height is reasonable
+        else if (currentRow.length >= Math.floor(idealImagesPerRow)) {
+            if (potentialRowHeight >= minRowHeight && potentialRowHeight <= maxRowHeight) {
+                shouldFinalizeRow = true;
+            }
+            // Or we've exceeded max images per row
+            else if (currentRow.length >= Math.ceil(idealImagesPerRow) + 1) {
+                shouldFinalizeRow = true;
+            }
+        }
+        // Height has dropped below minimum (too many images)
+        else if (potentialRowHeight < minRowHeight && currentRow.length >= 2) {
+            shouldFinalizeRow = true;
+        }
+        
+        if (shouldFinalizeRow) {
+            // Recalculate final dimensions
+            const finalGutterWidth = (currentRow.length - 1) * gutter;
+            const finalAvailableWidth = containerWidth - finalGutterWidth;
+            const finalRowHeight = finalAvailableWidth / currentRowAspectSum;
+            
+            // Constrain row height to reasonable bounds
+            const constrainedHeight = Math.max(minRowHeight, Math.min(maxRowHeight, finalRowHeight));
+            
+            // Calculate final widths for each image
+            const finalRow = {
+                height: constrainedHeight,
+                items: currentRow.map(itemData => ({
+                    element: itemData.element,
+                    width: constrainedHeight * itemData.aspectRatio,
+                    aspectRatio: itemData.aspectRatio
+                }))
+            };
+            
+            rows.push(finalRow);
+            
+            // Reset for next row
+            currentRow = [];
+            currentRowAspectSum = 0;
+        }
+    });
+    
+    return rows;
+}
+
+// Initialize justified layout - called after gallery items are created
+function initJustifiedLayout() {
+    // Apply layout after a short delay to ensure images are loaded
+    setTimeout(() => {
+        applyJustifiedLayout();
+    }, 100);
+    
+    // Reapply on window resize with debouncing
+    // Only add listener once
+    if (!window.justifiedLayoutInitialized) {
+        window.justifiedLayoutInitialized = true;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                applyJustifiedLayout();
+            }, 250);
+        });
+    }
 }
