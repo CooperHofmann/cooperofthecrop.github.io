@@ -901,11 +901,236 @@
         let currentGallery = 'track';
         let photoIdCounter = 0; // Counter to ensure unique photo IDs
 
+        // ========== IndexedDB Photo Storage ==========
+        
+        const DB_NAME = 'AdminPhotoDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'photos';
+        let db = null;
+
+        // Initialize IndexedDB
+        async function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                
+                request.onerror = () => {
+                    console.error('IndexedDB error:', request.error);
+                    reject(request.error);
+                };
+                
+                request.onsuccess = () => {
+                    db = request.result;
+                    console.log('IndexedDB initialized successfully');
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    
+                    // Create object store if it doesn't exist
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        const objectStore = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                        objectStore.createIndex('category', 'category', { unique: false });
+                        objectStore.createIndex('filename', 'filename', { unique: false });
+                        console.log('IndexedDB object store created');
+                    }
+                };
+            });
+        }
+
+        // Save photo blob to IndexedDB
+        async function saveBlobToIndexedDB(id, category, filename, blob, timestamp) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const objectStore = transaction.objectStore(STORE_NAME);
+                
+                const data = {
+                    id: id,
+                    category: category,
+                    filename: filename,
+                    blob: blob,
+                    timestamp: timestamp
+                };
+                
+                const request = objectStore.put(data);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Get photo blob from IndexedDB
+        async function getBlobFromIndexedDB(id) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const objectStore = transaction.objectStore(STORE_NAME);
+                const request = objectStore.get(id);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Get all photos for a category from IndexedDB
+        async function getBlobsForCategory(category) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const objectStore = transaction.objectStore(STORE_NAME);
+                const index = objectStore.index('category');
+                const request = index.getAll(category);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Delete photo blob from IndexedDB
+        async function deleteBlobFromIndexedDB(id) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    reject(new Error('IndexedDB not initialized'));
+                    return;
+                }
+                
+                const transaction = db.transaction([STORE_NAME], 'readwrite');
+                const objectStore = transaction.objectStore(STORE_NAME);
+                const request = objectStore.delete(id);
+                
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject(request.error);
+            });
+        }
+
+        // Convert dataURL to Blob
+        function dataURLToBlob(dataURL) {
+            const parts = dataURL.split(',');
+            const mime = parts[0].match(/:(.*?);/)[1];
+            const base64 = parts[1];
+            const binary = atob(base64);
+            const array = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                array[i] = binary.charCodeAt(i);
+            }
+            return new Blob([array], { type: mime });
+        }
+
+        // Convert Blob to dataURL
+        async function blobToDataURL(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        // Migrate existing localStorage photos to IndexedDB
+        async function migrateToIndexedDB() {
+            try {
+                const oldPhotos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+                
+                // Check if migration is needed
+                let needsMigration = false;
+                for (const category in oldPhotos) {
+                    if (oldPhotos[category] && oldPhotos[category].length > 0) {
+                        // Check if any photo has dataUrl (old format)
+                        if (oldPhotos[category].some(p => p.dataUrl)) {
+                            needsMigration = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!needsMigration) {
+                    console.log('No migration needed - already using IndexedDB format');
+                    return;
+                }
+                
+                console.log('Migrating photos from localStorage to IndexedDB...');
+                showNotification('⏳ Migrating photos to new storage format...', 'success');
+                
+                const newMetadata = {};
+                let migratedCount = 0;
+                
+                for (const category in oldPhotos) {
+                    if (!oldPhotos[category] || oldPhotos[category].length === 0) continue;
+                    
+                    newMetadata[category] = [];
+                    
+                    for (const photo of oldPhotos[category]) {
+                        if (!photo.dataUrl) continue; // Skip if already migrated
+                        
+                        try {
+                            // Convert dataURL to blob
+                            const blob = dataURLToBlob(photo.dataUrl);
+                            
+                            // Generate unique ID
+                            const id = `${category}_${photo.filename}_${photo.timestamp || Date.now()}`;
+                            
+                            // Save blob to IndexedDB
+                            await saveBlobToIndexedDB(id, category, photo.filename, blob, photo.timestamp || Date.now());
+                            
+                            // Save metadata to new structure (without dataUrl)
+                            newMetadata[category].push({
+                                id: id,
+                                filename: photo.filename,
+                                timestamp: photo.timestamp || Date.now()
+                            });
+                            
+                            migratedCount++;
+                        } catch (error) {
+                            console.error(`Error migrating photo ${photo.filename}:`, error);
+                        }
+                    }
+                }
+                
+                // Save new metadata structure to localStorage
+                localStorage.setItem('adminPhotosMetadata', JSON.stringify(newMetadata));
+                
+                // Remove old large localStorage key
+                localStorage.removeItem('adminPhotos');
+                
+                console.log(`Migration complete! Migrated ${migratedCount} photos to IndexedDB`);
+                showNotification(`✓ Migrated ${migratedCount} photos to new storage format!`, 'success');
+                
+            } catch (error) {
+                console.error('Migration error:', error);
+                showNotification('⚠️ Migration had some errors. Check console for details.', 'error');
+            }
+        }
+
         // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             initPinAuth();
-            loadPhotosFromStorage();
-            updateStats();
+            
+            // Initialize IndexedDB first
+            try {
+                await initIndexedDB();
+                // Migrate existing data if needed
+                await migrateToIndexedDB();
+                // Load photos (now from new storage)
+                loadPhotosFromStorage();
+                updateStats();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showNotification('⚠️ Error initializing storage. Some features may not work.', 'error');
+            }
+            
             loadSavedGitHubToken();
         });
 
@@ -1207,51 +1432,120 @@
             e.target.value = '';
         }
 
-        // Photo Storage (localStorage)
-        function savePhoto(category, filename, dataUrl) {
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
-            if (!photos[category]) {
-                photos[category] = [];
+        // Photo Storage (IndexedDB + localStorage metadata)
+        async function savePhoto(category, filename, dataUrl) {
+            try {
+                // Convert dataURL to blob
+                const blob = dataURLToBlob(dataUrl);
+                
+                // Generate unique ID
+                const timestamp = Date.now();
+                const id = `${category}_${filename}_${timestamp}`;
+                
+                // Save blob to IndexedDB
+                await saveBlobToIndexedDB(id, category, filename, blob, timestamp);
+                
+                // Get current metadata
+                const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
+                if (!metadata[category]) {
+                    metadata[category] = [];
+                }
+                
+                // Check if photo already exists
+                const existingIndex = metadata[category].findIndex(p => p.filename === filename);
+                if (existingIndex >= 0) {
+                    // Delete old blob from IndexedDB
+                    const oldId = metadata[category][existingIndex].id;
+                    await deleteBlobFromIndexedDB(oldId);
+                    
+                    // Update metadata
+                    metadata[category][existingIndex] = { id, filename, timestamp };
+                } else {
+                    // Add new metadata entry
+                    metadata[category].push({ id, filename, timestamp });
+                }
+                
+                // Save metadata to localStorage
+                localStorage.setItem('adminPhotosMetadata', JSON.stringify(metadata));
+                
+            } catch (error) {
+                console.error('Error saving photo:', error);
+                throw error;
             }
-            
-            // Check if photo already exists
-            const existingIndex = photos[category].findIndex(p => p.filename === filename);
-            if (existingIndex >= 0) {
-                photos[category][existingIndex] = { filename, dataUrl, timestamp: Date.now() };
-            } else {
-                photos[category].push({ filename, dataUrl, timestamp: Date.now() });
-            }
-            
-            localStorage.setItem('adminPhotos', JSON.stringify(photos));
         }
 
         function loadPhotosFromStorage() {
             // Initialize if not exists
-            if (!localStorage.getItem('adminPhotos')) {
-                localStorage.setItem('adminPhotos', JSON.stringify({}));
+            if (!localStorage.getItem('adminPhotosMetadata')) {
+                localStorage.setItem('adminPhotosMetadata', JSON.stringify({}));
             }
         }
 
-        function getPhotos(category) {
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
-            return photos[category] || [];
+        async function getPhotos(category) {
+            try {
+                // Get metadata from localStorage
+                const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
+                const categoryMetadata = metadata[category] || [];
+                
+                // Get blobs from IndexedDB and combine with metadata
+                const photos = [];
+                for (const meta of categoryMetadata) {
+                    try {
+                        const photoData = await getBlobFromIndexedDB(meta.id);
+                        if (photoData && photoData.blob) {
+                            // Convert blob to dataURL for display
+                            const dataUrl = await blobToDataURL(photoData.blob);
+                            photos.push({
+                                id: meta.id,
+                                filename: meta.filename,
+                                dataUrl: dataUrl,
+                                timestamp: meta.timestamp
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error loading photo ${meta.filename}:`, error);
+                    }
+                }
+                
+                return photos;
+            } catch (error) {
+                console.error('Error getting photos:', error);
+                return [];
+            }
         }
 
-        function deletePhoto(category, filename) {
+        async function deletePhoto(category, filename) {
             if (!confirm(`Delete ${filename} from ${category}?`)) return;
             
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
-            if (photos[category]) {
-                photos[category] = photos[category].filter(p => p.filename !== filename);
-                localStorage.setItem('adminPhotos', JSON.stringify(photos));
-                showGallery(category);
-                updateStats();
-                showNotification(`✓ ${filename} deleted`, 'success');
+            try {
+                // Get metadata
+                const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
+                if (metadata[category]) {
+                    // Find the photo to delete
+                    const photoIndex = metadata[category].findIndex(p => p.filename === filename);
+                    if (photoIndex >= 0) {
+                        const photoId = metadata[category][photoIndex].id;
+                        
+                        // Delete blob from IndexedDB
+                        await deleteBlobFromIndexedDB(photoId);
+                        
+                        // Remove from metadata
+                        metadata[category] = metadata[category].filter(p => p.filename !== filename);
+                        localStorage.setItem('adminPhotosMetadata', JSON.stringify(metadata));
+                        
+                        showGallery(category);
+                        updateStats();
+                        showNotification(`✓ ${filename} deleted`, 'success');
+                    }
+                }
+            } catch (error) {
+                console.error('Error deleting photo:', error);
+                showNotification('❌ Error deleting photo', 'error');
             }
         }
 
         // Gallery Management
-        function showGallery(gallery) {
+        async function showGallery(gallery) {
             currentGallery = gallery;
             
             // Update button states
@@ -1262,7 +1556,7 @@
                 }
             });
 
-            const photos = getPhotos(gallery);
+            const photos = await getPhotos(gallery);
             const galleryGrid = document.getElementById('galleryGrid');
             
             if (photos.length === 0) {
@@ -1308,23 +1602,23 @@
         }
         
         // Move photo up or down in the order
-        function movePhoto(category, currentIndex, direction) {
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
-            if (!photos[category] || photos[category].length <= 1) return;
+        async function movePhoto(category, currentIndex, direction) {
+            const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
+            if (!metadata[category] || metadata[category].length <= 1) return;
             
             const newIndex = currentIndex + direction;
             
             // Validate new index
-            if (newIndex < 0 || newIndex >= photos[category].length) return;
+            if (newIndex < 0 || newIndex >= metadata[category].length) return;
             
-            // Swap photos
-            const temp = photos[category][currentIndex];
-            photos[category][currentIndex] = photos[category][newIndex];
-            photos[category][newIndex] = temp;
+            // Swap photos in metadata
+            const temp = metadata[category][currentIndex];
+            metadata[category][currentIndex] = metadata[category][newIndex];
+            metadata[category][newIndex] = temp;
             
             // Save and refresh
-            localStorage.setItem('adminPhotos', JSON.stringify(photos));
-            showGallery(category);
+            localStorage.setItem('adminPhotosMetadata', JSON.stringify(metadata));
+            await showGallery(category);
             updateConfigCode();
             showNotification('✓ Photo order updated', 'success');
         }
@@ -1367,22 +1661,22 @@
                 });
                 
                 // Drop
-                item.addEventListener('drop', (e) => {
+                item.addEventListener('drop', async (e) => {
                     e.preventDefault();
                     item.classList.remove('drag-over');
                     
                     if (item !== draggedElement) {
                         const dropIndex = parseInt(item.dataset.index, 10);
                         
-                        // Reorder photos in storage
-                        const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
-                        if (photos[gallery]) {
-                            const draggedPhoto = photos[gallery][draggedIndex];
-                            photos[gallery].splice(draggedIndex, 1);
-                            photos[gallery].splice(dropIndex, 0, draggedPhoto);
+                        // Reorder photos in metadata storage
+                        const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
+                        if (metadata[gallery]) {
+                            const draggedPhoto = metadata[gallery][draggedIndex];
+                            metadata[gallery].splice(draggedIndex, 1);
+                            metadata[gallery].splice(dropIndex, 0, draggedPhoto);
                             
-                            localStorage.setItem('adminPhotos', JSON.stringify(photos));
-                            showGallery(gallery);
+                            localStorage.setItem('adminPhotosMetadata', JSON.stringify(metadata));
+                            await showGallery(gallery);
                             updateConfigCode();
                             showNotification('✓ Photo order updated', 'success');
                         }
@@ -1421,8 +1715,8 @@
         }
 
         // Download all photos from current category
-        function downloadAllCategoryPhotos() {
-            const photos = getPhotos(currentGallery);
+        async function downloadAllCategoryPhotos() {
+            const photos = await getPhotos(currentGallery);
             if (photos.length === 0) {
                 showNotification('❌ No photos in this category to download.', 'error');
                 return;
@@ -1444,18 +1738,18 @@
 
         // Stats Update
         function updateStats() {
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
             
-            document.getElementById('statTrack').textContent = (photos.track || []).length;
-            document.getElementById('statSoccer').textContent = (photos.soccer || []).length;
-            document.getElementById('statFootball').textContent = (photos.football || []).length;
-            document.getElementById('statBasketball').textContent = (photos.basketball || []).length;
-            document.getElementById('statBestOf').textContent = (photos.bestOf || []).length;
+            document.getElementById('statTrack').textContent = (metadata.track || []).length;
+            document.getElementById('statSoccer').textContent = (metadata.soccer || []).length;
+            document.getElementById('statFootball').textContent = (metadata.football || []).length;
+            document.getElementById('statBasketball').textContent = (metadata.basketball || []).length;
+            document.getElementById('statBestOf').textContent = (metadata.bestOf || []).length;
         }
 
         // Configuration Generator
         function generateConfig() {
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
             
             const configCode = `/**
  * IMAGE CONFIGURATION
@@ -1469,35 +1763,35 @@ const portfolioConfig = {
         title: "TRACK &<br>FIELD",
         description: "Track & Field Photography",
         images: [
-${(photos.track || []).map(p => `            "${p.filename}",`).join('\n')}
+${(metadata.track || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
     },
     soccer: {
         title: "SOCCER",
         description: "Soccer Photography",
         images: [
-${(photos.soccer || []).map(p => `            "${p.filename}",`).join('\n')}
+${(metadata.soccer || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
     },
     football: {
         title: "FOOTBALL",
         description: "Football Photography",
         images: [
-${(photos.football || []).map(p => `            "${p.filename}",`).join('\n')}
+${(metadata.football || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
     },
     basketball: {
         title: "BASKETBALL",
         description: "Basketball Photography",
         images: [
-${(photos.basketball || []).map(p => `            "${p.filename}",`).join('\n')}
+${(metadata.basketball || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
     },
     bestOf: {
         title: "BEST<br>OF",
         description: "Curated Selection",
         images: [
-${(photos.bestOf || []).map(p => `            "${p.filename}",`).join('\n')}
+${(metadata.bestOf || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
     }
 };
@@ -1541,10 +1835,10 @@ const placeholderImages = [
 
         // Download Photos Package as ZIP
         async function downloadPhotosPackage() {
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
             
             // Check if there are any photos
-            const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+            const totalPhotos = Object.values(metadata).reduce((sum, arr) => sum + arr.length, 0);
             if (totalPhotos === 0) {
                 showNotification('❌ No photos to download. Please upload some photos first.', 'error');
                 return;
@@ -1577,13 +1871,20 @@ const placeholderImages = [
                 };
 
                 for (const [category, folderName] of Object.entries(categories)) {
-                    const categoryPhotos = photos[category] || [];
-                    if (categoryPhotos.length > 0) {
+                    const categoryMetadata = metadata[category] || [];
+                    if (categoryMetadata.length > 0) {
                         const folder = zip.folder(`images/${folderName}`);
-                        for (const photo of categoryPhotos) {
-                            // Convert base64 to blob
-                            const base64Data = photo.dataUrl.split(',')[1];
-                            folder.file(photo.filename, base64Data, {base64: true});
+                        for (const meta of categoryMetadata) {
+                            try {
+                                // Get blob from IndexedDB
+                                const photoData = await getBlobFromIndexedDB(meta.id);
+                                if (photoData && photoData.blob) {
+                                    // Add blob directly to ZIP
+                                    folder.file(meta.filename, photoData.blob);
+                                }
+                            } catch (error) {
+                                console.error(`Error adding photo ${meta.filename} to ZIP:`, error);
+                            }
                         }
                     }
                 }
@@ -1682,8 +1983,8 @@ Generated by Cooper of the Crop Admin Panel
 
         // Download deployment instructions as a fallback
         function downloadDeploymentInstructions() {
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
-            const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+            const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
+            const totalPhotos = Object.values(metadata).reduce((sum, arr) => sum + arr.length, 0);
             
             const categories = {
                 track: 'track',
@@ -1700,7 +2001,7 @@ You have ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''} ready to deploy to 
 
 ## Photo Summary
 ${Object.entries(categories).map(([category, folderName]) => {
-    const count = (photos[category] || []).length;
+    const count = (metadata[category] || []).length;
     return `- ${folderName}: ${count} photo${count !== 1 ? 's' : ''}`;
 }).join('\n')}
 
@@ -1742,9 +2043,9 @@ The config.js file has already been downloaded separately.
 Make sure the filenames match exactly (case-sensitive):
 
 ${Object.entries(categories).map(([category, folderName]) => {
-    const categoryPhotos = photos[category] || [];
-    if (categoryPhotos.length === 0) return '';
-    return `### ${folderName}:\n${categoryPhotos.map(p => `- ${p.filename}`).join('\n')}`;
+    const categoryMetadata = metadata[category] || [];
+    if (categoryMetadata.length === 0) return '';
+    return `### ${folderName}:\n${categoryMetadata.map(p => `- ${p.filename}`).join('\n')}`;
 }).filter(Boolean).join('\n\n')}
 
 ## Need Help?
@@ -1829,9 +2130,9 @@ Your token is stored only in your browser's localStorage.
                 return;
             }
 
-            // Get photos from localStorage
-            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
-            const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+            // Get photos metadata from localStorage
+            const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
+            const totalPhotos = Object.values(metadata).reduce((sum, arr) => sum + arr.length, 0);
             
             if (totalPhotos === 0) {
                 statusDiv.style.background = 'rgba(204, 0, 0, 0.1)';
@@ -1891,40 +2192,52 @@ Your token is stored only in your browser's localStorage.
                 
                 // Upload photos
                 for (const [category, folderName] of Object.entries(categories)) {
-                    const categoryPhotos = photos[category] || [];
+                    const categoryMetadata = metadata[category] || [];
                     
-                    for (const photo of categoryPhotos) {
+                    for (const meta of categoryMetadata) {
                         statusDiv.innerHTML = `⏳ Uploading photo ${++uploadedCount} of ${totalPhotos}...`;
                         
-                        // Remove data URL prefix to get base64 content
-                        const base64Content = photo.dataUrl.split(',')[1];
-                        
-                        // Create blob for photo
-                        const blobResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs`, {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${token}`,
-                                'Accept': 'application/vnd.github.v3+json',
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                content: base64Content,
-                                encoding: 'base64'
-                            })
-                        });
+                        try {
+                            // Get blob from IndexedDB
+                            const photoData = await getBlobFromIndexedDB(meta.id);
+                            if (!photoData || !photoData.blob) {
+                                console.error(`Photo ${meta.filename} not found in IndexedDB`);
+                                continue;
+                            }
+                            
+                            // Convert blob to base64
+                            const dataUrl = await blobToDataURL(photoData.blob);
+                            const base64Content = dataUrl.split(',')[1];
+                            
+                            // Create blob for photo
+                            const blobResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs`, {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Accept': 'application/vnd.github.v3+json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    content: base64Content,
+                                    encoding: 'base64'
+                                })
+                            });
 
-                        if (!blobResponse.ok) {
-                            throw new Error(`Failed to create blob for ${photo.filename}: ${blobResponse.status}`);
+                            if (!blobResponse.ok) {
+                                throw new Error(`Failed to create blob for ${meta.filename}: ${blobResponse.status}`);
+                            }
+
+                            const blobData = await blobResponse.json();
+                            
+                            treeItems.push({
+                                path: `images/${folderName}/${meta.filename}`,
+                                mode: '100644',
+                                type: 'blob',
+                                sha: blobData.sha
+                            });
+                        } catch (error) {
+                            console.error(`Error uploading photo ${meta.filename}:`, error);
                         }
-
-                        const blobData = await blobResponse.json();
-                        
-                        treeItems.push({
-                            path: `images/${folderName}/${photo.filename}`,
-                            mode: '100644',
-                            type: 'blob',
-                            sha: blobData.sha
-                        });
                     }
                 }
 
