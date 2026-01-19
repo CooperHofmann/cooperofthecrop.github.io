@@ -1088,7 +1088,7 @@
                             // Convert to blob with timeout protection
                             let timeoutId = setTimeout(() => {
                                 reject(new Error('Canvas toBlob timeout'));
-                            }, 30000); // 30 second timeout
+                            }, 15000); // 15 second timeout for better responsiveness
                             
                             canvas.toBlob((blob) => {
                                 clearTimeout(timeoutId);
@@ -1187,9 +1187,9 @@
                         lastError = error;
                         console.error(`Compression error for ${file.name} (attempt ${attempt + 1}):`, error);
                         
-                        // Wait before retry (exponential backoff)
+                        // Wait before retry (exponential backoff: 500ms, 1000ms, 2000ms...)
                         if (attempt < MAX_RETRIES) {
-                            await new Promise(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+                            await new Promise(resolve => setTimeout(resolve, 500 * Math.pow(2, attempt)));
                         }
                     }
                 }

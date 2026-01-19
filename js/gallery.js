@@ -4,8 +4,8 @@
  * Handles dynamic image loading and lightbox functionality for portfolio pages
  * This module reads from config.js to determine which images to display
  * 
- * Note: The first image is displayed as the featured/title image only.
- * It will not be shown again in the gallery grid to avoid duplication.
+ * Note: The first image is displayed as the featured/title image (full-width, 16:9).
+ * All images appear in the gallery grid, with the first one having special featured styling.
  * The lightbox includes all images for navigation.
  */
 
@@ -38,12 +38,13 @@ function initGallery(category) {
     const basePath = config.images.length > 0 ? `images/${category}/` : '';
 
     // Generate gallery items
-    // Strategy: Show first image as featured, then show images starting from index 1
+    // Strategy: All images appear in grid. First image gets featured styling (full-width, 16:9).
+    // This makes it appear as the title/hero image while remaining part of the navigable gallery.
     images.forEach((image, index) => {
         const imagePath = basePath ? `${basePath}${image}` : image;
         
         if (index === 0) {
-            // First image: create as featured/title image
+            // First image: create as featured/title image with special styling
             const galleryItem = createGalleryItem(imagePath, index, true);
             galleryGrid.appendChild(galleryItem);
         } else {
