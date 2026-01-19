@@ -134,6 +134,7 @@ nav a:hover {
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: opacity 0.3s ease;
 }
 
 /* Featured Image - Full Width 16:9 */
@@ -145,8 +146,6 @@ nav a:hover {
 
 .gallery-featured img {
     object-fit: cover;
-    width: 100%;
-    height: 100%;
 }
 
 /* Responsive adjustments for medium screens */
