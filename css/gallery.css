@@ -119,7 +119,6 @@ nav a:hover {
 .gallery-item {
     position: relative;
     background: var(--white);
-    border: 4px solid var(--black);
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s ease;
