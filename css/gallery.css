@@ -119,28 +119,21 @@ nav a:hover {
 
 .gallery-item {
     position: relative;
-    background: var(--white);
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.2s ease;
-    border: 2px solid var(--black);
+    transition: opacity 0.3s ease;
     flex-shrink: 0;
 }
 
 .gallery-item:hover {
-    transform: translateY(-4px);
+    opacity: 0.9;
 }
 
 .gallery-item img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     display: block;
-    transition: transform 0.3s ease;
-}
-
-.gallery-item:hover img {
-    transform: scale(1.05);
 }
 
 /* Featured Image - Full Width 16:9 */
@@ -152,6 +145,8 @@ nav a:hover {
 
 .gallery-featured img {
     object-fit: cover;
+    width: 100%;
+    height: 100%;
 }
 
 /* Responsive adjustments for medium screens */
