@@ -174,8 +174,6 @@ To make your changes live on the website:
 - Automatic commit creation with descriptive messages
 - Real-time deployment status updates
 - One-time token setup, then deploy anytime with one click!
-- Includes proper formatting and comments
-- **NEW:** Download Photos Package - One-click ZIP with all photos + config!
 
 ### Help Documentation
 - Built-in help section
