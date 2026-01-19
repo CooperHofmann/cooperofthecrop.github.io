@@ -331,6 +331,31 @@
             overflow: hidden;
             aspect-ratio: 1;
             background: var(--light-gray);
+            cursor: move;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+        
+        .photo-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        
+        .photo-item.drag-over {
+            border-color: var(--blue);
+            border-width: 6px;
+        }
+        
+        .photo-item .order-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--black);
+            color: var(--white);
+            padding: 5px 10px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            z-index: 2;
         }
 
         .photo-item img {
@@ -348,11 +373,18 @@
             bottom: 0;
             background: rgba(0, 0, 0, 0.9);
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 10px;
             opacity: 0;
             transition: opacity 0.3s ease;
+            z-index: 3;
+        }
+        
+        .photo-item .overlay .button-row {
+            display: flex;
+            gap: 10px;
         }
 
         .photo-item:hover .overlay {
@@ -680,6 +712,16 @@
                 <section id="panelManage" class="panel-section">
                     <h2>Manage Photos</h2>
                     
+                    <div class="instructions-box" style="margin-bottom: 20px;">
+                        <h3>📋 Photo Ordering</h3>
+                        <p style="line-height: 1.6;">
+                            <strong>The first photo (#1 🌟) will be the title/featured photo on the gallery page.</strong><br>
+                            • <strong>Drag and drop</strong> photos to reorder them<br>
+                            • Use <strong>⬆️ Up / ⬇️ Down</strong> buttons for precise positioning<br>
+                            • Changes are saved automatically and reflected in the configuration
+                        </p>
+                    </div>
+                    
                     <h3 style="font-family: Helvetica, Arial, sans-serif; margin-bottom: 15px;">Select Gallery</h3>
                     <div class="category-selector">
                         <button class="category-btn active" data-gallery="track" onclick="showGallery('track')">📸 TRACK</button>
@@ -852,6 +894,7 @@
         const IMAGE_MAX_WIDTH = 2000;  // Maximum width for uploaded images
         const IMAGE_QUALITY = 0.85;     // JPEG quality (0-1, where 1 is highest quality)
         const BASE64_OVERHEAD = 0.75;   // Base64 encoding efficiency factor (actual data is ~75% of encoded string)
+        const RETRY_BASE_DELAY_MS = 500; // Base delay for exponential backoff (500ms, 1000ms, 2000ms...)
         
         // Current selected category for upload
         let currentCategory = 'track';
@@ -997,81 +1040,166 @@
         async function compressImage(file, maxWidth = IMAGE_MAX_WIDTH, quality = IMAGE_QUALITY) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
+                
                 reader.onload = (e) => {
                     const img = new Image();
+                    
                     img.onload = () => {
-                        // Create canvas for compression
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        // Scale down if image is too large
-                        if (width > maxWidth) {
-                            height = (height * maxWidth) / width;
-                            width = maxWidth;
-                        }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        // Convert to JPEG with specified quality
-                        canvas.toBlob((blob) => {
-                            if (!blob) {
-                                reject(new Error('Failed to create blob from canvas'));
+                        try {
+                            // Create canvas for compression
+                            const canvas = document.createElement('canvas');
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            // Validate image dimensions
+                            if (width <= 0 || height <= 0) {
+                                reject(new Error('Invalid image dimensions'));
                                 return;
                             }
-                            const compressedReader = new FileReader();
-                            compressedReader.onload = (event) => {
-                                resolve(event.target.result);
-                            };
-                            compressedReader.onerror = reject;
-                            compressedReader.readAsDataURL(blob);
-                        }, 'image/jpeg', quality);
+                            
+                            // Scale down if image is too large
+                            if (width > maxWidth) {
+                                height = Math.floor((height * maxWidth) / width);
+                                width = maxWidth;
+                            }
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            
+                            const ctx = canvas.getContext('2d');
+                            if (!ctx) {
+                                reject(new Error('Failed to get canvas context'));
+                                return;
+                            }
+                            
+                            // Enable image smoothing for better quality
+                            ctx.imageSmoothingEnabled = true;
+                            ctx.imageSmoothingQuality = 'high';
+                            
+                            // Draw image on canvas
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            // Determine output format based on input file type
+                            // Use original format for PNG/GIF to preserve transparency, otherwise use JPEG
+                            const outputFormat = (file.type === 'image/png' || file.type === 'image/gif') 
+                                ? file.type 
+                                : 'image/jpeg';
+                            const outputQuality = (outputFormat === 'image/jpeg') ? quality : 0.95;
+                            
+                            // Convert to blob with timeout protection
+                            let timeoutId = setTimeout(() => {
+                                reject(new Error('Canvas toBlob timeout'));
+                            }, 15000); // 15 second timeout for better responsiveness
+                            
+                            canvas.toBlob((blob) => {
+                                clearTimeout(timeoutId);
+                                
+                                if (!blob) {
+                                    reject(new Error('Failed to create blob from canvas'));
+                                    return;
+                                }
+                                
+                                const compressedReader = new FileReader();
+                                compressedReader.onload = (event) => {
+                                    resolve(event.target.result);
+                                };
+                                compressedReader.onerror = (err) => {
+                                    reject(new Error('Failed to read compressed image: ' + err));
+                                };
+                                compressedReader.readAsDataURL(blob);
+                            }, outputFormat, outputQuality);
+                            
+                        } catch (error) {
+                            reject(new Error('Canvas processing error: ' + error.message));
+                        }
                     };
-                    img.onerror = reject;
+                    
+                    img.onerror = (err) => {
+                        reject(new Error('Failed to load image: ' + (err.message || 'Unknown error')));
+                    };
+                    
+                    // Set crossOrigin before setting src
+                    img.crossOrigin = 'anonymous';
                     img.src = e.target.result;
                 };
-                reader.onerror = reject;
+                
+                reader.onerror = (err) => {
+                    reject(new Error('Failed to read file: ' + (err.message || 'Unknown error')));
+                };
+                
                 reader.readAsDataURL(file);
             });
         }
 
         async function handleFileSelect(e) {
             const files = Array.from(e.target.files);
+            const MAX_RETRIES = 2;
             
             for (const file of files) {
                 if (!file.type.match('image.*')) {
                     showNotification('❌ Please upload only image files', 'error');
                     continue;
                 }
+                
+                // Validate file size (warn if > 10MB)
+                const fileSizeMB = file.size / (1024 * 1024);
+                if (fileSizeMB > 10) {
+                    showNotification(`⚠️ ${file.name} is large (${fileSizeMB.toFixed(1)}MB). Processing may take a moment...`, 'warning');
+                }
 
-                try {
-                    // Compress the image before saving
-                    const compressedDataUrl = await compressImage(file, IMAGE_MAX_WIDTH, IMAGE_QUALITY);
-                    
-                    // Calculate compression ratio
-                    const originalSize = file.size / 1024; // Original size in KB
-                    // Remove data URL prefix to get just the Base64 data
-                    const base64Data = compressedDataUrl.split(',')[1];
-                    // Base64 encoding: each character represents 6 bits but takes 8 bits to store
-                    // So actual binary data size = base64Length * 0.75
-                    const compressedSize = (base64Data.length * BASE64_OVERHEAD / 1024);
-                    const compressionRatio = Math.max(0, Math.round((1 - compressedSize / originalSize) * 100));
-                    
-                    savePhoto(currentCategory, file.name, compressedDataUrl);
-                    
-                    if (compressionRatio > 0) {
-                        showNotification(`✓ ${file.name} compressed (${compressionRatio}% smaller) and uploaded to ${currentCategory}!`, 'success');
-                    } else {
-                        showNotification(`✓ ${file.name} uploaded to ${currentCategory}!`, 'success');
+                let success = false;
+                let lastError = null;
+                
+                // Retry logic for reliability
+                for (let attempt = 0; attempt <= MAX_RETRIES && !success; attempt++) {
+                    try {
+                        if (attempt > 0) {
+                            console.log(`Retrying compression for ${file.name} (attempt ${attempt + 1}/${MAX_RETRIES + 1})`);
+                        }
+                        
+                        // Compress the image before saving
+                        const compressedDataUrl = await compressImage(file, IMAGE_MAX_WIDTH, IMAGE_QUALITY);
+                        
+                        // Validate the compressed result
+                        if (!compressedDataUrl || !compressedDataUrl.startsWith('data:image/')) {
+                            throw new Error('Invalid compressed image data');
+                        }
+                        
+                        // Calculate compression ratio
+                        const originalSize = file.size / 1024; // Original size in KB
+                        // Remove data URL prefix to get just the Base64 data
+                        const base64Data = compressedDataUrl.split(',')[1];
+                        // Base64 encoding: each character represents 6 bits but takes 8 bits to store
+                        // So actual binary data size = base64Length * 0.75
+                        const compressedSize = (base64Data.length * BASE64_OVERHEAD / 1024);
+                        const compressionRatio = Math.max(0, Math.round((1 - compressedSize / originalSize) * 100));
+                        
+                        savePhoto(currentCategory, file.name, compressedDataUrl);
+                        
+                        if (compressionRatio > 0) {
+                            showNotification(`✓ ${file.name} compressed (${compressionRatio}% smaller) and uploaded to ${currentCategory}!`, 'success');
+                        } else {
+                            showNotification(`✓ ${file.name} uploaded to ${currentCategory}!`, 'success');
+                        }
+                        updateStats();
+                        success = true;
+                        
+                    } catch (error) {
+                        lastError = error;
+                        console.error(`Compression error for ${file.name} (attempt ${attempt + 1}):`, error);
+                        
+                        // Wait before retry (exponential backoff: 500ms, 1000ms, 2000ms...)
+                        if (attempt < MAX_RETRIES) {
+                            await new Promise(resolve => setTimeout(resolve, RETRY_BASE_DELAY_MS * Math.pow(2, attempt)));
+                        }
                     }
-                    updateStats();
-                } catch (error) {
-                    console.error('Compression error:', error);
-                    showNotification(`❌ Failed to compress ${file.name}`, 'error');
+                }
+                
+                // If all retries failed, show error
+                if (!success) {
+                    const errorMsg = lastError?.message || 'Unknown error';
+                    showNotification(`❌ Failed to process ${file.name}: ${errorMsg}`, 'error');
+                    console.error('All compression attempts failed for', file.name, lastError);
                 }
             }
 
@@ -1149,21 +1277,118 @@
                 return div.innerHTML;
             };
 
-            galleryGrid.innerHTML = photos.map(photo => {
+            galleryGrid.innerHTML = photos.map((photo, index) => {
                 const safeFilename = escapeHtml(photo.filename);
                 const safeGallery = escapeHtml(gallery);
                 // Create a unique ID for each photo using timestamp + counter to prevent collisions
                 const photoId = `photo_${safeGallery}_${Date.now()}_${++photoIdCounter}`;
+                const isFirst = index === 0;
+                const isLast = index === photos.length - 1;
+                
                 return `
-                <div class="photo-item">
+                <div class="photo-item" draggable="true" data-index="${index}" data-filename="${safeFilename}">
+                    <div class="order-badge">#${index + 1}${isFirst ? ' 🌟' : ''}</div>
                     <img src="${photo.dataUrl}" alt="${safeFilename}" id="${photoId}">
                     <div class="overlay">
-                        <button onclick="downloadPhoto('${photoId}', '${safeFilename}')">💾 Download</button>
-                        <button onclick="deletePhoto('${safeGallery}', '${safeFilename}')">🗑️ Delete</button>
+                        <div class="button-row">
+                            <button onclick="movePhoto('${safeGallery}', ${index}, -1)" ${isFirst ? 'disabled style="opacity:0.3"' : ''}>⬆️ Up</button>
+                            <button onclick="movePhoto('${safeGallery}', ${index}, 1)" ${isLast ? 'disabled style="opacity:0.3"' : ''}>⬇️ Down</button>
+                        </div>
+                        <div class="button-row">
+                            <button onclick="downloadPhoto('${photoId}', '${safeFilename}')">💾 Download</button>
+                            <button onclick="deletePhoto('${safeGallery}', '${safeFilename}')">🗑️ Delete</button>
+                        </div>
                     </div>
                 </div>
             `;
             }).join('');
+            
+            // Add drag and drop event listeners
+            setupDragAndDrop(gallery);
+        }
+        
+        // Move photo up or down in the order
+        function movePhoto(category, currentIndex, direction) {
+            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            if (!photos[category] || photos[category].length <= 1) return;
+            
+            const newIndex = currentIndex + direction;
+            
+            // Validate new index
+            if (newIndex < 0 || newIndex >= photos[category].length) return;
+            
+            // Swap photos
+            const temp = photos[category][currentIndex];
+            photos[category][currentIndex] = photos[category][newIndex];
+            photos[category][newIndex] = temp;
+            
+            // Save and refresh
+            localStorage.setItem('adminPhotos', JSON.stringify(photos));
+            showGallery(category);
+            updateConfigCode();
+            showNotification('✓ Photo order updated', 'success');
+        }
+        
+        // Setup drag and drop functionality
+        function setupDragAndDrop(gallery) {
+            const photoItems = document.querySelectorAll('#galleryGrid .photo-item');
+            let draggedElement = null;
+            let draggedIndex = null;
+            
+            photoItems.forEach((item, index) => {
+                // Drag start
+                item.addEventListener('dragstart', (e) => {
+                    draggedElement = item;
+                    draggedIndex = parseInt(item.dataset.index, 10);
+                    item.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                
+                // Drag end
+                item.addEventListener('dragend', (e) => {
+                    item.classList.remove('dragging');
+                    // Remove all drag-over classes
+                    photoItems.forEach(i => i.classList.remove('drag-over'));
+                });
+                
+                // Drag over
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    
+                    if (item !== draggedElement) {
+                        item.classList.add('drag-over');
+                    }
+                });
+                
+                // Drag leave
+                item.addEventListener('dragleave', (e) => {
+                    item.classList.remove('drag-over');
+                });
+                
+                // Drop
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    item.classList.remove('drag-over');
+                    
+                    if (item !== draggedElement) {
+                        const dropIndex = parseInt(item.dataset.index, 10);
+                        
+                        // Reorder photos in storage
+                        const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+                        if (photos[gallery]) {
+                            const draggedPhoto = photos[gallery][draggedIndex];
+                            photos[gallery].splice(draggedIndex, 1);
+                            photos[gallery].splice(dropIndex, 0, draggedPhoto);
+                            
+                            localStorage.setItem('adminPhotos', JSON.stringify(photos));
+                            showGallery(gallery);
+                            updateConfigCode();
+                            showNotification('✓ Photo order updated', 'success');
+                        }
+                    }
+                });
+            });
         }
 
         // Constants
