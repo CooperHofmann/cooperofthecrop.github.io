@@ -3,6 +3,10 @@
  * 
  * Handles dynamic image loading and lightbox functionality for portfolio pages
  * This module reads from config.js to determine which images to display
+ * 
+ * Note: The first image is displayed as the featured/title image only.
+ * It will not be shown again in the gallery grid to avoid duplication.
+ * The lightbox includes all images for navigation.
  */
 
 // Initialize gallery for a specific category
@@ -34,12 +38,19 @@ function initGallery(category) {
     const basePath = config.images.length > 0 ? `images/${category}/` : '';
 
     // Generate gallery items
-    // First image (index 0) is featured/title image only, don't show in grid
-    // Start from index 1 for the grid display
+    // Strategy: Show first image as featured, then show images starting from index 1
     images.forEach((image, index) => {
         const imagePath = basePath ? `${basePath}${image}` : image;
-        const galleryItem = createGalleryItem(imagePath, index);
-        galleryGrid.appendChild(galleryItem);
+        
+        if (index === 0) {
+            // First image: create as featured/title image
+            const galleryItem = createGalleryItem(imagePath, index, true);
+            galleryGrid.appendChild(galleryItem);
+        } else {
+            // Remaining images: create as regular grid items
+            const galleryItem = createGalleryItem(imagePath, index, false);
+            galleryGrid.appendChild(galleryItem);
+        }
     });
 
     // Initialize lightbox with all images (including first one)
@@ -47,13 +58,12 @@ function initGallery(category) {
 }
 
 // Create a single gallery item element
-function createGalleryItem(imagePath, index) {
+function createGalleryItem(imagePath, index, isFeatured) {
     const item = document.createElement('div');
     item.className = 'gallery-item';
     
-    // First image is featured/title only - it still gets the class for styling
-    // but we'll handle it specially
-    if (index === 0) {
+    // First image is featured/title - full width, larger display
+    if (isFeatured) {
         item.classList.add('gallery-featured');
     }
 
@@ -64,8 +74,8 @@ function createGalleryItem(imagePath, index) {
     
     // Function to set aspect ratio based on image dimensions
     const setAspectRatio = function() {
-        // Force first image to 16:9 landscape
-        if (index === 0) {
+        // Force featured image to 16:9 landscape
+        if (isFeatured) {
             item.style.aspectRatio = '16 / 9';
         } else if (img.naturalWidth > 0 && img.naturalHeight > 0) {
             // Use natural aspect ratio for other images (guard against division by zero)
