@@ -65,7 +65,20 @@ The dashboard shows:
 
 To make your changes live on the website:
 
-### Method 1: Download Photos Package (Recommended - NEW! 🎉)
+### Method 1: Direct GitHub Deployment (Easiest - NEW! 🚀)
+1. Upload photos using the **"Upload Photos"** panel
+2. Organize your photos in the **"Manage Photos"** panel
+3. Click **"Configuration"** in the sidebar
+4. Enter your GitHub Personal Access Token (one-time setup):
+   - Click "How to get a token?" for detailed instructions
+   - Create a token with "repo" permissions at github.com/settings/tokens
+   - Paste it in the field and click "Save Token"
+5. Click **"🚀 DEPLOY TO GITHUB NOW"** button
+6. Wait 1-2 minutes - Done! Your photos are live!
+
+**Benefits:** Upload photos on the live website and they automatically go to GitHub - no manual steps!
+
+### Method 2: Download Photos Package (Alternative)
 1. Upload photos using the **"Upload Photos"** panel
 2. Organize your photos in the **"Manage Photos"** panel
 3. Click **"Configuration"** in the sidebar
@@ -82,7 +95,7 @@ To make your changes live on the website:
 
 **Benefits:** All photos and configuration in one download - no code editing required!
 
-### Method 2: Using the Configuration Panel (Manual)
+### Method 3: Using the Configuration Panel (Manual)
 1. Click **"Configuration"** in the sidebar
 2. Review the generated JavaScript configuration code
 3. Click **"Copy to Clipboard"** or **"Download as File"**
@@ -108,7 +121,7 @@ To make your changes live on the website:
     ```
 11. Wait 1-2 minutes for GitHub Pages to deploy
 
-### Method 3: Manual Configuration
+### Method 4: Manual Configuration
 1. Add image files to the appropriate `/images/` folder
 2. Open `js/config.js` in a text editor
 3. Add filenames to the appropriate category array:
@@ -150,6 +163,17 @@ To make your changes live on the website:
 - Automatically generates deployment code
 - One-click copy to clipboard
 - Download as file option
+- Includes proper formatting and comments
+- **NEW:** Direct GitHub deployment with API integration!
+- **NEW:** Download Photos Package - One-click ZIP with all photos + config!
+
+### Direct GitHub Deployment (NEW!)
+- Deploy directly from browser to GitHub repository
+- No manual git commands needed
+- Secure token-based authentication (stored in browser only)
+- Automatic commit creation with descriptive messages
+- Real-time deployment status updates
+- One-time token setup, then deploy anytime with one click!
 - Includes proper formatting and comments
 - **NEW:** Download Photos Package - One-click ZIP with all photos + config!
 
@@ -232,6 +256,36 @@ To make your changes live on the website:
 - Use a modern ZIP extraction tool (7-Zip, WinRAR, or built-in OS tools)
 - Make sure you have write permissions in the extraction location
 - Verify the ZIP file downloaded completely (check file size)
+
+### GitHub deployment failing? (NEW!)
+- **Token Issues:**
+  - Make sure your token starts with `ghp_` or `github_pat_`
+  - Verify the token has "repo" permission checked
+  - Token may have expired - create a new one
+  - Copy the entire token (they're long!)
+- **Repository Issues:**
+  - Check that repository owner is `CooperHofmann`
+  - Verify repository name is `cooperofthecrop.github.io`
+  - Confirm you have write access to the repository
+  - Make sure the branch name is correct (usually `main` or `master`)
+- **Network Issues:**
+  - Check your internet connection
+  - Disable VPN if active (may block GitHub API)
+  - Try again in a few minutes (API rate limits)
+- **Browser Issues:**
+  - Clear browser cache and reload the page
+  - Try a different browser
+  - Check browser console for detailed error messages
+
+### How to create a GitHub token?
+1. Go to https://github.com/settings/tokens
+2. Click "Generate new token" → "Generate new token (classic)"
+3. Name it: "Portfolio Admin Panel"
+4. Select expiration: 90 days (or longer)
+5. Check: ✓ **repo** (Full control of private repositories)
+6. Scroll down and click "Generate token"
+7. **IMPORTANT:** Copy the token immediately! You won't see it again
+8. Paste it in the admin panel and click "Save Token"
 
 ## 📝 Best Practices
 
