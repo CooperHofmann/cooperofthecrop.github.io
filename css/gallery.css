@@ -123,9 +123,6 @@ nav a:hover {
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .gallery-item:hover {

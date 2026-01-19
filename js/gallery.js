@@ -59,18 +59,24 @@ function createGalleryItem(imagePath, index) {
     img.alt = `Gallery image ${index + 1}`;
     img.loading = 'lazy'; // Native lazy loading
     
-    // Load image to get natural dimensions
-    img.onload = function() {
-        const aspectRatio = this.naturalWidth / this.naturalHeight;
-        
+    // Function to set aspect ratio based on image dimensions
+    const setAspectRatio = function() {
         // Force first image to 16:9 landscape
         if (index === 0) {
             item.style.aspectRatio = '16 / 9';
-        } else {
-            // Use natural aspect ratio for other images
+        } else if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+            // Use natural aspect ratio for other images (guard against division by zero)
+            const aspectRatio = img.naturalWidth / img.naturalHeight;
             item.style.aspectRatio = `${aspectRatio}`;
         }
     };
+    
+    // Handle both immediate load (cached) and delayed load cases
+    if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+        setAspectRatio();
+    } else {
+        img.onload = setAspectRatio;
+    }
     
     // Error handling for broken images
     img.onerror = function() {
