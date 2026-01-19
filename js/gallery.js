@@ -56,6 +56,9 @@ function initGallery(category) {
 
     // Initialize lightbox with all images (including first one)
     initLightbox();
+    
+    // Apply justified layout after gallery is built
+    initJustifiedLayout();
 }
 
 // Create a single gallery item element
@@ -212,6 +215,12 @@ function toggleMenu() {
  * - Eliminates dead space
  */
 
+// Default aspect ratio for images that fail to load (3:2 landscape)
+const DEFAULT_ASPECT_RATIO = 1.5;
+
+// Track resize timeout to prevent multiple simultaneous layout calculations
+let resizeTimeout = null;
+
 function applyJustifiedLayout() {
     const galleryGrid = document.querySelector('.gallery-grid');
     if (!galleryGrid) return;
@@ -284,7 +293,7 @@ function buildJustifiedRows(items, containerWidth, gutter, idealImagesPerRow, ta
     const maxRowHeight = targetRowHeight * 1.35;
     
     items.forEach((item, index) => {
-        const aspectRatio = parseFloat(item.getAttribute('data-aspect-ratio')) || 1.5;
+        const aspectRatio = parseFloat(item.getAttribute('data-aspect-ratio')) || DEFAULT_ASPECT_RATIO;
         
         // Add to current row
         currentRow.push({
@@ -350,7 +359,7 @@ function buildJustifiedRows(items, containerWidth, gutter, idealImagesPerRow, ta
     return rows;
 }
 
-// Initialize justified layout on load and resize
+// Initialize justified layout - called after gallery items are created
 function initJustifiedLayout() {
     // Apply layout after a short delay to ensure images are loaded
     setTimeout(() => {
@@ -358,22 +367,14 @@ function initJustifiedLayout() {
     }, 100);
     
     // Reapply on window resize with debouncing
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            applyJustifiedLayout();
-        }, 250);
-    });
-}
-
-// Call initJustifiedLayout after gallery is initialized
-// This should be called after initGallery() completes
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        // Wait a bit for dynamic content to load
-        setTimeout(initJustifiedLayout, 500);
-    });
-} else {
-    setTimeout(initJustifiedLayout, 500);
+    // Only add listener once
+    if (!window.justifiedLayoutInitialized) {
+        window.justifiedLayoutInitialized = true;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                applyJustifiedLayout();
+            }, 250);
+        });
+    }
 }
