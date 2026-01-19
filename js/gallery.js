@@ -73,23 +73,42 @@ function createGalleryItem(imagePath, index, isFeatured) {
     img.alt = `Gallery image ${index + 1}`;
     img.loading = 'lazy'; // Native lazy loading
     
-    // Function to set aspect ratio based on image dimensions
-    const setAspectRatio = function() {
+    // Function to set aspect ratio and orientation based on image dimensions
+    const setAspectRatioAndOrientation = function() {
         // Force featured image to 16:9 landscape
         if (isFeatured) {
             item.style.aspectRatio = '16 / 9';
+            item.setAttribute('data-orientation', 'featured');
         } else if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-            // Use natural aspect ratio for other images (guard against division by zero)
+            // Calculate aspect ratio
             const aspectRatio = img.naturalWidth / img.naturalHeight;
             item.style.aspectRatio = `${aspectRatio}`;
+            
+            // Determine orientation for better grid placement
+            if (aspectRatio < 0.7) {
+                // Very tall portrait
+                item.setAttribute('data-orientation', 'tall-portrait');
+            } else if (aspectRatio < 0.9) {
+                // Portrait
+                item.setAttribute('data-orientation', 'portrait');
+            } else if (aspectRatio < 1.1) {
+                // Square
+                item.setAttribute('data-orientation', 'square');
+            } else if (aspectRatio < 1.8) {
+                // Landscape
+                item.setAttribute('data-orientation', 'landscape');
+            } else {
+                // Wide landscape
+                item.setAttribute('data-orientation', 'wide-landscape');
+            }
         }
     };
     
     // Handle both immediate load (cached) and delayed load cases
     if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-        setAspectRatio();
+        setAspectRatioAndOrientation();
     } else {
-        img.onload = setAspectRatio;
+        img.onload = setAspectRatioAndOrientation;
     }
     
     // Error handling for broken images
