@@ -25,9 +25,9 @@
         
         body {
             font-family: Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--white);
             color: var(--black);
-            line-height: 1.4;
+            line-height: 1.5;
             min-height: 100vh;
         }
 
@@ -112,34 +112,35 @@
         /* Admin Container */
         .admin-container {
             display: none;
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 40px;
+            background: var(--white);
         }
 
         .admin-container.active {
             display: block;
         }
 
-        /* Header */
+        /* Header - Swiss Grid Layout */
         .admin-header {
-            background: var(--white);
-            border: 4px solid var(--black);
-            padding: 30px 40px;
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: space-between;
+            background: var(--black);
+            color: var(--white);
+            padding: 40px;
+            margin-bottom: 60px;
+            display: grid;
+            grid-template-columns: 1fr auto;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            gap: 40px;
         }
 
         .admin-header h1 {
             font-family: Helvetica, Arial, sans-serif;
-            font-size: clamp(28px, 5vw, 48px);
+            font-size: clamp(28px, 4vw, 42px);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: -0.02em;
+            line-height: 1.1;
         }
 
         .admin-header .actions {
@@ -148,53 +149,56 @@
             flex-wrap: wrap;
         }
 
-        /* Stats Cards */
+        /* Stats Cards - Swiss Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2px;
+            margin-bottom: 60px;
+            border: 2px solid var(--black);
         }
 
         .stat-card {
             background: var(--white);
-            border: 4px solid var(--black);
-            padding: 30px;
-            text-align: center;
-            transition: transform 0.2s ease;
+            border-right: 2px solid var(--black);
+            border-bottom: 2px solid var(--black);
+            padding: 30px 20px;
+            text-align: left;
+            transition: background 0.2s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
+            background: var(--light-gray);
         }
 
         .stat-card .number {
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--blue);
-            margin-bottom: 10px;
+            font-size: 56px;
+            font-weight: 300;
+            color: var(--black);
+            margin-bottom: 8px;
+            line-height: 1;
         }
 
         .stat-card .label {
-            font-size: 14px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             color: var(--gray);
-            font-weight: 600;
+            font-weight: 500;
         }
 
-        /* Main Content Area */
+        /* Main Content Area - Swiss Grid */
         .admin-content {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 30px;
+            grid-template-columns: 240px 1fr;
+            gap: 60px;
         }
 
-        /* Sidebar */
+        /* Sidebar - Swiss Minimal */
         .admin-sidebar {
-            background: var(--white);
-            border: 4px solid var(--black);
+            background: var(--black);
+            color: var(--white);
             padding: 0;
             height: fit-content;
             position: sticky;
@@ -206,7 +210,7 @@
         }
 
         .sidebar-menu li {
-            border-bottom: 3px solid var(--black);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar-menu li:last-child {
@@ -217,26 +221,25 @@
             display: block;
             padding: 20px 25px;
             text-decoration: none;
-            color: var(--black);
-            font-weight: 600;
+            color: var(--white);
+            font-weight: 500;
             text-transform: uppercase;
-            font-size: 14px;
-            transition: all 0.2s ease;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            transition: background 0.2s ease;
             cursor: pointer;
         }
 
         .sidebar-menu a:hover,
         .sidebar-menu a.active {
-            background: var(--black);
-            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Panel Sections */
+        /* Panel Sections - Clean Swiss Layout */
         .panel-section {
             display: none;
             background: var(--white);
-            border: 4px solid var(--black);
-            padding: 40px;
+            padding: 0;
         }
 
         .panel-section.active {
@@ -248,65 +251,74 @@
             font-size: 32px;
             font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 30px;
-            border-bottom: 4px solid var(--black);
-            padding-bottom: 15px;
+            margin-bottom: 40px;
+            letter-spacing: -0.02em;
+            border-bottom: 2px solid var(--black);
+            padding-bottom: 20px;
         }
 
-        /* Upload Zone */
+        /* Upload Zone - Swiss Style */
         .upload-zone {
-            border: 4px dashed var(--gray);
-            padding: 60px 20px;
+            border: 2px solid var(--black);
+            padding: 80px 40px;
             text-align: center;
             background: var(--light-gray);
-            margin-bottom: 30px;
+            margin-bottom: 40px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.2s ease;
         }
 
         .upload-zone:hover,
         .upload-zone.dragover {
-            border-color: var(--blue);
-            background: rgba(0, 102, 204, 0.1);
+            background: var(--white);
+            border-color: var(--black);
         }
 
         .upload-zone .icon {
-            font-size: 64px;
+            font-size: 48px;
             margin-bottom: 20px;
         }
 
         .upload-zone h3 {
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             margin-bottom: 10px;
         }
 
         .upload-zone p {
             color: var(--gray);
-            font-size: 14px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
         #fileInput {
             display: none;
         }
 
-        /* Category Selector */
+        /* Category Selector - Swiss Grid */
         .category-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 2px;
+            margin-bottom: 40px;
+            border: 2px solid var(--black);
         }
 
         .category-btn {
             background: var(--light-gray);
-            border: 3px solid var(--black);
+            border: none;
+            border-right: 2px solid var(--black);
+            border-bottom: 2px solid var(--black);
             padding: 20px;
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.15em;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -317,17 +329,19 @@
             color: var(--white);
         }
 
-        /* Photo Grid */
+        /* Photo Grid - Swiss Layout */
         .photo-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
+            gap: 2px;
+            margin-top: 40px;
+            border: 2px solid var(--black);
         }
 
         .photo-item {
             position: relative;
-            border: 4px solid var(--black);
+            border-right: 2px solid var(--black);
+            border-bottom: 2px solid var(--black);
             overflow: hidden;
             aspect-ratio: 1;
             background: var(--light-gray);
@@ -341,8 +355,8 @@
         }
         
         .photo-item.drag-over {
-            border-color: var(--blue);
-            border-width: 6px;
+            border-color: var(--black);
+            border-width: 4px;
         }
         
         .photo-item .order-badge {
@@ -351,10 +365,11 @@
             left: 10px;
             background: var(--black);
             color: var(--white);
-            padding: 5px 10px;
+            padding: 5px 12px;
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 700;
+            letter-spacing: 0.1em;
             z-index: 2;
         }
 
@@ -371,14 +386,14 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.92);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 10px;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease;
             z-index: 3;
         }
         
@@ -393,13 +408,16 @@
 
         .photo-item .overlay button {
             padding: 10px 15px;
-            border: 2px solid var(--white);
+            border: 1px solid var(--white);
             background: transparent;
             color: var(--white);
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             cursor: pointer;
             transition: all 0.2s ease;
+            font-weight: 500;
         }
 
         .photo-item .overlay button:hover {
@@ -407,54 +425,49 @@
             color: var(--black);
         }
 
-        /* Buttons */
+        /* Buttons - Swiss Minimal */
         .btn {
             background: var(--black);
             color: var(--white);
-            border: 3px solid var(--black);
-            padding: 12px 24px;
+            border: none;
+            padding: 15px 30px;
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 14px;
+            font-size: 11px;
             text-transform: uppercase;
+            letter-spacing: 0.15em;
             cursor: pointer;
             transition: all 0.2s ease;
             text-decoration: none;
             display: inline-block;
+            font-weight: 500;
         }
 
         .btn:hover {
-            background: var(--white);
-            color: var(--black);
+            background: var(--gray);
         }
 
         .btn-success {
-            background: var(--success);
-            border-color: var(--success);
+            background: var(--black);
         }
 
         .btn-success:hover {
-            background: var(--white);
-            color: var(--success);
+            background: var(--success);
         }
 
         .btn-danger {
             background: var(--danger);
-            border-color: var(--danger);
         }
 
         .btn-danger:hover {
-            background: var(--white);
-            color: var(--danger);
+            background: #990000;
         }
 
         .btn-blue {
             background: var(--blue);
-            border-color: var(--blue);
         }
 
         .btn-blue:hover {
-            background: var(--white);
-            color: var(--blue);
+            background: #0052A3;
         }
 
         /* Config Editor */
@@ -479,20 +492,21 @@
             border-color: var(--blue);
         }
 
-        /* Instructions Box */
+        /* Instructions Box - Swiss Clean */
         .instructions-box {
-            background: rgba(255, 153, 0, 0.2);
-            border: 3px solid var(--warning);
-            padding: 25px;
-            margin-bottom: 30px;
+            background: var(--light-gray);
+            border-left: 4px solid var(--black);
+            padding: 30px;
+            margin-bottom: 40px;
         }
 
         .instructions-box h3 {
             font-family: Helvetica, Arial, sans-serif;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 15px;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
         }
 
         .instructions-box ol {
@@ -502,9 +516,9 @@
 
         .instructions-box code {
             background: var(--white);
-            padding: 2px 6px;
+            padding: 2px 8px;
             border: 1px solid var(--black);
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: 'Courier New', monospace;
             font-size: 12px;
         }
 
@@ -1571,6 +1585,10 @@
                 return div.innerHTML;
             };
 
+            // Get home page photo settings
+            const homePagePhotos = JSON.parse(localStorage.getItem('homePagePhotos') || '{}');
+            const currentHomePagePhoto = homePagePhotos[gallery];
+
             galleryGrid.innerHTML = photos.map((photo, index) => {
                 const safeFilename = escapeHtml(photo.filename);
                 const safeGallery = escapeHtml(gallery);
@@ -1578,15 +1596,19 @@
                 const photoId = `photo_${safeGallery}_${Date.now()}_${++photoIdCounter}`;
                 const isFirst = index === 0;
                 const isLast = index === photos.length - 1;
+                const isHomePagePhoto = currentHomePagePhoto === photo.filename;
                 
                 return `
                 <div class="photo-item" draggable="true" data-index="${index}" data-filename="${safeFilename}">
-                    <div class="order-badge">#${index + 1}${isFirst ? ' 🌟' : ''}</div>
+                    <div class="order-badge">#${index + 1}${isFirst ? ' 🌟' : ''}${isHomePagePhoto ? ' 🏠' : ''}</div>
                     <img src="${photo.dataUrl}" alt="${safeFilename}" id="${photoId}">
                     <div class="overlay">
                         <div class="button-row">
                             <button onclick="movePhoto('${safeGallery}', ${index}, -1)" ${isFirst ? 'disabled style="opacity:0.3"' : ''}>⬆️ Up</button>
                             <button onclick="movePhoto('${safeGallery}', ${index}, 1)" ${isLast ? 'disabled style="opacity:0.3"' : ''}>⬇️ Down</button>
+                        </div>
+                        <div class="button-row">
+                            <button onclick="setHomePagePhoto('${safeGallery}', '${safeFilename}')" ${isHomePagePhoto ? 'style="background:var(--success);color:var(--white)"' : ''}>🏠 ${isHomePagePhoto ? 'Home Photo' : 'Set Home'}</button>
                         </div>
                         <div class="button-row">
                             <button onclick="downloadPhoto('${photoId}', '${safeFilename}')">💾 Download</button>
@@ -1621,6 +1643,31 @@
             await showGallery(category);
             updateConfigCode();
             showNotification('✓ Photo order updated', 'success');
+        }
+        
+        // Set photo as home page photo for a gallery
+        function setHomePagePhoto(category, filename) {
+            const homePagePhotos = JSON.parse(localStorage.getItem('homePagePhotos') || '{}');
+            
+            // Toggle: if already set, unset it; otherwise set it
+            if (homePagePhotos[category] === filename) {
+                delete homePagePhotos[category];
+                showNotification(`✓ Home page photo cleared for ${category}. Will use first photo.`, 'success');
+            } else {
+                homePagePhotos[category] = filename;
+                showNotification(`✓ ${filename} set as home page photo for ${category}!`, 'success');
+            }
+            
+            localStorage.setItem('homePagePhotos', JSON.stringify(homePagePhotos));
+            showGallery(category);
+            updateConfigCode();
+        }
+        
+        // Update config code in real-time
+        function updateConfigCode() {
+            if (document.getElementById('panelConfig').classList.contains('active')) {
+                generateConfig();
+            }
         }
         
         // Setup drag and drop functionality
@@ -1750,6 +1797,7 @@
         // Configuration Generator
         function generateConfig() {
             const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
+            const homePagePhotos = JSON.parse(localStorage.getItem('homePagePhotos') || '{}');
             
             const configCode = `/**
  * IMAGE CONFIGURATION
@@ -1762,6 +1810,7 @@ const portfolioConfig = {
     track: {
         title: "TRACK &<br>FIELD",
         description: "Track & Field Photography",
+        homePagePhoto: ${homePagePhotos.track ? `"${homePagePhotos.track}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
 ${(metadata.track || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
@@ -1769,6 +1818,7 @@ ${(metadata.track || []).map(p => `            "${p.filename}",`).join('\n')}
     soccer: {
         title: "SOCCER",
         description: "Soccer Photography",
+        homePagePhoto: ${homePagePhotos.soccer ? `"${homePagePhotos.soccer}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
 ${(metadata.soccer || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
@@ -1776,6 +1826,7 @@ ${(metadata.soccer || []).map(p => `            "${p.filename}",`).join('\n')}
     football: {
         title: "FOOTBALL",
         description: "Football Photography",
+        homePagePhoto: ${homePagePhotos.football ? `"${homePagePhotos.football}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
 ${(metadata.football || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
@@ -1783,6 +1834,7 @@ ${(metadata.football || []).map(p => `            "${p.filename}",`).join('\n')}
     basketball: {
         title: "BASKETBALL",
         description: "Basketball Photography",
+        homePagePhoto: ${homePagePhotos.basketball ? `"${homePagePhotos.basketball}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
 ${(metadata.basketball || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
@@ -1790,10 +1842,12 @@ ${(metadata.basketball || []).map(p => `            "${p.filename}",`).join('\n'
     bestOf: {
         title: "BEST<br>OF",
         description: "Curated Selection",
+        homePagePhoto: ${homePagePhotos.bestOf ? `"${homePagePhotos.bestOf}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
 ${(metadata.bestOf || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
     }
+};
 };
 
 // Placeholder images for empty galleries

@@ -432,46 +432,8 @@
 
     <!-- Work Grid -->
     <section class="work-section">
-        <div class="work-grid">
-            <a href="track.html" class="work-item">
-                <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&q=80" alt="Track & Field">
-                <div class="overlay">
-                    <h3>Track & Field</h3>
-                    <p class="year">View Gallery</p>
-                </div>
-            </a>
-            
-            <a href="soccer.html" class="work-item">
-                <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80" alt="Soccer">
-                <div class="overlay">
-                    <h3>Soccer</h3>
-                    <p class="year">View Gallery</p>
-                </div>
-            </a>
-            
-            <a href="football.html" class="work-item">
-                <img src="https://images.unsplash.com/photo-1566577134770-3d85bb3a9cc4?w=800&q=80" alt="Football">
-                <div class="overlay">
-                    <h3>Football</h3>
-                    <p class="year">View Gallery</p>
-                </div>
-            </a>
-            
-            <a href="basketball.html" class="work-item">
-                <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1000&q=80" alt="Basketball">
-                <div class="overlay">
-                    <h3>Basketball</h3>
-                    <p class="year">View Gallery</p>
-                </div>
-            </a>
-            
-            <a href="best-of.html" class="work-item">
-                <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=1200&q=80" alt="Best Of">
-                <div class="overlay">
-                    <h3>Best Of</h3>
-                    <p class="year">View Gallery</p>
-                </div>
-            </a>
+        <div class="work-grid" id="homeWorkGrid">
+            <!-- Gallery items will be dynamically loaded from config.js -->
         </div>
     </section>
 
@@ -524,6 +486,68 @@
         function toggleMenu() {
             document.getElementById('nav-menu').classList.toggle('active');
         }
+
+        // Load gallery images from config.js for homepage
+        document.addEventListener('DOMContentLoaded', function() {
+            const workGrid = document.getElementById('homeWorkGrid');
+            if (!workGrid) return;
+
+            const galleries = [
+                { key: 'track', name: 'Track & Field', page: 'track.html' },
+                { key: 'soccer', name: 'Soccer', page: 'soccer.html' },
+                { key: 'football', name: 'Football', page: 'football.html' },
+                { key: 'basketball', name: 'Basketball', page: 'basketball.html' },
+                { key: 'bestOf', name: 'Best Of', page: 'best-of.html' }
+            ];
+
+            galleries.forEach(gallery => {
+                const config = portfolioConfig[gallery.key];
+                if (!config) return;
+
+                // Determine which photo to use for homepage
+                let photoSrc;
+                if (config.homePagePhoto) {
+                    // Use override photo if set
+                    photoSrc = `images/${gallery.key === 'bestOf' ? 'best-of' : gallery.key}/${config.homePagePhoto}`;
+                } else if (config.images && config.images.length > 0) {
+                    // Use first photo from gallery
+                    photoSrc = `images/${gallery.key === 'bestOf' ? 'best-of' : gallery.key}/${config.images[0]}`;
+                } else {
+                    // Use placeholder from config
+                    photoSrc = placeholderImages[0];
+                }
+
+                // Create work item
+                const workItem = document.createElement('a');
+                workItem.href = gallery.page;
+                workItem.className = 'work-item';
+
+                const img = document.createElement('img');
+                img.src = photoSrc;
+                img.alt = gallery.name;
+                img.onerror = function() {
+                    // Fallback to placeholder if image fails to load
+                    this.src = placeholderImages[0];
+                };
+
+                const overlay = document.createElement('div');
+                overlay.className = 'overlay';
+                
+                const h3 = document.createElement('h3');
+                h3.textContent = gallery.name;
+                
+                const p = document.createElement('p');
+                p.className = 'year';
+                p.textContent = 'View Gallery';
+
+                overlay.appendChild(h3);
+                overlay.appendChild(p);
+                workItem.appendChild(img);
+                workItem.appendChild(overlay);
+                workGrid.appendChild(workItem);
+            });
+        });
     </script>
+    <script src="js/config.js"></script>
 </body>
 </html>

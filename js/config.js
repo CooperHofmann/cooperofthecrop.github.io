@@ -9,6 +9,7 @@ const portfolioConfig = {
     track: {
         title: "TRACK &<br>FIELD",
         description: "Track & Field Photography",
+        homePagePhoto: null, // Set to filename to override, null uses first image
         images: [
             "PB1(Track) (36 of 262).jpg",
             "PB1(Track) (11 of 262).jpg",
@@ -24,6 +25,7 @@ const portfolioConfig = {
     soccer: {
         title: "SOCCER",
         description: "Soccer Photography",
+        homePagePhoto: null, // Set to filename to override, null uses first image
         images: [
             "expo1mp (20 of 430).jpg",
             "expo1mp (192 of 430).jpg",
@@ -59,6 +61,7 @@ const portfolioConfig = {
     football: {
         title: "FOOTBALL",
         description: "Football Photography",
+        homePagePhoto: null, // Set to filename to override, null uses first image
         images: [
 
         ]
@@ -66,6 +69,7 @@ const portfolioConfig = {
     basketball: {
         title: "BASKETBALL",
         description: "Basketball Photography",
+        homePagePhoto: null, // Set to filename to override, null uses first image
         images: [
 
         ]
@@ -73,6 +77,7 @@ const portfolioConfig = {
     bestOf: {
         title: "BEST<br>OF",
         description: "Curated Selection",
+        homePagePhoto: null, // Set to filename to override, null uses first image
         images: [
 
         ]
