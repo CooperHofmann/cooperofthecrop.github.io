@@ -59,6 +59,19 @@ function createGalleryItem(imagePath, index) {
     img.alt = `Gallery image ${index + 1}`;
     img.loading = 'lazy'; // Native lazy loading
     
+    // Load image to get natural dimensions
+    img.onload = function() {
+        const aspectRatio = this.naturalWidth / this.naturalHeight;
+        
+        // Force first image to 16:9 landscape
+        if (index === 0) {
+            item.style.aspectRatio = '16 / 9';
+        } else {
+            // Use natural aspect ratio for other images
+            item.style.aspectRatio = `${aspectRatio}`;
+        }
+    };
+    
     // Error handling for broken images
     img.onerror = function() {
         console.warn(`Failed to load image: ${imagePath}`);
