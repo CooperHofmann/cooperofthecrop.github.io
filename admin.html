@@ -615,22 +615,26 @@
                 <section id="panelOverview" class="panel-section active">
                     <h2>Welcome to Your Admin Panel</h2>
                     
-                    <div class="instructions-box">
-                        <h3>⚠️ Important Information</h3>
+                    <div class="instructions-box" style="background: rgba(0, 170, 0, 0.1); border-color: var(--success);">
+                        <h3>🚀 NEW: Deploy Directly from Browser!</h3>
                         <ol>
-                            <li>This admin panel helps you manage photos <strong>locally</strong></li>
-                            <li>Upload photos to preview and organize them</li>
-                            <li>To publish changes, you need to update <code>js/config.js</code> and push to GitHub</li>
-                            <li>Use the Configuration panel to get the code to copy into your config file</li>
-                            <li>Your photos are stored in browser localStorage (not on the server yet)</li>
+                            <li>Upload photos using the <strong>Upload Photos</strong> panel</li>
+                            <li>Organize and preview your photos in the <strong>Manage Photos</strong> panel</li>
+                            <li>Go to <strong>Configuration</strong> panel</li>
+                            <li>Enter your GitHub token (one-time setup)</li>
+                            <li>Click <strong>"DEPLOY TO GITHUB NOW"</strong></li>
+                            <li>Done! Your photos are live in 1-2 minutes! 🎉</li>
                         </ol>
+                        <p style="margin-top: 15px; padding: 15px; background: var(--white); border: 2px solid var(--success);">
+                            <strong>✨ No more manual steps!</strong> Upload photos on the website and they automatically go live on GitHub!
+                        </p>
                     </div>
 
                     <h3 style="font-family: Helvetica, Arial, sans-serif; font-size: 20px; margin: 30px 0 20px;">Quick Actions</h3>
                     <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                         <button class="btn btn-blue" onclick="showPanel('upload')">⬆️ Upload New Photos</button>
                         <button class="btn" onclick="showPanel('manage')">🖼️ Browse Galleries</button>
-                        <button class="btn btn-success" onclick="showPanel('config')">⚙️ View Configuration</button>
+                        <button class="btn btn-success" onclick="showPanel('config')">🚀 Deploy to GitHub</button>
                     </div>
 
                     <h3 style="font-family: Helvetica, Arial, sans-serif; font-size: 20px; margin: 30px 0 20px;">Recent Activity</h3>
@@ -684,6 +688,13 @@
                         <button class="category-btn" data-gallery="basketball" onclick="showGallery('basketball')">🏀 BASKETBALL</button>
                         <button class="category-btn" data-gallery="bestOf" onclick="showGallery('bestOf')">⭐ BEST OF</button>
                     </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <button class="btn btn-blue" onclick="downloadAllCategoryPhotos()">💾 Download All Photos in This Category</button>
+                        <p style="margin-top: 10px; color: var(--gray); font-size: 14px;">
+                            Download all photos from the currently selected category. You can also download individual photos by hovering over them.
+                        </p>
+                    </div>
 
                     <div id="galleryGrid" class="photo-grid"></div>
                 </section>
@@ -713,7 +724,46 @@
 
                     <div style="margin-top: 20px;">
                         <button class="btn btn-success" onclick="copyConfig()">📋 Copy to Clipboard</button>
-                        <button class="btn" onclick="downloadConfig()">💾 Download as File</button>
+                        <button class="btn" onclick="downloadConfig()">💾 Download Config File</button>
+                        <button class="btn btn-blue" onclick="downloadPhotosPackage()">📦 Download Photos Package</button>
+                    </div>
+                    
+                    <div class="instructions-box" style="margin-top: 30px; background: rgba(0, 170, 0, 0.1); border-color: var(--success);">
+                        <h3>🚀 NEW: Deploy Directly to GitHub!</h3>
+                        <p style="margin-bottom: 15px;">Skip the manual steps - deploy your photos directly from the browser!</p>
+                        
+                        <div style="background: var(--white); padding: 20px; border: 2px solid var(--black); margin-bottom: 20px;">
+                            <label style="font-family: Helvetica, Arial, sans-serif; font-weight: 700; display: block; margin-bottom: 10px;">
+                                GitHub Personal Access Token:
+                            </label>
+                            <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" 
+                                   style="width: 100%; padding: 10px; border: 3px solid var(--black); font-family: Helvetica, Arial, sans-serif; font-size: 14px; margin-bottom: 10px;">
+                            <p style="font-size: 12px; color: var(--gray); margin-bottom: 5px;">
+                                Your token is stored only in your browser and never sent to any third-party servers.
+                            </p>
+                            <p style="font-size: 11px; color: var(--danger); margin-bottom: 10px;">
+                                ⚠️ <strong>Security:</strong> Tokens in localStorage can be accessed by browser extensions. Only use on trusted devices. Use a token with minimal permissions (repo access only).
+                            </p>
+                            <button class="btn" onclick="saveGitHubToken()" style="font-size: 12px; padding: 8px 16px;">💾 Save Token</button>
+                            <button class="btn" onclick="showTokenInstructions()" style="font-size: 12px; padding: 8px 16px;">❓ How to get a token?</button>
+                        </div>
+
+                        <button class="btn btn-success" onclick="deployDirectlyToGitHub()" style="font-size: 16px; padding: 15px 30px;">
+                            🚀 DEPLOY TO GITHUB NOW
+                        </button>
+                        
+                        <div id="deployStatus" style="margin-top: 15px; padding: 15px; display: none; border: 3px solid var(--black);"></div>
+                    </div>
+                    
+                    <div class="instructions-box" style="margin-top: 30px;">
+                        <h3>📦 Download Photos Package (Alternative Method)</h3>
+                        <p style="margin-bottom: 10px;">If you prefer to deploy manually, click "Download Photos Package" to get a ZIP file containing:</p>
+                        <ul style="margin-left: 20px; line-height: 1.8;">
+                            <li>All photos organized in their category folders (track, soccer, football, basketball, best-of)</li>
+                            <li>Updated <code>config.js</code> file</li>
+                            <li>README with deployment instructions</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>To deploy:</strong> Extract the ZIP, copy files to your repository, commit and push!</p>
                     </div>
                 </section>
 
@@ -751,15 +801,19 @@
                     <div style="margin-bottom: 30px;">
                         <h3 style="font-family: Helvetica, Arial, sans-serif; font-size: 20px; margin-bottom: 15px;">🚀 Publishing Changes</h3>
                         <p style="line-height: 1.8; margin-bottom: 15px;">
-                            To make your changes live:
+                            <strong>NEW: Easy one-click deployment!</strong>
                         </p>
                         <ol style="margin-left: 30px; line-height: 1.8;">
                             <li>Go to the Configuration panel</li>
-                            <li>Copy the generated configuration code</li>
-                            <li>Paste it into <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">js/config.js</code></li>
-                            <li>Upload actual image files to the appropriate <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">images/</code> folders</li>
-                            <li>Commit and push to GitHub</li>
+                            <li>Click <strong>"Download Photos Package"</strong> button</li>
+                            <li>Extract the downloaded ZIP file</li>
+                            <li>Copy the <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">images/</code> and <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">js/</code> folders to your repository (replace when prompted)</li>
+                            <li>Commit and push to GitHub: <code style="background: var(--light-gray); padding: 3px 8px; border: 1px solid var(--black);">git add . && git commit -m "Update photos" && git push</code></li>
+                            <li>Wait 1-2 minutes for GitHub Pages to deploy</li>
                         </ol>
+                        <p style="margin-top: 15px; padding: 15px; background: rgba(0, 170, 0, 0.1); border: 2px solid var(--success);">
+                            <strong>💡 New Feature:</strong> The Photos Package includes all your photos AND the updated config file. No manual code editing required!
+                        </p>
                     </div>
 
                     <div style="background: var(--light-gray); padding: 25px; border: 3px solid var(--black);">
@@ -776,6 +830,14 @@
     <!-- Notification -->
     <div id="notification" class="notification"></div>
 
+    <!-- JSZip for creating ZIP files (loaded from CDN with integrity check) -->
+    <!-- Using JSZip v3.10.1 (latest stable as of Jan 2024) for ZIP file creation -->
+    <!-- SRI hash ensures the script hasn't been tampered with -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" 
+            integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" 
+            crossorigin="anonymous"></script>
+    <!-- Fallback notice will be shown in the downloadPhotosPackage function if JSZip fails to load -->
+    
     <script src="js/config.js"></script>
     <script>
         // Admin PIN (change this to your desired PIN)
@@ -794,13 +856,23 @@
         // Current selected category for upload
         let currentCategory = 'track';
         let currentGallery = 'track';
+        let photoIdCounter = 0; // Counter to ensure unique photo IDs
 
         // Initialize
         window.addEventListener('DOMContentLoaded', () => {
             initPinAuth();
             loadPhotosFromStorage();
             updateStats();
+            loadSavedGitHubToken();
         });
+
+        // Load saved GitHub token into the field
+        function loadSavedGitHubToken() {
+            const savedToken = localStorage.getItem('githubToken');
+            if (savedToken) {
+                document.getElementById('githubToken').value = savedToken;
+            }
+        }
 
         // PIN Authentication
         function initPinAuth() {
@@ -1080,15 +1152,69 @@
             galleryGrid.innerHTML = photos.map(photo => {
                 const safeFilename = escapeHtml(photo.filename);
                 const safeGallery = escapeHtml(gallery);
+                // Create a unique ID for each photo using timestamp + counter to prevent collisions
+                const photoId = `photo_${safeGallery}_${Date.now()}_${++photoIdCounter}`;
                 return `
                 <div class="photo-item">
-                    <img src="${photo.dataUrl}" alt="${safeFilename}">
+                    <img src="${photo.dataUrl}" alt="${safeFilename}" id="${photoId}">
                     <div class="overlay">
+                        <button onclick="downloadPhoto('${photoId}', '${safeFilename}')">💾 Download</button>
                         <button onclick="deletePhoto('${safeGallery}', '${safeFilename}')">🗑️ Delete</button>
                     </div>
                 </div>
             `;
             }).join('');
+        }
+
+        // Constants
+        const DOWNLOAD_DELAY_MS = 200; // Delay between multiple file downloads to avoid browser blocking
+
+        // Helper function to trigger file download
+        function triggerDownload(dataUrl, filename) {
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = filename;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            // Use setTimeout to ensure click event completes before removing
+            setTimeout(() => {
+                document.body.removeChild(a);
+            }, 100);
+        }
+
+        // Download individual photo
+        function downloadPhoto(photoId, filename) {
+            const img = document.getElementById(photoId);
+            if (!img) {
+                showNotification('❌ Photo not found', 'error');
+                return;
+            }
+            const dataUrl = img.src;
+            triggerDownload(dataUrl, filename);
+            showNotification(`✓ ${filename} downloaded!`, 'success');
+        }
+
+        // Download all photos from current category
+        function downloadAllCategoryPhotos() {
+            const photos = getPhotos(currentGallery);
+            if (photos.length === 0) {
+                showNotification('❌ No photos in this category to download.', 'error');
+                return;
+            }
+
+            showNotification(`📥 Downloading ${photos.length} photo${photos.length !== 1 ? 's' : ''}...`, 'success');
+            
+            // Download each photo with a slight delay to avoid browser blocking
+            photos.forEach((photo, index) => {
+                setTimeout(() => {
+                    triggerDownload(photo.dataUrl, photo.filename);
+                    
+                    if (index === photos.length - 1) {
+                        showNotification(`✓ All ${photos.length} photo${photos.length !== 1 ? 's' : ''} downloaded!`, 'success');
+                    }
+                }, index * DOWNLOAD_DELAY_MS);
+            });
         }
 
         // Stats Update
@@ -1183,14 +1309,527 @@ const placeholderImages = [
             const configCode = document.getElementById('configCode').value;
             const blob = new Blob([configCode], { type: 'text/javascript' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'config.js';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            triggerDownload(url, 'config.js');
             URL.revokeObjectURL(url);
             showNotification('✓ Configuration downloaded!', 'success');
+        }
+
+        // Download Photos Package as ZIP
+        async function downloadPhotosPackage() {
+            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            
+            // Check if there are any photos
+            const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+            if (totalPhotos === 0) {
+                showNotification('❌ No photos to download. Please upload some photos first.', 'error');
+                return;
+            }
+
+            // Check if JSZip is available
+            if (typeof JSZip === 'undefined') {
+                // Fallback: Download files individually
+                const proceed = confirm('JSZip library is not available. Would you like to download the config file and instructions instead?\n\n(Note: You will need to save photos manually from the Manage Photos section)');
+                if (proceed) {
+                    downloadConfig();
+                    downloadDeploymentInstructions();
+                    showNotification('⚠️ Config downloaded. Please save photos manually from Manage Photos section.', 'error');
+                }
+                return;
+            }
+
+            showNotification('📦 Creating package... This may take a moment.', 'success');
+
+            try {
+                const zip = new JSZip();
+                
+                // Add photos to appropriate folders
+                const categories = {
+                    track: 'track',
+                    soccer: 'soccer',
+                    football: 'football',
+                    basketball: 'basketball',
+                    bestOf: 'best-of'
+                };
+
+                for (const [category, folderName] of Object.entries(categories)) {
+                    const categoryPhotos = photos[category] || [];
+                    if (categoryPhotos.length > 0) {
+                        const folder = zip.folder(`images/${folderName}`);
+                        for (const photo of categoryPhotos) {
+                            // Convert base64 to blob
+                            const base64Data = photo.dataUrl.split(',')[1];
+                            folder.file(photo.filename, base64Data, {base64: true});
+                        }
+                    }
+                }
+
+                // Add config.js file
+                const configCode = document.getElementById('configCode').value;
+                zip.folder('js').file('config.js', configCode);
+
+                // Add README with instructions
+                const readme = `# Photo Package - Ready to Deploy
+
+## What's in this package?
+
+This ZIP file contains:
+- All your photos organized in the images/ folders
+- Updated config.js file
+- This README with deployment instructions
+
+## How to deploy these changes:
+
+### Option 1: Quick Deploy (Recommended)
+1. Extract this ZIP file
+2. Copy the \`images/\` and \`js/\` folders to your repository
+3. When prompted, choose to replace/merge existing folders
+4. Open terminal/command prompt in your repository folder
+5. Run these commands:
+   \`\`\`
+   git add .
+   git commit -m "Update portfolio photos"
+   git push
+   \`\`\`
+6. Wait 1-2 minutes for GitHub Pages to deploy
+7. Visit your site to see the changes!
+
+### Option 2: Manual Verification
+1. Extract this ZIP file
+2. Copy each image file to its corresponding folder in your repo:
+   - images/track/ → Track photos
+   - images/soccer/ → Soccer photos
+   - images/football/ → Football photos
+   - images/basketball/ → Basketball photos
+   - images/best-of/ → Best Of photos
+3. Replace js/config.js with the new config.js file
+4. Verify files are in the correct locations
+5. Commit and push:
+   \`\`\`
+   git add .
+   git commit -m "Update portfolio photos"
+   git push
+   \`\`\`
+
+## Photo Summary
+
+Generated on: ${new Date().toLocaleString()}
+
+${Object.entries(categories).map(([category, folderName]) => {
+    const count = (photos[category] || []).length;
+    return `- ${folderName}: ${count} photo${count !== 1 ? 's' : ''}`;
+}).join('\n')}
+
+Total: ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''}
+
+## Need Help?
+
+If you encounter any issues:
+1. Make sure you're in your repository folder
+2. Check that Git is installed (\`git --version\`)
+3. Verify you have access to push to the repository
+4. See ADMIN_GUIDE.md in your repository for more details
+
+---
+
+Generated by Cooper of the Crop Admin Panel
+`;
+                
+                zip.file('README-DEPLOYMENT.txt', readme);
+
+                // Generate ZIP file
+                const content = await zip.generateAsync({
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                });
+
+                // Download the ZIP file
+                const url = URL.createObjectURL(content);
+                triggerDownload(url, `portfolio-photos-${new Date().toISOString().split('T')[0]}.zip`);
+                URL.revokeObjectURL(url);
+
+                showNotification(`✓ Package downloaded! Contains ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''}.`, 'success');
+            } catch (error) {
+                console.error('Error creating ZIP:', error);
+                showNotification('❌ Failed to create package. Try downloading config and photos separately.', 'error');
+            }
+        }
+
+        // Download deployment instructions as a fallback
+        function downloadDeploymentInstructions() {
+            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+            
+            const categories = {
+                track: 'track',
+                soccer: 'soccer',
+                football: 'football',
+                basketball: 'basketball',
+                bestOf: 'best-of'
+            };
+
+            const instructions = `# Photo Deployment Instructions
+
+## Overview
+You have ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''} ready to deploy to your portfolio.
+
+## Photo Summary
+${Object.entries(categories).map(([category, folderName]) => {
+    const count = (photos[category] || []).length;
+    return `- ${folderName}: ${count} photo${count !== 1 ? 's' : ''}`;
+}).join('\n')}
+
+## Deployment Steps
+
+### Step 1: Save Photos
+1. Go to the "Manage Photos" section in the admin panel
+2. For each category with photos:
+   - Click on the category tab
+   - Right-click each photo and select "Save Image As..."
+   - Save to a folder on your computer (organize by category)
+
+### Step 2: Copy Photos to Repository
+1. Open your repository folder on your computer
+2. Navigate to the images/ folder
+3. Copy your saved photos to the appropriate subfolders:
+   - Track photos → images/track/
+   - Soccer photos → images/soccer/
+   - Football photos → images/football/
+   - Basketball photos → images/basketball/
+   - Best Of photos → images/best-of/
+
+### Step 3: Update Configuration
+The config.js file has already been downloaded separately.
+1. Replace your repository's js/config.js with the downloaded file
+
+### Step 4: Deploy to GitHub
+1. Open terminal/command prompt in your repository folder
+2. Run these commands:
+   \`\`\`
+   git add .
+   git commit -m "Update portfolio photos"
+   git push
+   \`\`\`
+3. Wait 1-2 minutes for GitHub Pages to deploy
+4. Visit your website to see the changes
+
+## Filenames
+Make sure the filenames match exactly (case-sensitive):
+
+${Object.entries(categories).map(([category, folderName]) => {
+    const categoryPhotos = photos[category] || [];
+    if (categoryPhotos.length === 0) return '';
+    return `### ${folderName}:\n${categoryPhotos.map(p => `- ${p.filename}`).join('\n')}`;
+}).filter(Boolean).join('\n\n')}
+
+## Need Help?
+- Check that filenames match exactly (including extensions)
+- Verify photos are in the correct folders
+- Make sure you have permission to push to the repository
+- See ADMIN_GUIDE.md in your repository for more details
+
+---
+
+Generated by Cooper of the Crop Admin Panel on ${new Date().toLocaleString()}
+`;
+
+            const blob = new Blob([instructions], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            triggerDownload(url, 'DEPLOYMENT-INSTRUCTIONS.txt');
+            URL.revokeObjectURL(url);
+        }
+
+        // ========== GitHub API Integration ==========
+        
+        // GitHub repository configuration
+        const GITHUB_OWNER = 'CooperHofmann';
+        const GITHUB_REPO = 'cooperofthecrop.github.io';
+        const GITHUB_BRANCH = 'main'; // or 'master' depending on your default branch
+
+        // Save GitHub token to localStorage
+        function saveGitHubToken() {
+            const token = document.getElementById('githubToken').value.trim();
+            if (!token) {
+                showNotification('❌ Please enter a GitHub token', 'error');
+                return;
+            }
+            
+            if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+                showNotification('⚠️ Token should start with "ghp_" or "github_pat_"', 'error');
+                return;
+            }
+
+            localStorage.setItem('githubToken', token);
+            showNotification('✓ GitHub token saved securely in your browser!', 'success');
+        }
+
+        // Show instructions for creating GitHub token
+        function showTokenInstructions() {
+            const instructions = `
+HOW TO CREATE A GITHUB PERSONAL ACCESS TOKEN:
+
+1. Go to GitHub.com and log in to your account
+2. Click your profile picture (top right) → Settings
+3. Scroll down and click "Developer settings" (bottom left)
+4. Click "Personal access tokens" → "Tokens (classic)"
+5. Click "Generate new token" → "Generate new token (classic)"
+6. Name it: "Portfolio Admin Panel"
+7. Select expiration (recommend: 90 days)
+8. Check these permissions:
+   ✓ repo (Full control of private repositories)
+9. Click "Generate token" at the bottom
+10. COPY THE TOKEN IMMEDIATELY (you won't see it again!)
+11. Paste it in the field above and click "Save Token"
+
+⚠️ IMPORTANT: Keep your token secret! Don't share it with anyone.
+Your token is stored only in your browser's localStorage.
+            `.trim();
+
+            alert(instructions);
+        }
+
+        // Deploy directly to GitHub using GitHub API
+        async function deployDirectlyToGitHub() {
+            const statusDiv = document.getElementById('deployStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = 'var(--light-gray)';
+            statusDiv.innerHTML = '⏳ Starting deployment...';
+
+            // Get GitHub token
+            const token = localStorage.getItem('githubToken');
+            if (!token) {
+                statusDiv.style.background = 'rgba(204, 0, 0, 0.1)';
+                statusDiv.innerHTML = '❌ No GitHub token found. Please enter and save your token first.';
+                showNotification('❌ GitHub token required', 'error');
+                return;
+            }
+
+            // Get photos from localStorage
+            const photos = JSON.parse(localStorage.getItem('adminPhotos') || '{}');
+            const totalPhotos = Object.values(photos).reduce((sum, arr) => sum + arr.length, 0);
+            
+            if (totalPhotos === 0) {
+                statusDiv.style.background = 'rgba(204, 0, 0, 0.1)';
+                statusDiv.innerHTML = '❌ No photos to deploy. Please upload some photos first.';
+                showNotification('❌ No photos to deploy', 'error');
+                return;
+            }
+
+            try {
+                statusDiv.innerHTML = '⏳ Connecting to GitHub...';
+                
+                // Get current branch SHA
+                const branchResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/refs/heads/${GITHUB_BRANCH}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!branchResponse.ok) {
+                    throw new Error(`Failed to get branch info: ${branchResponse.status} ${branchResponse.statusText}`);
+                }
+
+                const branchData = await branchResponse.json();
+                const currentCommitSha = branchData.object.sha;
+
+                statusDiv.innerHTML = '⏳ Getting repository tree...';
+
+                // Get current commit tree
+                const commitResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/commits/${currentCommitSha}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!commitResponse.ok) {
+                    throw new Error(`Failed to get commit: ${commitResponse.status}`);
+                }
+
+                const commitData = await commitResponse.json();
+                const baseTreeSha = commitData.tree.sha;
+
+                statusDiv.innerHTML = '⏳ Preparing files for upload...';
+
+                // Create blobs for all photos and config
+                const treeItems = [];
+                const categories = {
+                    track: 'track',
+                    soccer: 'soccer',
+                    football: 'football',
+                    basketball: 'basketball',
+                    bestOf: 'best-of'
+                };
+
+                let uploadedCount = 0;
+                
+                // Upload photos
+                for (const [category, folderName] of Object.entries(categories)) {
+                    const categoryPhotos = photos[category] || [];
+                    
+                    for (const photo of categoryPhotos) {
+                        statusDiv.innerHTML = `⏳ Uploading photo ${++uploadedCount} of ${totalPhotos}...`;
+                        
+                        // Remove data URL prefix to get base64 content
+                        const base64Content = photo.dataUrl.split(',')[1];
+                        
+                        // Create blob for photo
+                        const blobResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/vnd.github.v3+json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                content: base64Content,
+                                encoding: 'base64'
+                            })
+                        });
+
+                        if (!blobResponse.ok) {
+                            throw new Error(`Failed to create blob for ${photo.filename}: ${blobResponse.status}`);
+                        }
+
+                        const blobData = await blobResponse.json();
+                        
+                        treeItems.push({
+                            path: `images/${folderName}/${photo.filename}`,
+                            mode: '100644',
+                            type: 'blob',
+                            sha: blobData.sha
+                        });
+                    }
+                }
+
+                statusDiv.innerHTML = '⏳ Uploading configuration file...';
+
+                // Create blob for config.js
+                const configCode = document.getElementById('configCode').value;
+                const configBlobResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        content: btoa(encodeURIComponent(configCode).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1))),
+                        encoding: 'base64'
+                    })
+                });
+
+                if (!configBlobResponse.ok) {
+                    throw new Error(`Failed to create blob for config.js: ${configBlobResponse.status}`);
+                }
+
+                const configBlobData = await configBlobResponse.json();
+                treeItems.push({
+                    path: 'js/config.js',
+                    mode: '100644',
+                    type: 'blob',
+                    sha: configBlobData.sha
+                });
+
+                statusDiv.innerHTML = '⏳ Creating commit...';
+
+                // Create new tree
+                const treeResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        base_tree: baseTreeSha,
+                        tree: treeItems
+                    })
+                });
+
+                if (!treeResponse.ok) {
+                    throw new Error(`Failed to create tree: ${treeResponse.status}`);
+                }
+
+                const treeData = await treeResponse.json();
+
+                // Create new commit
+                const newCommitResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/commits`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Update portfolio: Add ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''} via Admin Panel`,
+                        tree: treeData.sha,
+                        parents: [currentCommitSha]
+                    })
+                });
+
+                if (!newCommitResponse.ok) {
+                    throw new Error(`Failed to create commit: ${newCommitResponse.status}`);
+                }
+
+                const newCommitData = await newCommitResponse.json();
+
+                statusDiv.innerHTML = '⏳ Pushing to GitHub...';
+
+                // Update branch reference
+                const updateRefResponse = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/refs/heads/${GITHUB_BRANCH}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sha: newCommitData.sha,
+                        force: false
+                    })
+                });
+
+                if (!updateRefResponse.ok) {
+                    throw new Error(`Failed to update branch: ${updateRefResponse.status}`);
+                }
+
+                statusDiv.style.background = 'rgba(0, 170, 0, 0.2)';
+                statusDiv.innerHTML = `
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--success); margin-bottom: 10px;">🎉 Deployment Successful!</h3>
+                        <p style="margin-bottom: 15px;">
+                            ✓ Uploaded ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''}<br>
+                            ✓ Updated config.js<br>
+                            ✓ Committed to ${GITHUB_BRANCH} branch<br>
+                        </p>
+                        <p style="font-size: 14px; color: var(--gray);">
+                            Your changes are live! GitHub Pages will update in 1-2 minutes.<br>
+                            <a href="https://${GITHUB_OWNER.toLowerCase()}.github.io/" target="_blank" style="color: var(--blue);">View your website →</a>
+                        </p>
+                    </div>
+                `;
+                
+                showNotification(`🎉 Successfully deployed ${totalPhotos} photo${totalPhotos !== 1 ? 's' : ''} to GitHub!`, 'success');
+
+            } catch (error) {
+                console.error('Deployment error:', error);
+                statusDiv.style.background = 'rgba(204, 0, 0, 0.1)';
+                statusDiv.innerHTML = `
+                    <h3 style="color: var(--danger); margin-bottom: 10px;">❌ Deployment Failed</h3>
+                    <p style="margin-bottom: 10px;">Error: ${error.message}</p>
+                    <p style="font-size: 12px; color: var(--gray);">
+                        Common issues:<br>
+                        • Invalid or expired GitHub token<br>
+                        • Token doesn't have "repo" permission<br>
+                        • Repository name or owner is incorrect<br>
+                        • Network connection issues
+                    </p>
+                    <button class="btn" onclick="showTokenInstructions()" style="margin-top: 10px;">❓ How to fix?</button>
+                `;
+                showNotification('❌ Deployment failed. See details above.', 'error');
+            }
         }
 
         // Notification System
