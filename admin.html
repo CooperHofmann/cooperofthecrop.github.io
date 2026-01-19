@@ -1399,7 +1399,7 @@
                         const compressedSize = (base64Data.length * BASE64_OVERHEAD / 1024);
                         const compressionRatio = Math.max(0, Math.round((1 - compressedSize / originalSize) * 100));
                         
-                        savePhoto(currentCategory, file.name, compressedDataUrl);
+                        await savePhoto(currentCategory, file.name, compressedDataUrl);
                         
                         if (compressionRatio > 0) {
                             showNotification(`✓ ${file.name} compressed (${compressionRatio}% smaller) and uploaded to ${currentCategory}!`, 'success');
