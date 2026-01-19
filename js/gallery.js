@@ -34,13 +34,15 @@ function initGallery(category) {
     const basePath = config.images.length > 0 ? `images/${category}/` : '';
 
     // Generate gallery items
+    // First image (index 0) is featured/title image only, don't show in grid
+    // Start from index 1 for the grid display
     images.forEach((image, index) => {
         const imagePath = basePath ? `${basePath}${image}` : image;
         const galleryItem = createGalleryItem(imagePath, index);
         galleryGrid.appendChild(galleryItem);
     });
 
-    // Initialize lightbox
+    // Initialize lightbox with all images (including first one)
     initLightbox();
 }
 
@@ -49,7 +51,8 @@ function createGalleryItem(imagePath, index) {
     const item = document.createElement('div');
     item.className = 'gallery-item';
     
-    // Add featured class to first item
+    // First image is featured/title only - it still gets the class for styling
+    // but we'll handle it specially
     if (index === 0) {
         item.classList.add('gallery-featured');
     }
