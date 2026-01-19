@@ -114,6 +114,7 @@ nav a:hover {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 20px;
+    grid-auto-flow: dense;
 }
 
 .gallery-item {
@@ -128,19 +129,6 @@ nav a:hover {
     transform: translateY(-4px);
 }
 
-/* Varying heights for brutalist asymmetry */
-.gallery-item:nth-child(3n+1) {
-    min-height: 500px;
-}
-
-.gallery-item:nth-child(3n+2) {
-    min-height: 350px;
-}
-
-.gallery-item:nth-child(3n+3) {
-    min-height: 600px;
-}
-
 .gallery-item img {
     width: 100%;
     height: 100%;
@@ -153,10 +141,10 @@ nav a:hover {
     transform: scale(1.05);
 }
 
-/* Featured Image - Full Width */
+/* Featured Image - Full Width 16:9 */
 .gallery-featured {
     grid-column: 1 / -1;
-    min-height: 600px !important;
+    aspect-ratio: 16 / 9;
     margin-bottom: 20px;
 }
 
@@ -303,10 +291,6 @@ footer p {
     
     .gallery-grid {
         grid-template-columns: 1fr;
-    }
-    
-    .gallery-item {
-        min-height: 400px !important;
     }
     
     nav {
