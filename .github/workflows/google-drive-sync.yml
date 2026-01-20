@@ -1,0 +1,303 @@
+name: Google Drive Image Sync
+
+on:
+  repository_dispatch:
+    types: [sync-google-drive-images]
+  workflow_dispatch:
+    inputs:
+      folder_link:
+        description: 'Google Drive folder link'
+        required: true
+        type: string
+      category:
+        description: 'Category (track/soccer/football/basketball/best-of)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  sync-images:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib Pillow
+      
+      - name: Extract folder ID from link
+        id: extract_id
+        run: |
+          # Extract folder ID from various Google Drive URL formats
+          FOLDER_LINK="${{ github.event.client_payload.folder_link || github.event.inputs.folder_link }}"
+          echo "Input folder link: $FOLDER_LINK"
+          
+          # Validate input to prevent command injection
+          if [[ ! "$FOLDER_LINK" =~ ^[a-zA-Z0-9_/:.?=-]+$ ]]; then
+            echo "Error: Invalid characters in folder link"
+            exit 1
+          fi
+          
+          # Pattern 1: https://drive.google.com/drive/folders/FOLDER_ID
+          if [[ $FOLDER_LINK =~ /folders/([a-zA-Z0-9_-]+) ]]; then
+            FOLDER_ID="${BASH_REMATCH[1]}"
+          # Pattern 2: https://drive.google.com/drive/u/0/folders/FOLDER_ID
+          elif [[ $FOLDER_LINK =~ /u/[0-9]+/folders/([a-zA-Z0-9_-]+) ]]; then
+            FOLDER_ID="${BASH_REMATCH[1]}"
+          # Pattern 3: Direct folder ID
+          elif [[ $FOLDER_LINK =~ ^[a-zA-Z0-9_-]+$ ]]; then
+            FOLDER_ID="$FOLDER_LINK"
+          else
+            echo "Error: Could not extract folder ID from link"
+            exit 1
+          fi
+          
+          # Validate extracted folder ID format
+          if [[ ! "$FOLDER_ID" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+            echo "Error: Invalid folder ID format"
+            exit 1
+          fi
+          
+          echo "folder_id=$FOLDER_ID" >> $GITHUB_OUTPUT
+          echo "Extracted folder ID: $FOLDER_ID"
+      
+      - name: Create credentials file
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > /tmp/service-account-key.json
+      
+      - name: Download images from Google Drive
+        id: download
+        env:
+          FOLDER_ID: ${{ steps.extract_id.outputs.folder_id }}
+          CATEGORY: ${{ github.event.client_payload.category || github.event.inputs.category }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import os
+          import io
+          import json
+          from google.oauth2 import service_account
+          from googleapiclient.discovery import build
+          from googleapiclient.http import MediaIoBaseDownload
+          from PIL import Image
+          
+          # Configuration
+          SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
+          SERVICE_ACCOUNT_FILE = '/tmp/service-account-key.json'
+          
+          folder_id = os.environ['FOLDER_ID']
+          category = os.environ['CATEGORY']
+          
+          # Map category to directory name
+          category_map = {
+              'track': 'track',
+              'soccer': 'soccer',
+              'football': 'football',
+              'basketball': 'basketball',
+              'best-of': 'best-of'
+          }
+          
+          if category not in category_map:
+              print(f"Error: Invalid category '{category}'")
+              exit(1)
+          
+          target_dir = f"images/{category_map[category]}"
+          os.makedirs(target_dir, exist_ok=True)
+          
+          print(f"Downloading images from folder {folder_id} to {target_dir}")
+          
+          # Authenticate with Google Drive API
+          credentials = service_account.Credentials.from_service_account_file(
+              SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+          service = build('drive', 'v3', credentials=credentials)
+          
+          # List files in the folder
+          query = f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false"
+          results = service.files().list(
+              q=query,
+              pageSize=100,
+              fields="nextPageToken, files(id, name, mimeType)"
+          ).execute()
+          
+          files = results.get('files', [])
+          
+          if not files:
+              print("No image files found in the folder")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write(f"file_count=0\n")
+                  f.write(f"status=no_files\n")
+              exit(0)
+          
+          print(f"Found {len(files)} image(s)")
+          
+          downloaded_files = []
+          failed_files = []
+          for file in files:
+              print(f"Downloading: {file['name']}")
+              
+              try:
+                  # Download file
+                  request = service.files().get_media(fileId=file['id'])
+                  fh = io.BytesIO()
+                  downloader = MediaIoBaseDownload(fh, request)
+                  
+                  done = False
+                  while done is False:
+                      status, done = downloader.next_chunk()
+                  
+                  # Save file
+                  file_path = os.path.join(target_dir, file['name'])
+                  
+                  # Open with PIL to verify it's a valid image and convert if needed
+                  fh.seek(0)
+                  img = Image.open(fh)
+                  
+                  # Convert RGBA to RGB if needed (for JPEG compatibility)
+                  if img.mode == 'RGBA':
+                      rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+                      rgb_img.paste(img, mask=img.split()[3])
+                      img = rgb_img
+                  
+                  # Save as JPEG with optimization
+                  if file['name'].lower().endswith(('.jpg', '.jpeg')):
+                      img.save(file_path, 'JPEG', quality=85, optimize=True)
+                  elif file['name'].lower().endswith('.png'):
+                      img.save(file_path, 'PNG', optimize=True)
+                  else:
+                      # Default to JPEG for other formats
+                      base_name = os.path.splitext(file['name'])[0]
+                      file_path = os.path.join(target_dir, f"{base_name}.jpg")
+                      img.save(file_path, 'JPEG', quality=85, optimize=True)
+                  
+                  downloaded_files.append(os.path.basename(file_path))
+                  print(f"  ✓ Saved: {file_path}")
+                  
+              except Exception as e:
+                  print(f"  ✗ Error downloading {file['name']}: {str(e)}")
+                  failed_files.append(file['name'])
+          
+          print(f"\nSuccessfully downloaded {len(downloaded_files)} file(s)")
+          if failed_files:
+              print(f"Failed to download {len(failed_files)} file(s): {', '.join(failed_files)}")
+          
+          # Output results
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"file_count={len(downloaded_files)}\n")
+              f.write(f"failed_count={len(failed_files)}\n")
+              if len(downloaded_files) > 0:
+                  f.write(f"status=success\n")
+              else:
+                  f.write(f"status=no_success\n")
+              f.write(f"files={json.dumps(downloaded_files)}\n")
+          PYTHON_SCRIPT
+      
+      - name: Update config.js
+        if: steps.download.outputs.status == 'success'
+        env:
+          CATEGORY: ${{ github.event.client_payload.category || github.event.inputs.category }}
+          FILES: ${{ steps.download.outputs.files }}
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import os
+          import json
+          import re
+          
+          category = os.environ['CATEGORY']
+          new_files = json.loads(os.environ['FILES'])
+          
+          # Map category names
+          category_map = {
+              'track': 'track',
+              'soccer': 'soccer',
+              'football': 'football',
+              'basketball': 'basketball',
+              'best-of': 'bestOf'
+          }
+          
+          config_key = category_map[category]
+          config_path = 'js/config.js'
+          
+          print(f"Updating config.js for category '{config_key}' with {len(new_files)} file(s)")
+          
+          # Read current config
+          with open(config_path, 'r') as f:
+              config_content = f.read()
+          
+          # Find the images array for this category - updated pattern
+          pattern = rf'({config_key}:\s*\{{[^}}]*?images:\s*\[)([^\]]*?)(\s*\])'
+          
+          if not re.search(pattern, config_content, flags=re.DOTALL):
+              print(f"Error: Could not find images array for category '{config_key}'")
+              exit(1)
+          
+          def update_images(match):
+              prefix = match.group(1)
+              current_images_str = match.group(2)
+              suffix = match.group(3)
+              
+              # Parse existing images
+              existing_images = []
+              for line in current_images_str.split('\n'):
+                  line = line.strip()
+                  if line and line.startswith('"'):
+                      # Extract filename, handling various quote patterns
+                      img = line.strip().strip('",').strip('"').strip()
+                      if img and img not in new_files:
+                          existing_images.append(img)
+              
+              # Combine existing and new images (new images first)
+              all_images = new_files + existing_images
+              
+              # Format as JavaScript array
+              images_str = '\n' + '\n'.join([f'            "{img}",' for img in all_images]) + '\n        '
+              
+              return f'{prefix}{images_str}{suffix}'
+          
+          # Update the config
+          try:
+              updated_config = re.sub(pattern, update_images, config_content, flags=re.DOTALL)
+          except Exception as e:
+              print(f"Error updating config: {str(e)}")
+              exit(1)
+          
+          # Write back
+          with open(config_path, 'w') as f:
+              f.write(updated_config)
+          
+          print("Config updated successfully")
+          PYTHON_SCRIPT
+      
+      - name: Commit and push changes
+        if: steps.download.outputs.status == 'success'
+        env:
+          CATEGORY: ${{ github.event.client_payload.category || github.event.inputs.category }}
+          FILE_COUNT: ${{ steps.download.outputs.file_count }}
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+          git add images/ js/config.js
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Add $FILE_COUNT image(s) from Google Drive to $CATEGORY"
+            git push
+            echo "Changes pushed successfully"
+          fi
+      
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -f /tmp/service-account-key.json

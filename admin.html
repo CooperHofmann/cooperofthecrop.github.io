@@ -649,6 +649,7 @@
                 <ul class="sidebar-menu">
                     <li><a onclick="showPanel('overview', event)" class="active">📊 Overview</a></li>
                     <li><a onclick="showPanel('upload', event)">⬆️ Upload Photos</a></li>
+                    <li><a onclick="showPanel('googledrive', event)">☁️ Google Drive</a></li>
                     <li><a onclick="showPanel('manage', event)">🖼️ Manage Photos</a></li>
                     <li><a onclick="showPanel('config', event)">⚙️ Configuration</a></li>
                     <li><a onclick="showPanel('help', event)">❓ Help</a></li>
@@ -720,6 +721,59 @@
                     <input type="file" id="fileInput" multiple accept="image/*">
 
                     <div id="previewGrid" class="photo-grid"></div>
+                </section>
+
+                <!-- Google Drive Panel -->
+                <section id="panelGoogledrive" class="panel-section">
+                    <h2>Import from Google Drive</h2>
+                    
+                    <div class="instructions-box" style="background: rgba(0, 102, 204, 0.1); border-color: var(--blue);">
+                        <h3>☁️ How to Import from Google Drive</h3>
+                        <ol>
+                            <li>Create a folder in Google Drive and add your images</li>
+                            <li>Right-click the folder and select "Share" → "Anyone with the link"</li>
+                            <li>Copy the folder link</li>
+                            <li>Paste the link below and select a category</li>
+                            <li>Click "Import Images" - GitHub Actions will download and add them to your repository</li>
+                        </ol>
+                        <p style="margin-top: 15px; padding: 15px; background: var(--white); border: 2px solid var(--blue);">
+                            <strong>✨ Automatic Workflow:</strong> This triggers a GitHub Actions workflow that downloads images from Google Drive and commits them to your repository. The process takes 2-5 minutes depending on the number of images.
+                        </p>
+                    </div>
+
+                    <div style="background: var(--white); padding: 20px; border: 2px solid var(--black); margin-bottom: 20px;">
+                        <h3 style="font-family: Helvetica, Arial, sans-serif; margin-bottom: 15px;">Google Drive Folder Link</h3>
+                        <input type="text" id="driveFolderLink" placeholder="https://drive.google.com/drive/folders/..." 
+                               style="width: 100%; padding: 15px; border: 3px solid var(--black); font-family: Helvetica, Arial, sans-serif; font-size: 14px; margin-bottom: 15px;">
+                        
+                        <h3 style="font-family: Helvetica, Arial, sans-serif; margin: 20px 0 15px;">Select Category</h3>
+                        <div class="category-selector" style="margin-bottom: 20px;">
+                            <button class="category-btn active" data-category="track" onclick="selectDriveCategory('track', event)">📸 TRACK</button>
+                            <button class="category-btn" data-category="soccer" onclick="selectDriveCategory('soccer', event)">⚽ SOCCER</button>
+                            <button class="category-btn" data-category="football" onclick="selectDriveCategory('football', event)">🏈 FOOTBALL</button>
+                            <button class="category-btn" data-category="basketball" onclick="selectDriveCategory('basketball', event)">🏀 BASKETBALL</button>
+                            <button class="category-btn" data-category="best-of" onclick="selectDriveCategory('best-of', event)">⭐ BEST OF</button>
+                        </div>
+                        
+                        <button class="btn btn-success" onclick="importFromGoogleDrive()" style="font-size: 16px; padding: 15px 30px; width: 100%;">
+                            ☁️ IMPORT IMAGES FROM GOOGLE DRIVE
+                        </button>
+                    </div>
+                    
+                    <div id="driveImportStatus" style="display: none; padding: 20px; border: 3px solid var(--black); margin-bottom: 20px;"></div>
+                    
+                    <div class="instructions-box" style="background: rgba(255, 153, 0, 0.1); border-color: var(--warning);">
+                        <h3>⚙️ Setup Required (One-Time)</h3>
+                        <p style="margin-bottom: 10px;"><strong>Before using this feature, you need to:</strong></p>
+                        <ol>
+                            <li>Create a Google Service Account and generate credentials</li>
+                            <li>Add the service account credentials to GitHub Secrets</li>
+                            <li>Configure repository permissions</li>
+                        </ol>
+                        <p style="margin-top: 15px; padding: 15px; background: var(--white); border: 2px solid var(--warning);">
+                            <strong>📖 Need Help?</strong> See the detailed setup guide in <code>GOOGLE_DRIVE_SETUP.md</code> in the repository.
+                        </p>
+                    </div>
                 </section>
 
                 <!-- Manage Panel -->
@@ -1253,6 +1307,131 @@
             });
             if (clickEvent && clickEvent.target) {
                 clickEvent.target.classList.add('active');
+            }
+        }
+
+        // Google Drive Category Selection
+        let selectedDriveCategory = 'track';
+        function selectDriveCategory(category, clickEvent) {
+            selectedDriveCategory = category;
+            // Get all category buttons in the Google Drive panel only
+            const drivePanel = document.getElementById('panelGoogledrive');
+            const buttons = drivePanel.querySelectorAll('.category-btn[data-category]');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            if (clickEvent && clickEvent.target) {
+                clickEvent.target.classList.add('active');
+            }
+        }
+
+        // Import from Google Drive
+        async function importFromGoogleDrive() {
+            const folderLink = document.getElementById('driveFolderLink').value.trim();
+            const statusDiv = document.getElementById('driveImportStatus');
+            
+            if (!folderLink) {
+                showNotification('Please enter a Google Drive folder link', 'error');
+                return;
+            }
+            
+            // Validate input format - match backend validation
+            if (!/^[a-zA-Z0-9_/:.?=-]+$/.test(folderLink)) {
+                showNotification('Invalid characters in folder link', 'error');
+                return;
+            }
+            
+            // Validate folder link format
+            const hasFolderPattern = /\/folders\/([a-zA-Z0-9_-]+)/.test(folderLink);
+            const hasUserFolderPattern = /\/u\/[0-9]+\/folders\/([a-zA-Z0-9_-]+)/.test(folderLink);
+            const isDirectId = /^[a-zA-Z0-9_-]+$/.test(folderLink);
+            
+            if (!hasFolderPattern && !hasUserFolderPattern && !isDirectId) {
+                showNotification('Invalid Google Drive folder link format. Expected URL like: https://drive.google.com/drive/folders/FOLDER_ID', 'error');
+                return;
+            }
+            
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = 'rgba(0, 102, 204, 0.1)';
+            statusDiv.style.borderColor = 'var(--blue)';
+            statusDiv.innerHTML = '⏳ Triggering GitHub Actions workflow...';
+            
+            try {
+                // Get GitHub token from localStorage
+                const token = localStorage.getItem('githubToken');
+                if (!token) {
+                    throw new Error('GitHub token not found. Please configure it in the Configuration panel.');
+                }
+                
+                // GitHub repository details
+                const GITHUB_OWNER = 'CooperHofmann';
+                const GITHUB_REPO = 'cooperofthecrop.github.io';
+                
+                // Trigger repository_dispatch event
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        event_type: 'sync-google-drive-images',
+                        client_payload: {
+                            folder_link: folderLink,
+                            category: selectedDriveCategory
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        throw new Error('GitHub Actions workflow not found. Make sure the workflow file exists in .github/workflows/');
+                    } else if (response.status === 401) {
+                        throw new Error('Invalid GitHub token. Please update your token in the Configuration panel.');
+                    } else {
+                        throw new Error(`GitHub API error: ${response.status}`);
+                    }
+                }
+                
+                statusDiv.style.background = 'rgba(0, 170, 0, 0.1)';
+                statusDiv.style.borderColor = 'var(--success)';
+                statusDiv.innerHTML = `
+                    <h3 style="font-family: Helvetica, Arial, sans-serif; margin-bottom: 10px;">✅ Workflow Triggered Successfully!</h3>
+                    <p style="margin-bottom: 10px;">GitHub Actions is now downloading images from Google Drive and adding them to the <strong>${selectedDriveCategory}</strong> category.</p>
+                    <p style="margin-bottom: 10px;"><strong>Next Steps:</strong></p>
+                    <ol style="margin-left: 20px; line-height: 1.8;">
+                        <li>Go to <a href="https://github.com/${GITHUB_OWNER}/${GITHUB_REPO}/actions" target="_blank" style="color: var(--blue); text-decoration: underline;">GitHub Actions</a> to monitor progress</li>
+                        <li>The workflow typically takes 2-5 minutes to complete</li>
+                        <li>Once complete, refresh your website to see the new images</li>
+                        <li>Images will appear in the <strong>${selectedDriveCategory}</strong> gallery</li>
+                    </ol>
+                    <p style="margin-top: 15px; padding: 10px; background: var(--white); border: 2px solid var(--success);">
+                        <strong>💡 Tip:</strong> You can trigger multiple imports. Each will be processed in order.
+                    </p>
+                `;
+                
+                showNotification('Google Drive import started! Check GitHub Actions for progress.', 'success');
+                
+                // Clear the input
+                document.getElementById('driveFolderLink').value = '';
+                
+            } catch (error) {
+                console.error('Error triggering workflow:', error);
+                statusDiv.style.background = 'rgba(204, 0, 0, 0.1)';
+                statusDiv.style.borderColor = 'var(--danger)';
+                statusDiv.innerHTML = `
+                    <h3 style="font-family: Helvetica, Arial, sans-serif; margin-bottom: 10px;">❌ Error</h3>
+                    <p style="margin-bottom: 10px;"><strong>${error.message}</strong></p>
+                    <p style="margin-bottom: 10px;">Common issues:</p>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>GitHub token not configured or expired (go to Configuration panel)</li>
+                        <li>Google Drive service account not set up (see GOOGLE_DRIVE_SETUP.md)</li>
+                        <li>GitHub Actions workflow file missing (.github/workflows/google-drive-sync.yml)</li>
+                        <li>Repository secrets not configured (GOOGLE_SERVICE_ACCOUNT_KEY)</li>
+                    </ul>
+                `;
+                showNotification(error.message, 'error');
             }
         }
 

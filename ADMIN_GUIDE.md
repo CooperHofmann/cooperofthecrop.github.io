@@ -30,11 +30,13 @@ The dashboard shows:
 - Total photo count for each category (Track, Soccer, Football, Basketball, Best Of)
 - Quick action buttons
 - Recent activity (when implemented)
-- Navigation sidebar with 5 main sections
+- Navigation sidebar with 6 main sections
 
 ## ⬆️ Uploading Photos
 
-### Step-by-Step:
+### Method 1: Upload from Computer (Traditional)
+
+#### Step-by-Step:
 1. Click **"Upload Photos"** in the sidebar
 2. Select a category (Track, Soccer, Football, Basketball, or Best Of)
 3. Either:
@@ -43,11 +45,41 @@ The dashboard shows:
 4. Supported formats: JPG, JPEG, PNG, GIF
 5. Photos are stored in browser localStorage for preview
 
-### Important Notes:
+#### Important Notes:
 - Photos are stored locally in your browser only
 - They won't appear on the live site until you deploy
 - Browser storage is limited (typically 5-10MB)
 - Clearing browser data will delete uploaded photos
+
+### Method 2: Import from Google Drive (NEW! ☁️)
+
+Import images directly from a shared Google Drive folder!
+
+#### Step-by-Step:
+1. Click **"☁️ Google Drive"** in the sidebar
+2. Create a folder in Google Drive with your images
+3. Share the folder (Right-click → Share → "Anyone with the link")
+4. Copy the folder link
+5. Paste the link in the admin panel
+6. Select a category (Track, Soccer, Football, Basketball, or Best Of)
+7. Click **"IMPORT IMAGES FROM GOOGLE DRIVE"**
+8. Wait 2-5 minutes for the automatic import to complete
+9. Refresh your website to see the new images!
+
+#### Important Notes:
+- Requires one-time setup (see [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md))
+- Images are automatically downloaded, optimized, and committed to GitHub
+- The process uses GitHub Actions (free and automatic)
+- You can monitor progress in the GitHub Actions tab
+- **This is the recommended method for bulk imports!**
+
+#### Setup Required (One-Time):
+To use Google Drive imports, you need to:
+1. Create a Google Service Account
+2. Add credentials to GitHub Secrets
+3. Share Google Drive folders with the service account
+
+**See the detailed guide:** [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md)
 
 ## 🖼️ Managing Photos
 
