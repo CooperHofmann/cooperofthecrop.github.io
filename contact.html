@@ -14,10 +14,11 @@
         
         :root {
             --black: #000000;
-            --white: #FAF9F6;
-            --accent: #FF462E;
-            --gray: #808080;
-            --light-gray: #E0E0E0;
+            --white: #FFFFFF;
+            --accent: #ED4C24;
+            --accent-blue: #0099DD;
+            --gray: #CECCCC;
+            --light-gray: #F5F5F0;
         }
         
         html {
@@ -25,11 +26,12 @@
         }
         
         body {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             background: var(--white);
             color: var(--black);
-            line-height: 1.2;
+            line-height: 1.5;
             overflow-x: hidden;
+            font-weight: 400;
         }
         
         /* Brutalist Navigation */
@@ -54,12 +56,13 @@
         }
         
         nav .logo {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 24px;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: -0.02em;
             text-decoration: none;
             color: var(--white);
+            text-transform: uppercase;
         }
         
         nav ul {
@@ -71,15 +74,15 @@
         nav a {
             color: var(--white);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 14px;
+            letter-spacing: 0.08em;
+            font-size: 13px;
             transition: color 0.2s ease;
         }
         
         nav a:hover {
-            color: var(--accent);
+            color: var(--accent-blue);
         }
         
         /* Contact Section */
@@ -96,11 +99,11 @@
         }
         
         .contact-main h1 {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: clamp(48px, 10vw, 120px);
-            font-weight: 700;
-            line-height: 0.85;
-            letter-spacing: -0.03em;
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
             text-transform: uppercase;
             margin-bottom: 60px;
             transition: transform 0.3s ease, color 0.3s ease;
@@ -126,17 +129,18 @@
         }
         
         .contact-card h2 {
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 14px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             margin-bottom: 20px;
             color: var(--gray);
+            font-weight: 600;
         }
         
         .contact-card p {
             font-size: 24px;
-            font-weight: 500;
+            font-weight: 400;
             color: var(--black);
         }
         
@@ -158,12 +162,12 @@
         }
         
         .form-section h2 {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: clamp(24px, 5vw, 48px);
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             margin-bottom: 40px;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
         }
         
         .form-group {
@@ -172,12 +176,13 @@
         
         .form-group label {
             display: block;
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 12px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             margin-bottom: 10px;
             color: var(--gray);
+            font-weight: 600;
         }
         
         .form-group input,
@@ -187,15 +192,16 @@
             border: none;
             border-bottom: 3px solid var(--black);
             padding: 15px 0;
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 18px;
+            font-weight: 300;
             transition: border-color 0.2s ease;
         }
         
         .form-group input:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: var(--gray);
+            border-color: var(--accent-blue);
         }
         
         .form-group textarea {
@@ -204,21 +210,23 @@
         }
         
         .submit-btn {
-            background: var(--black);
+            background: var(--accent-blue);
             color: var(--white);
-            border: 3px solid var(--black);
+            border: 3px solid var(--accent-blue);
             padding: 20px 50px;
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 14px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             cursor: pointer;
             transition: all 0.2s ease;
         }
         
         .submit-btn:hover {
-            background: var(--white);
-            color: var(--black);
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--white);
         }
         
         /* Footer */
@@ -231,10 +239,11 @@
         }
         
         footer p {
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 12px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
+            font-weight: 500;
         }
         
         /* Mobile Menu */
@@ -244,10 +253,12 @@
             border: 2px solid var(--white);
             color: var(--white);
             padding: 10px 15px;
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 14px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         @media (max-width: 768px) {
