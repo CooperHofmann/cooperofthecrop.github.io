@@ -88,10 +88,15 @@ jobs:
           from bs4 import BeautifulSoup
           from PIL import Image
           from urllib.parse import parse_qs, urlparse, unquote
-          import time
           
           folder_id = os.environ['FOLDER_ID']
           category = os.environ['CATEGORY']
+          
+          # Constants for file ID validation and image detection
+          MIN_FILE_ID_LENGTH = 25
+          MAX_FILE_ID_LENGTH = 44
+          FILE_ID_PREFIX_CHECK_LENGTH = 10
+          IMAGE_EXTENSIONS = r'jpg|jpeg|png|gif|webp|bmp|JPG|JPEG|PNG|GIF|WEBP|BMP'
           
           # Map category to directory name
           category_map = {
@@ -141,7 +146,8 @@ jobs:
                   
                   # Method 1: Look for embedded JSON data structures
                   # Drive stores file info in various JS arrays, try to find them
-                  json_pattern = r'\[\"([a-zA-Z0-9_-]{25,44})\",\"([^\"]+?\.(?:jpg|jpeg|png|gif|webp|bmp|JPG|JPEG|PNG|GIF|WEBP|BMP))\"'
+                  # Pattern matches: ["fileId","filename.jpg",...]
+                  json_pattern = rf'\[\"([a-zA-Z0-9_-]{{{MIN_FILE_ID_LENGTH},{MAX_FILE_ID_LENGTH}}})\",\"([^\"]+?\.(?:{IMAGE_EXTENSIONS}))\"'
                   matches = re.findall(json_pattern, html_content)
                   
                   if matches:
@@ -149,7 +155,8 @@ jobs:
                       seen_ids = set()
                       for file_id, file_name in matches:
                           # Skip duplicates and validate ID format
-                          if file_id not in seen_ids and len(file_id) >= 25 and '_' not in file_id[:10]:
+                          # Google Drive file IDs typically don't have underscores in the first part
+                          if file_id not in seen_ids and len(file_id) >= MIN_FILE_ID_LENGTH and '_' not in file_id[:FILE_ID_PREFIX_CHECK_LENGTH]:
                               files.append({
                                   'id': file_id,
                                   'name': file_name
@@ -161,7 +168,8 @@ jobs:
                   if not files:
                       print("Trying alternative extraction method...")
                       # Look for the key-value pattern where file data might be stored
-                      alt_pattern = r'\[\"(1[a-zA-Z0-9_-]{25,43})\",\[\"([^\"]+?\.(?:jpg|jpeg|png|gif|webp|bmp|JPG|JPEG|PNG|GIF|WEBP|BMP))\"'
+                      # Pattern matches: ["1...","filename.jpg",...]
+                      alt_pattern = rf'\[\"(1[a-zA-Z0-9_-]{{{MIN_FILE_ID_LENGTH-1},{MAX_FILE_ID_LENGTH-1}}})\",\[\"([^\"]+?\.(?:{IMAGE_EXTENSIONS}))\"'
                       alt_matches = re.findall(alt_pattern, html_content, re.IGNORECASE)
                       
                       if alt_matches:
