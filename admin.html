@@ -1697,7 +1697,7 @@
 
         async function getPhotos(category) {
             try {
-                // Get metadata from localStorage
+                // Get metadata from localStorage (photos uploaded via admin)
                 const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
                 const categoryMetadata = metadata[category] || [];
                 
@@ -1713,11 +1713,58 @@
                                 id: meta.id,
                                 filename: meta.filename,
                                 dataUrl: dataUrl,
-                                timestamp: meta.timestamp
+                                timestamp: meta.timestamp,
+                                source: 'indexeddb'
                             });
                         }
                     } catch (error) {
                         console.error(`Error loading photo ${meta.filename}:`, error);
+                    }
+                }
+                
+                // Also load photos from repository (defined in config.js)
+                // Map category names to match config structure
+                const categoryMapping = {
+                    'track': 'track',
+                    'soccer': 'soccer',
+                    'football': 'football',
+                    'basketball': 'basketball',
+                    'bestOf': 'bestOf'
+                };
+                
+                const configCategory = categoryMapping[category];
+                
+                // Check if portfolioConfig is available and has images for this category
+                if (typeof portfolioConfig !== 'undefined' && 
+                    portfolioConfig[configCategory] && 
+                    portfolioConfig[configCategory].images && 
+                    portfolioConfig[configCategory].images.length > 0) {
+                    
+                    const folderMapping = {
+                        'track': 'track',
+                        'soccer': 'soccer',
+                        'football': 'football',
+                        'basketball': 'basketball',
+                        'bestOf': 'best-of'
+                    };
+                    
+                    const folderName = folderMapping[category];
+                    
+                    // Add repository images that aren't already in IndexedDB
+                    for (const filename of portfolioConfig[configCategory].images) {
+                        // Check if this photo is already loaded from IndexedDB
+                        const existsInIndexedDB = photos.some(p => p.filename === filename);
+                        
+                        if (!existsInIndexedDB) {
+                            // Add repository photo
+                            photos.push({
+                                id: `repo_${category}_${filename}`,
+                                filename: filename,
+                                dataUrl: `images/${folderName}/${filename}`,
+                                timestamp: 0, // Repository photos don't have timestamps
+                                source: 'repository'
+                            });
+                        }
                     }
                 }
                 
@@ -1797,10 +1844,11 @@
                 const isFirst = index === 0;
                 const isLast = index === photos.length - 1;
                 const isHomePagePhoto = currentHomePagePhoto === photo.filename;
+                const isRepoPhoto = photo.source === 'repository';
                 
                 return `
                 <div class="photo-item" draggable="true" data-index="${index}" data-filename="${safeFilename}">
-                    <div class="order-badge">#${index + 1}${isFirst ? ' 🌟' : ''}${isHomePagePhoto ? ' 🏠' : ''}</div>
+                    <div class="order-badge">#${index + 1}${isFirst ? ' 🌟' : ''}${isHomePagePhoto ? ' 🏠' : ''}${isRepoPhoto ? ' 📁' : ''}</div>
                     <img src="${photo.dataUrl}" alt="${safeFilename}" id="${photoId}">
                     <div class="overlay">
                         <div class="button-row">
@@ -1812,7 +1860,7 @@
                         </div>
                         <div class="button-row">
                             <button onclick="downloadPhoto('${photoId}', '${safeFilename}')">💾 Download</button>
-                            <button onclick="deletePhoto('${safeGallery}', '${safeFilename}')">🗑️ Delete</button>
+                            ${!isRepoPhoto ? `<button onclick="deletePhoto('${safeGallery}', '${safeFilename}')">🗑️ Delete</button>` : `<button disabled style="opacity:0.3" title="Repository photos cannot be deleted from admin panel">🗑️ Delete</button>`}
                         </div>
                     </div>
                 </div>
@@ -1987,11 +2035,38 @@
         function updateStats() {
             const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
             
-            document.getElementById('statTrack').textContent = (metadata.track || []).length;
-            document.getElementById('statSoccer').textContent = (metadata.soccer || []).length;
-            document.getElementById('statFootball').textContent = (metadata.football || []).length;
-            document.getElementById('statBasketball').textContent = (metadata.basketball || []).length;
-            document.getElementById('statBestOf').textContent = (metadata.bestOf || []).length;
+            // Count photos from IndexedDB
+            const indexedDBCounts = {
+                track: (metadata.track || []).length,
+                soccer: (metadata.soccer || []).length,
+                football: (metadata.football || []).length,
+                basketball: (metadata.basketball || []).length,
+                bestOf: (metadata.bestOf || []).length
+            };
+            
+            // Count photos from repository (config.js)
+            const repoCounts = {
+                track: 0,
+                soccer: 0,
+                football: 0,
+                basketball: 0,
+                bestOf: 0
+            };
+            
+            if (typeof portfolioConfig !== 'undefined') {
+                repoCounts.track = (portfolioConfig.track?.images || []).length;
+                repoCounts.soccer = (portfolioConfig.soccer?.images || []).length;
+                repoCounts.football = (portfolioConfig.football?.images || []).length;
+                repoCounts.basketball = (portfolioConfig.basketball?.images || []).length;
+                repoCounts.bestOf = (portfolioConfig.bestOf?.images || []).length;
+            }
+            
+            // Display total counts (prefer repo counts if they exist, otherwise show IndexedDB counts)
+            document.getElementById('statTrack').textContent = Math.max(indexedDBCounts.track, repoCounts.track);
+            document.getElementById('statSoccer').textContent = Math.max(indexedDBCounts.soccer, repoCounts.soccer);
+            document.getElementById('statFootball').textContent = Math.max(indexedDBCounts.football, repoCounts.football);
+            document.getElementById('statBasketball').textContent = Math.max(indexedDBCounts.basketball, repoCounts.basketball);
+            document.getElementById('statBestOf').textContent = Math.max(indexedDBCounts.bestOf, repoCounts.bestOf);
         }
 
         // Configuration Generator
