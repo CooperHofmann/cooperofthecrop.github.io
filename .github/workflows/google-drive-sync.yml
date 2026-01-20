@@ -44,6 +44,12 @@ jobs:
           FOLDER_LINK="${{ github.event.client_payload.folder_link || github.event.inputs.folder_link }}"
           echo "Input folder link: $FOLDER_LINK"
           
+          # Validate input to prevent command injection
+          if [[ ! "$FOLDER_LINK" =~ ^[a-zA-Z0-9_/:.?=-]+$ ]]; then
+            echo "Error: Invalid characters in folder link"
+            exit 1
+          fi
+          
           # Pattern 1: https://drive.google.com/drive/folders/FOLDER_ID
           if [[ $FOLDER_LINK =~ /folders/([a-zA-Z0-9_-]+) ]]; then
             FOLDER_ID="${BASH_REMATCH[1]}"
@@ -55,6 +61,12 @@ jobs:
             FOLDER_ID="$FOLDER_LINK"
           else
             echo "Error: Could not extract folder ID from link"
+            exit 1
+          fi
+          
+          # Validate extracted folder ID format
+          if [[ ! "$FOLDER_ID" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+            echo "Error: Invalid folder ID format"
             exit 1
           fi
           
@@ -130,6 +142,7 @@ jobs:
           print(f"Found {len(files)} image(s)")
           
           downloaded_files = []
+          failed_files = []
           for file in files:
               print(f"Downloading: {file['name']}")
               
@@ -172,13 +185,20 @@ jobs:
                   
               except Exception as e:
                   print(f"  ✗ Error downloading {file['name']}: {str(e)}")
+                  failed_files.append(file['name'])
           
           print(f"\nSuccessfully downloaded {len(downloaded_files)} file(s)")
+          if failed_files:
+              print(f"Failed to download {len(failed_files)} file(s): {', '.join(failed_files)}")
           
           # Output results
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
               f.write(f"file_count={len(downloaded_files)}\n")
-              f.write(f"status=success\n")
+              f.write(f"failed_count={len(failed_files)}\n")
+              if len(downloaded_files) > 0:
+                  f.write(f"status=success\n")
+              else:
+                  f.write(f"status=no_success\n")
               f.write(f"files={json.dumps(downloaded_files)}\n")
           PYTHON_SCRIPT
       
@@ -217,6 +237,10 @@ jobs:
           # Find the images array for this category - updated pattern
           pattern = rf'({config_key}:\s*\{{[^}}]*?images:\s*\[)([^\]]*?)(\s*\])'
           
+          if not re.search(pattern, config_content, flags=re.DOTALL):
+              print(f"Error: Could not find images array for category '{config_key}'")
+              exit(1)
+          
           def update_images(match):
               prefix = match.group(1)
               current_images_str = match.group(2)
@@ -227,7 +251,8 @@ jobs:
               for line in current_images_str.split('\n'):
                   line = line.strip()
                   if line and line.startswith('"'):
-                      img = line.strip().strip('",').strip('"')
+                      # Extract filename, handling various quote patterns
+                      img = line.strip().strip('",').strip('"').strip()
                       if img and img not in new_files:
                           existing_images.append(img)
               
@@ -240,7 +265,11 @@ jobs:
               return f'{prefix}{images_str}{suffix}'
           
           # Update the config
-          updated_config = re.sub(pattern, update_images, config_content, flags=re.DOTALL)
+          try:
+              updated_config = re.sub(pattern, update_images, config_content, flags=re.DOTALL)
+          except Exception as e:
+              print(f"Error updating config: {str(e)}")
+              exit(1)
           
           # Write back
           with open(config_path, 'w') as f:

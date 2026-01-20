@@ -1335,10 +1335,19 @@
                 return;
             }
             
+            // Validate input format - match backend validation
+            if (!/^[a-zA-Z0-9_/:.?=-]+$/.test(folderLink)) {
+                showNotification('Invalid characters in folder link', 'error');
+                return;
+            }
+            
             // Validate folder link format
-            const folderIdPattern = /\/folders\/([a-zA-Z0-9_-]+)/;
-            if (!folderIdPattern.test(folderLink) && !folderLink.match(/^[a-zA-Z0-9_-]+$/)) {
-                showNotification('Invalid Google Drive folder link format', 'error');
+            const hasFolderPattern = /\/folders\/([a-zA-Z0-9_-]+)/.test(folderLink);
+            const hasUserFolderPattern = /\/u\/[0-9]+\/folders\/([a-zA-Z0-9_-]+)/.test(folderLink);
+            const isDirectId = /^[a-zA-Z0-9_-]+$/.test(folderLink);
+            
+            if (!hasFolderPattern && !hasUserFolderPattern && !isDirectId) {
+                showNotification('Invalid Google Drive folder link format. Expected URL like: https://drive.google.com/drive/folders/FOLDER_ID', 'error');
                 return;
             }
             
