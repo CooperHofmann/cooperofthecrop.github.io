@@ -118,7 +118,7 @@ jobs:
               
               # Make request with proper headers
               headers = {
-                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
               }
               
               try:
@@ -147,9 +147,13 @@ jobs:
                   
                   if file_ids:
                       print(f"Found {len(file_ids)} potential file(s) in the folder")
-                      # Create file objects
-                      for i, file_id in enumerate(set(file_ids[:20])):  # Limit to first 20 unique IDs
-                          name = file_names[i] if i < len(file_names) else f"image_{i+1}.jpg"
+                      # Create file objects - use unique file IDs
+                      unique_ids = list(set(file_ids[:20]))  # Limit to first 20 unique IDs, preserve as list
+                      unique_names = list(set(file_names[:len(unique_ids)]))  # Get unique names too
+                      
+                      for i, file_id in enumerate(unique_ids):
+                          # Use corresponding name if available, otherwise generate one
+                          name = unique_names[i] if i < len(unique_names) else f"image_{i+1}.jpg"
                           files.append({
                               'id': file_id,
                               'name': name
@@ -178,29 +182,35 @@ jobs:
               download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
               
               headers = {
-                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
               }
               
               try:
                   response = requests.get(download_url, headers=headers, stream=True, timeout=30)
                   
-                  # Check if we got a confirmation page (large files)
-                  if 'confirm=' in response.text or 'download_warning' in response.text:
-                      # Extract confirmation token
-                      soup = BeautifulSoup(response.text, 'html.parser')
-                      confirm_link = soup.find('a', {'id': 'uc-download-link'})
-                      
-                      if confirm_link and 'href' in confirm_link.attrs:
-                          confirm_url = "https://drive.google.com" + confirm_link['href']
-                          response = requests.get(confirm_url, headers=headers, stream=True, timeout=30)
+                  # Check content type first before loading entire response
+                  content_type = response.headers.get('content-type', '')
+                  
+                  # Check if we got a confirmation page (large files) - only check if it's HTML
+                  if 'text/html' in content_type:
+                      # Only load text for HTML responses
+                      page_content = response.text
+                      if 'confirm=' in page_content or 'download_warning' in page_content:
+                          # Extract confirmation token
+                          soup = BeautifulSoup(page_content, 'html.parser')
+                          confirm_link = soup.find('a', {'id': 'uc-download-link'})
+                          
+                          if confirm_link and 'href' in confirm_link.attrs:
+                              confirm_url = "https://drive.google.com" + confirm_link['href']
+                              response = requests.get(confirm_url, headers=headers, stream=True, timeout=30)
+                              content_type = response.headers.get('content-type', '')  # Update content type
                   
                   if response.status_code == 200:
-                      # Check if it's actually an image
-                      content_type = response.headers.get('content-type', '')
+                      # Content type already checked above
                       if 'image' in content_type or 'octet-stream' in content_type:
                           return response.content
                       else:
-                          # Try to load it as image anyway
+                          # Try to load it as image anyway (some servers don't set correct content-type)
                           return response.content
                   
                   return None
