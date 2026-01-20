@@ -123,7 +123,12 @@ When you trigger an import, the workflow:
 1. Extracts the folder ID from your link
 2. Accesses the public folder (no authentication needed!)
 3. Downloads all image files from the folder
-4. Optimizes images (compresses JPEGs, converts formats if needed)
+4. **Compresses and optimizes images:**
+   - Resizes images wider than 2000px (maintains aspect ratio)
+   - Compresses JPEGs at 85% quality
+   - Optimizes PNG files
+   - Converts other formats to JPEG
+   - Same compression as admin panel uploads!
 5. Saves images to the appropriate category folder (e.g., `images/track/`)
 6. Updates `js/config.js` with the new image filenames
 7. Commits and pushes changes to the repository
