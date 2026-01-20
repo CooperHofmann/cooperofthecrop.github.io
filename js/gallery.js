@@ -251,19 +251,29 @@ function applyJustifiedLayout() {
         const windowWidth = window.innerWidth;
         let targetRowHeight, gutter, idealImagesPerRow;
         
-        if (windowWidth <= 768) {
+        if (windowWidth <= 480) {
+            // Small Mobile: 1 image per row
+            targetRowHeight = 250;
+            gutter = 8;
+            idealImagesPerRow = 1;
+        } else if (windowWidth <= 768) {
             // Mobile: 1-2 images per row
             targetRowHeight = 280;
             gutter = 12;
             idealImagesPerRow = 1.5;
-        } else if (windowWidth <= 1200) {
+        } else if (windowWidth <= 1024) {
             // Tablet: 2-3 images per row
             targetRowHeight = 300;
             gutter = 16;
             idealImagesPerRow = 2.5;
+        } else if (windowWidth <= 1400) {
+            // Small Desktop: 3 images per row
+            targetRowHeight = 320;
+            gutter = 18;
+            idealImagesPerRow = 3;
         } else {
-            // Desktop: 3-4 images per row
-            targetRowHeight = 340;
+            // Large Desktop: 3-4 images per row
+            targetRowHeight = 360;
             gutter = 20;
             idealImagesPerRow = 3.5;
         }
