@@ -298,11 +298,15 @@ jobs:
                           file_path = os.path.join(target_dir, f"{base_name}.jpg")
                           img.save(file_path, 'JPEG', quality=JPEG_QUALITY, optimize=True)
                       
-                      # Calculate compression ratio
+                      # Calculate and log compression results
                       compressed_size_kb = os.path.getsize(file_path) / 1024
-                      if original_size_kb > compressed_size_kb:
-                          compression_ratio = int((1 - compressed_size_kb / original_size_kb) * 100)
+                      compression_ratio = int((1 - compressed_size_kb / original_size_kb) * 100)
+                      if compression_ratio > 0:
                           print(f"  ✓ Compressed: {original_size_kb:.1f}KB → {compressed_size_kb:.1f}KB ({compression_ratio}% smaller)")
+                      elif compression_ratio < 0:
+                          print(f"  ℹ Size increased: {original_size_kb:.1f}KB → {compressed_size_kb:.1f}KB (format conversion)")
+                      else:
+                          print(f"  ℹ No size change: {compressed_size_kb:.1f}KB")
                       
                       downloaded_files.append(os.path.basename(file_path))
                       print(f"  ✓ Saved: {file_path}")
