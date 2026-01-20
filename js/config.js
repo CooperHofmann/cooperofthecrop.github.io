@@ -12,6 +12,21 @@ const portfolioConfig = {
         homePagePhoto: "PB1(Track) (216 of 262).jpg", // Set to filename to override, null uses first image
         images: [
             "PB1(Track) (216 of 262).jpg",
+            "TRACK SN DONE (5 of 303).jpg",
+            "PB1(Track) (90 of 262).jpg",
+            "PB1(Track) (87 of 262).jpg",
+            "PB1(Track) (79 of 262).jpg",
+            "PB1(Track) (76 of 262).jpg",
+            "PB1(Track) (67 of 262).jpg",
+            "PB1(Track) (36 of 262).jpg",
+            "PB1(Track) (33 of 262).jpg",
+            "PB1(Track) (116 of 262).jpg",
+            "PB1(Track) (11 of 262).jpg",
+            "Drive A (183 of 200).jpg",
+            "soccermpvWT (172 of 242).jpg",
+            "soccermpvWT (169 of 242).jpg",
+            "soccermpvWT (151 of 242).jpg",
+            "soccermpvWT (150 of 242).jpg",
         ]
     },
     soccer: {
@@ -19,7 +34,35 @@ const portfolioConfig = {
         description: "Soccer Photography",
         homePagePhoto: null, // Set to filename to override, null uses first image
         images: [
-
+            "expo1mp (164 of 430).jpg",
+            "expo2mp (58 of 164).jpg",
+            "expo1mp (163 of 430).jpg",
+            "expo1mp (313 of 430).jpg",
+            "expo1mp (298 of 430).jpg",
+            "expo2mp (123 of 164).jpg",
+            "expo1mp (288 of 430).jpg",
+            "expo1mp (311 of 430).jpg",
+            "expo1mp (28 of 430).jpg",
+            "expo2mp (34 of 164).jpg",
+            "expo2mp (46 of 164).jpg",
+            "expo1mp (172 of 430).jpg",
+            "expo1mp (49 of 430).jpg",
+            "expo1mp (413 of 430).jpg",
+            "expo1mp (380 of 430).jpg",
+            "expo1mp (278 of 430).jpg",
+            "expo1mp (292 of 430).jpg",
+            "expo1mp (369 of 430).jpg",
+            "expo1mp (353 of 430).jpg",
+            "expo1mp (248 of 430).jpg",
+            "expo1mp (192 of 430).jpg",
+            "expo1mp (38 of 430).jpg",
+            "expo1mp (29 of 430).jpg",
+            "expo1mp (20 of 430).jpg",
+            "expo1mp (76 of 430).jpg",
+            "expo2mp (162 of 164).jpg",
+            "expo2mp (159 of 164).jpg",
+            "expo2mp (139 of 164).jpg",
+            "expo2mp (133 of 164).jpg",
         ]
     },
     football: {
@@ -101,7 +144,6 @@ const portfolioConfig = {
 
         ]
     }
-};
 };
 
 // Placeholder images for empty galleries
