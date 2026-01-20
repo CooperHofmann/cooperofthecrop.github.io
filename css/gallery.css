@@ -148,6 +148,13 @@ nav a:hover {
     object-fit: cover;
 }
 
+/* Responsive adjustments for tablet and below */
+@media (max-width: 1024px) {
+    .gallery-grid {
+        gap: 16px;
+    }
+}
+
 /* Responsive adjustments for small mobile screens */
 @media (max-width: 480px) {
     .gallery-grid {
@@ -156,20 +163,6 @@ nav a:hover {
     
     .gallery-main {
         padding: 50px 15px;
-    }
-}
-
-/* Responsive adjustments for medium screens */
-@media (max-width: 1024px) {
-    .gallery-grid {
-        gap: 16px;
-    }
-}
-
-/* Responsive adjustments for tablet screens */
-@media (max-width: 768px) {
-    .gallery-grid {
-        gap: 12px;
     }
 }
 
@@ -289,6 +282,10 @@ footer p {
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+    .gallery-grid {
+        gap: 12px;
+    }
+    
     nav ul {
         display: none;
         position: absolute;
