@@ -14,10 +14,11 @@
         
         :root {
             --black: #000000;
-            --white: #FAF9F6;
-            --accent: #FF462E;
-            --gray: #808080;
-            --light-gray: #E0E0E0;
+            --white: #FFFFFF;
+            --accent: #ED4C24;
+            --accent-blue: #0099DD;
+            --gray: #CECCCC;
+            --light-gray: #F5F5F0;
         }
         
         html {
@@ -25,11 +26,12 @@
         }
         
         body {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             background: var(--white);
             color: var(--black);
-            line-height: 1.2;
+            line-height: 1.5;
             overflow-x: hidden;
+            font-weight: 400;
         }
         
         /* Brutalist Navigation */
@@ -54,12 +56,13 @@
         }
         
         nav .logo {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 24px;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: -0.02em;
             text-decoration: none;
             color: var(--white);
+            text-transform: uppercase;
         }
         
         nav ul {
@@ -71,15 +74,15 @@
         nav a {
             color: var(--white);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 14px;
+            letter-spacing: 0.08em;
+            font-size: 13px;
             transition: color 0.2s ease;
         }
         
         nav a:hover {
-            color: var(--accent);
+            color: var(--accent-blue);
         }
         
         /* Hero Section */
@@ -96,11 +99,11 @@
         }
         
         .hero h1 {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: clamp(48px, 10vw, 140px);
-            font-weight: 700;
-            line-height: 0.85;
-            letter-spacing: -0.03em;
+            font-weight: 800;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
             text-transform: uppercase;
             margin-bottom: 40px;
             transition: transform 0.3s ease, color 0.3s ease;
@@ -115,8 +118,8 @@
         .hero .subtitle {
             font-size: clamp(18px, 3vw, 28px);
             max-width: 600px;
-            font-weight: 400;
-            line-height: 1.4;
+            font-weight: 300;
+            line-height: 1.5;
             color: var(--gray);
         }
         
@@ -127,12 +130,12 @@
         }
         
         .work-section h2 {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: clamp(36px, 6vw, 72px);
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             margin-bottom: 60px;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
             transition: transform 0.3s ease, color 0.3s ease;
             cursor: default;
         }
@@ -213,10 +216,11 @@
         }
         
         .work-item h3 {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: 20px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .work-item .year {
@@ -242,12 +246,12 @@
         }
         
         .about-section h2 {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: clamp(36px, 6vw, 72px);
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             margin-bottom: 40px;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
             transition: transform 0.3s ease, color 0.3s ease;
             cursor: default;
         }
@@ -262,6 +266,7 @@
             line-height: 1.6;
             margin-bottom: 20px;
             color: var(--black);
+            font-weight: 300;
         }
         
         .about-image {
@@ -288,12 +293,12 @@
         }
         
         .contact-section h2 {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             font-size: clamp(36px, 6vw, 72px);
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             margin-bottom: 60px;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
             transition: transform 0.3s ease, color 0.3s ease;
             cursor: default;
         }
@@ -316,12 +321,13 @@
         }
         
         .contact-item h3 {
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 14px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
             margin-bottom: 15px;
             color: var(--gray);
+            font-weight: 600;
         }
         
         .contact-item p {
@@ -339,10 +345,11 @@
         }
         
         footer p {
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 12px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.15em;
+            font-weight: 500;
         }
         
         /* Mobile Menu */
