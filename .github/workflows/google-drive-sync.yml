@@ -263,6 +263,21 @@ jobs:
                   try:
                       img = Image.open(io.BytesIO(file_content))
                       
+                      # Image compression settings (match admin panel settings)
+                      MAX_WIDTH = 2000
+                      JPEG_QUALITY = 85
+                      
+                      # Get original dimensions
+                      original_width, original_height = img.size
+                      original_size_kb = len(file_content) / 1024
+                      
+                      # Resize if image is too large
+                      if original_width > MAX_WIDTH and original_width > 0:
+                          # Calculate new height maintaining aspect ratio
+                          new_height = int((original_height * MAX_WIDTH) / original_width)
+                          img = img.resize((MAX_WIDTH, new_height), Image.Resampling.LANCZOS)
+                          print(f"  ↓ Resized from {original_width}x{original_height} to {MAX_WIDTH}x{new_height}")
+                      
                       # Convert RGBA to RGB if needed (for JPEG compatibility)
                       if img.mode == 'RGBA':
                           rgb_img = Image.new('RGB', img.size, (255, 255, 255))
@@ -272,16 +287,29 @@ jobs:
                       # Determine output path
                       file_path = os.path.join(target_dir, file_name)
                       
-                      # Save with optimization
+                      # Save with optimization and compression
                       if file_name.lower().endswith(('.jpg', '.jpeg')):
-                          img.save(file_path, 'JPEG', quality=85, optimize=True)
+                          img.save(file_path, 'JPEG', quality=JPEG_QUALITY, optimize=True)
                       elif file_name.lower().endswith('.png'):
                           img.save(file_path, 'PNG', optimize=True)
                       else:
                           # Default to JPEG
                           base_name = os.path.splitext(file_name)[0]
                           file_path = os.path.join(target_dir, f"{base_name}.jpg")
-                          img.save(file_path, 'JPEG', quality=85, optimize=True)
+                          img.save(file_path, 'JPEG', quality=JPEG_QUALITY, optimize=True)
+                      
+                      # Calculate and log compression results
+                      compressed_size_kb = os.path.getsize(file_path) / 1024
+                      if original_size_kb > 0:
+                          compression_ratio = int((1 - compressed_size_kb / original_size_kb) * 100)
+                          if compression_ratio > 0:
+                              print(f"  ✓ Compressed: {original_size_kb:.1f}KB → {compressed_size_kb:.1f}KB ({compression_ratio}% smaller)")
+                          elif compression_ratio < 0:
+                              print(f"  ℹ Size increased: {original_size_kb:.1f}KB → {compressed_size_kb:.1f}KB (format conversion)")
+                          else:
+                              print(f"  ℹ No size change: {compressed_size_kb:.1f}KB")
+                      else:
+                          print(f"  ℹ Saved: {compressed_size_kb:.1f}KB")
                       
                       downloaded_files.append(os.path.basename(file_path))
                       print(f"  ✓ Saved: {file_path}")
