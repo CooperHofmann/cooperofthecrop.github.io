@@ -68,12 +68,21 @@ To check the import progress:
 
 ## 🛠️ Troubleshooting
 
-### Error: "No files found"
+### Error: "No files found" or "Found 0 files to download"
 **Solution:** 
-- Make sure the folder is shared as "Anyone with the link can view"
-- Verify the folder link is correct
-- Check that the folder contains image files (JPG, PNG, GIF, etc.)
-- Make sure you copied the folder link, not a file link
+- **Step 1:** Verify folder sharing settings:
+  1. Right-click the folder in Google Drive
+  2. Click "Share"
+  3. Make sure it says **"Anyone with the link"** can **VIEW** (not just "Restricted")
+  4. If it says "Restricted", click "Change" and select "Anyone with the link"
+- **Step 2:** Check folder contents:
+  - Make sure the folder contains image files directly (JPG, JPEG, PNG, GIF, BMP, WEBP)
+  - Images must be directly in the folder, not in subfolders
+  - Try with at least 2-3 images first
+- **Step 3:** Verify the link format:
+  - The link should look like: `https://drive.google.com/drive/folders/FOLDER_ID`
+  - Make sure you copied the **folder link**, not a **file link**
+  - Test by opening the link in an incognito/private browser window - you should be able to see the folder contents
 
 ### Error: "GitHub token not found"
 **Solution:** Configure your GitHub Personal Access Token in the Configuration panel of the admin interface.
@@ -86,7 +95,7 @@ To check the import progress:
 - Wait 2-5 minutes for GitHub Pages to rebuild
 - Check the Actions tab to confirm the workflow completed successfully
 - Hard refresh your browser (Ctrl+Shift+R or Cmd+Shift+R)
-- Verify images were committed to the repository
+- Verify images were committed to the repository by checking the `images/` folder on GitHub
 
 ### Download fails or is very slow
 **Solution:**
@@ -94,6 +103,14 @@ To check the import progress:
 - Try with a smaller folder first (2-3 images)
 - Make sure images are reasonably sized (under 10MB each)
 - Wait a few minutes and try again
+
+### Advanced: Checking the workflow logs
+If the import is failing:
+1. Go to your repository on GitHub
+2. Click the "Actions" tab
+3. Click on the most recent "Google Drive Image Sync" workflow
+4. Click on the "sync-images" job
+5. Look at the "Download images from Google Drive" step to see detailed error messages
 
 ## 🔒 Security Notes
 
