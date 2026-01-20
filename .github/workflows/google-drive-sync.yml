@@ -272,7 +272,7 @@ jobs:
                       original_size_kb = len(file_content) / 1024
                       
                       # Resize if image is too large
-                      if original_width > MAX_WIDTH:
+                      if original_width > MAX_WIDTH and original_width > 0:
                           # Calculate new height maintaining aspect ratio
                           new_height = int((original_height * MAX_WIDTH) / original_width)
                           img = img.resize((MAX_WIDTH, new_height), Image.Resampling.LANCZOS)
