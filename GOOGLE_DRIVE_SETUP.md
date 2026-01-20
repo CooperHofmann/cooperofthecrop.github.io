@@ -1,6 +1,6 @@
-# Google Drive Integration Setup Guide
+# Google Drive Integration Setup Guide (100% FREE - No Credit Card!)
 
-This guide will help you set up automatic image importing from Google Drive to your GitHub Pages portfolio.
+This guide will help you set up automatic image importing from Google Drive to your GitHub Pages portfolio **without any credit card or payment information required**.
 
 ## 🌟 Overview
 
@@ -11,80 +11,40 @@ The Google Drive integration allows you to:
 - Update your portfolio configuration
 - All without manual file downloads or git commands!
 
+## ✨ NEW: Completely FREE Method
+
+**No credit card required! No Google Cloud account needed!**
+
+This integration now uses **public folder sharing** which is completely free and requires zero setup beyond making your folder public.
+
 ## 📋 Prerequisites
 
-- Access to Google Cloud Console
+- A Google Drive account (free)
 - GitHub repository admin access
-- About 10-15 minutes for initial setup
+- About 2 minutes for setup
 
-## 🔧 Setup Steps
+## 🔧 Setup Steps (SUPER SIMPLE!)
 
-### Step 1: Create a Google Cloud Project
+### Step 1: Create and Share Your Google Drive Folder
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Click on the project dropdown at the top
-3. Click "New Project"
-4. Enter a project name (e.g., "Portfolio Image Sync")
-5. Click "Create"
+1. Go to [Google Drive](https://drive.google.com/)
+2. Create a new folder or use an existing one
+3. Add your images to the folder
+4. Right-click the folder and select **"Share"**
+5. Click **"Change"** next to "Restricted"
+6. Select **"Anyone with the link"**
+7. Make sure it's set to **"Viewer"** (not Editor)
+8. Click **"Done"**
+9. Click **"Copy link"**
 
-### Step 2: Enable Google Drive API
-
-1. In your new project, go to "APIs & Services" → "Library"
-2. Search for "Google Drive API"
-3. Click on it and press "Enable"
-
-### Step 3: Create a Service Account
-
-1. Go to "APIs & Services" → "Credentials"
-2. Click "Create Credentials" → "Service Account"
-3. Enter a name (e.g., "portfolio-image-sync")
-4. Click "Create and Continue"
-5. Skip the optional steps and click "Done"
-
-### Step 4: Generate Service Account Key
-
-1. In the Credentials page, find your service account in the list
-2. Click on the service account email
-3. Go to the "Keys" tab
-4. Click "Add Key" → "Create new key"
-5. Select "JSON" format
-6. Click "Create"
-7. A JSON file will download - **Keep this file secure!**
-
-### Step 5: Add Service Account to GitHub Secrets
-
-1. Open the downloaded JSON file in a text editor
-2. Copy the entire contents
-3. Go to your GitHub repository
-4. Navigate to Settings → Secrets and variables → Actions
-5. Click "New repository secret"
-6. Name: `GOOGLE_SERVICE_ACCOUNT_KEY`
-7. Value: Paste the entire JSON contents
-8. Click "Add secret"
-
-### Step 6: Configure Google Drive Folder Permissions
-
-For each Google Drive folder you want to import from:
-
-1. Open the JSON key file you downloaded
-2. Find the `client_email` field (looks like: `xxx@xxx.iam.gserviceaccount.com`)
-3. Copy this email address
-4. In Google Drive, right-click the folder you want to share
-5. Click "Share"
-6. Paste the service account email
-7. Set permission to "Viewer"
-8. Click "Share" (uncheck "Notify people" since it's a service account)
-
-**Important:** You must do this for EVERY folder you want to import from!
+**That's it for setup!** No service accounts, no credentials, no credit card! 🎉
 
 ## 🎯 How to Use
-
-Once setup is complete:
 
 1. Go to your admin panel (`admin.html`)
 2. Enter your PIN
 3. Click "☁️ Google Drive" in the sidebar
-4. Paste your Google Drive folder link
+4. Paste your Google Drive folder link (the one you copied above)
 5. Select the category (Track, Soccer, Football, Basketball, or Best Of)
 6. Click "IMPORT IMAGES FROM GOOGLE DRIVE"
 7. Wait 2-5 minutes for the workflow to complete
@@ -108,23 +68,18 @@ To check the import progress:
 
 ## 🛠️ Troubleshooting
 
+### Error: "No files found"
+**Solution:** 
+- Make sure the folder is shared as "Anyone with the link can view"
+- Verify the folder link is correct
+- Check that the folder contains image files (JPG, PNG, GIF, etc.)
+- Make sure you copied the folder link, not a file link
+
 ### Error: "GitHub token not found"
 **Solution:** Configure your GitHub Personal Access Token in the Configuration panel of the admin interface.
 
 ### Error: "GitHub Actions workflow not found"
 **Solution:** Make sure the file `.github/workflows/google-drive-sync.yml` exists in your repository.
-
-### Error: "Permission denied" or "File not found"
-**Solution:** 
-- Make sure you've shared the Google Drive folder with the service account email
-- Verify the folder link is correct
-- Check that the folder contains image files
-
-### Error: "Invalid credentials"
-**Solution:**
-- Verify the `GOOGLE_SERVICE_ACCOUNT_KEY` secret is correctly set in GitHub
-- Make sure you copied the entire JSON file contents
-- Try creating a new service account key
 
 ### Images not appearing after import
 **Solution:**
@@ -133,48 +88,55 @@ To check the import progress:
 - Hard refresh your browser (Ctrl+Shift+R or Cmd+Shift+R)
 - Verify images were committed to the repository
 
-### Workflow fails during download
+### Download fails or is very slow
 **Solution:**
-- Ensure the Google Drive folder is shared with the service account
-- Check that the folder contains valid image files (JPG, PNG, GIF)
-- Verify Google Drive API is enabled in your Google Cloud project
+- Check your internet connection
+- Try with a smaller folder first (2-3 images)
+- Make sure images are reasonably sized (under 10MB each)
+- Wait a few minutes and try again
 
 ## 🔒 Security Notes
 
-- The service account key is stored as a GitHub Secret (encrypted and secure)
-- The service account only has read-only access to folders you explicitly share
-- Never commit the service account JSON file to your repository
-- The GitHub token is stored only in your browser's localStorage
-- Repository secrets are never exposed in workflow logs
+- Folders are shared with view-only access (no one can edit or delete)
+- Only you can trigger the import through the admin panel or GitHub Actions
+- Anyone with the folder link can view the images (but that's the point - they're for your public portfolio!)
+- Never share folders containing private or sensitive information
 
 ## 💰 Cost
 
 **This solution is 100% FREE:**
-- Google Drive API: Free tier includes 10,000 requests per day
-- GitHub Actions: Free tier includes 2,000 minutes per month
-- For typical usage (10-50 images per import), you'll never hit these limits
+- ✅ Google Drive: Free (15GB storage included with any Google account)
+- ✅ No Google Cloud account needed
+- ✅ No credit card required
+- ✅ No service account setup
+- ✅ No authentication configuration
+- ✅ GitHub Actions: Free tier includes 2,000 minutes per month
+- ✅ For typical usage (10-50 images per import), you'll never hit any limits
 
-## 📊 Workflow Details
+**Previously:** Required Google Cloud Project + Service Account + Credit Card  
+**Now:** Just share a folder link! 🎉
+
+## 📊 How It Works
 
 When you trigger an import, the workflow:
 
 1. Extracts the folder ID from your link
-2. Authenticates with Google Drive using the service account
-3. Lists all image files in the folder
-4. Downloads each image
-5. Optimizes images (compresses JPEGs, converts formats if needed)
-6. Saves images to the appropriate category folder (e.g., `images/track/`)
-7. Updates `js/config.js` with the new image filenames
-8. Commits and pushes changes to the repository
-9. GitHub Pages automatically rebuilds your site
+2. Accesses the public folder (no authentication needed!)
+3. Downloads all image files from the folder
+4. Optimizes images (compresses JPEGs, converts formats if needed)
+5. Saves images to the appropriate category folder (e.g., `images/track/`)
+6. Updates `js/config.js` with the new image filenames
+7. Commits and pushes changes to the repository
+8. GitHub Pages automatically rebuilds your site
 
 ## 🎓 Best Practices
 
 1. **Organize folders:** Create separate Google Drive folders for each category
 2. **Name images clearly:** Use descriptive filenames (e.g., `track-meet-2024-sprint.jpg`)
-3. **Optimize before upload:** While the workflow compresses images, pre-optimizing saves processing time
+3. **Reasonable sizes:** While the workflow handles large images, keeping them under 5MB speeds things up
 4. **Test with small folders first:** Try importing 2-3 images before doing bulk imports
 5. **Monitor Actions:** Check the Actions tab regularly to ensure imports succeed
+6. **Keep folders public:** Don't change the sharing settings after import - keep them as "Anyone with the link"
 
 ## 🔄 Updating Images
 
@@ -188,7 +150,7 @@ To replace or update images:
 If you encounter issues:
 1. Check the Troubleshooting section above
 2. Review the Actions tab in GitHub for detailed error logs
-3. Verify all setup steps were completed correctly
+3. Verify the folder is shared publicly
 4. Check the ADMIN_GUIDE.md for additional help
 
 ## 🚀 Advanced: Manual Workflow Trigger
@@ -204,7 +166,24 @@ You can also trigger the workflow manually from GitHub:
 
 This is useful for testing or if the admin panel isn't accessible.
 
+## ❓ FAQ
+
+**Q: Do I really not need a credit card?**  
+A: Correct! The new method uses public folder sharing which is completely free. No Google Cloud account, no service account, no credit card required!
+
+**Q: Is this as reliable as the old method?**  
+A: Yes! It's actually simpler and just as reliable for public portfolios.
+
+**Q: What if I have private photos?**  
+A: This method requires public sharing. For a public portfolio site, this is perfect. If you need private photos, you would need the old service account method.
+
+**Q: Can I still use the old method with service accounts?**  
+A: The new method has replaced the old one. For public portfolios, the new free method is recommended!
+
+**Q: What are the limitations?**  
+A: Google Drive's free tier includes 15GB storage. GitHub Actions free tier includes 2,000 minutes/month. For typical portfolio use, these limits are more than enough!
+
 ---
 
 **Last Updated:** January 2026  
-**Version:** 1.0
+**Version:** 2.0 (FREE Edition - No Credit Card Required!)

@@ -95,7 +95,7 @@ A powerful admin panel is now available for managing your portfolio:
 ### Features:
 - 📊 Dashboard with photo statistics
 - ⬆️ Drag & drop photo uploads
-- ☁️ **NEW: Import directly from Google Drive!** - Share a folder link and automatically download images
+- ☁️ **NEW: Import directly from Google Drive!** - Share a folder link and automatically download images - **100% FREE, No credit card required!**
 - 🖼️ Gallery management (view/delete photos)
 - ⚙️ Auto-generate configuration code
 - 💾 Browser-based photo storage
