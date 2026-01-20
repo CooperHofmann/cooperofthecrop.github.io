@@ -214,19 +214,20 @@ jobs:
           with open(config_path, 'r') as f:
               config_content = f.read()
           
-          # Find the images array for this category
-          pattern = rf'({config_key}:\s*\{{[^}}]*images:\s*\[)([^\]]*)\]'
+          # Find the images array for this category - updated pattern
+          pattern = rf'({config_key}:\s*\{{[^}}]*?images:\s*\[)([^\]]*?)(\s*\])'
           
           def update_images(match):
               prefix = match.group(1)
               current_images_str = match.group(2)
+              suffix = match.group(3)
               
               # Parse existing images
               existing_images = []
               for line in current_images_str.split('\n'):
                   line = line.strip()
-                  if line and line.startswith('"') and line.endswith('"') or line.endswith('",'):
-                      img = line.strip('",').strip('"')
+                  if line and line.startswith('"'):
+                      img = line.strip().strip('",').strip('"')
                       if img and img not in new_files:
                           existing_images.append(img)
               
@@ -234,9 +235,9 @@ jobs:
               all_images = new_files + existing_images
               
               # Format as JavaScript array
-              images_str = '\n'.join([f'            "{img}",' for img in all_images])
+              images_str = '\n' + '\n'.join([f'            "{img}",' for img in all_images]) + '\n        '
               
-              return f'{prefix}\n{images_str}\n        ]'
+              return f'{prefix}{images_str}{suffix}'
           
           # Update the config
           updated_config = re.sub(pattern, update_images, config_content, flags=re.DOTALL)
