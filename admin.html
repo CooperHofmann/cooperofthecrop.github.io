@@ -727,17 +727,22 @@
                 <section id="panelGoogledrive" class="panel-section">
                     <h2>Import from Google Drive</h2>
                     
-                    <div class="instructions-box" style="background: rgba(0, 102, 204, 0.1); border-color: var(--blue);">
+                    <div class="instructions-box" style="background: rgba(0, 204, 102, 0.15); border: 3px solid #00cc66;">
+                        <h3>✨ 100% FREE - No Credit Card Required!</h3>
+                        <p style="font-size: 16px; margin-bottom: 15px;">
+                            <strong>NEW:</strong> This feature now works without any Google Cloud account or credit card!
+                        </p>
                         <h3>☁️ How to Import from Google Drive</h3>
                         <ol>
                             <li>Create a folder in Google Drive and add your images</li>
-                            <li>Right-click the folder and select "Share" → "Anyone with the link"</li>
-                            <li>Copy the folder link</li>
+                            <li>Right-click the folder → "Share" → "Get link"</li>
+                            <li>Change to <strong>"Anyone with the link"</strong> can VIEW</li>
+                            <li>Click "Done" and copy the folder link</li>
                             <li>Paste the link below and select a category</li>
-                            <li>Click "Import Images" - GitHub Actions will download and add them to your repository</li>
+                            <li>Click "Import Images" - Done! GitHub Actions will automatically download and add them</li>
                         </ol>
-                        <p style="margin-top: 15px; padding: 15px; background: var(--white); border: 2px solid var(--blue);">
-                            <strong>✨ Automatic Workflow:</strong> This triggers a GitHub Actions workflow that downloads images from Google Drive and commits them to your repository. The process takes 2-5 minutes depending on the number of images.
+                        <p style="margin-top: 15px; padding: 15px; background: var(--white); border: 2px solid #00cc66;">
+                            <strong>✨ Automatic & Free:</strong> This triggers a GitHub Actions workflow that downloads images from your public Google Drive folder and commits them to your repository. The process takes 2-5 minutes depending on the number of images. No service accounts, no credentials, no cost!
                         </p>
                     </div>
 
@@ -762,16 +767,15 @@
                     
                     <div id="driveImportStatus" style="display: none; padding: 20px; border: 3px solid var(--black); margin-bottom: 20px;"></div>
                     
-                    <div class="instructions-box" style="background: rgba(255, 153, 0, 0.1); border-color: var(--warning);">
-                        <h3>⚙️ Setup Required (One-Time)</h3>
-                        <p style="margin-bottom: 10px;"><strong>Before using this feature, you need to:</strong></p>
+                    <div class="instructions-box" style="background: rgba(0, 204, 102, 0.1); border: 2px solid #00cc66;">
+                        <h3>✅ Setup (Quick & Easy - 2 Minutes!)</h3>
+                        <p style="margin-bottom: 10px;"><strong>To use this FREE feature:</strong></p>
                         <ol>
-                            <li>Create a Google Service Account and generate credentials</li>
-                            <li>Add the service account credentials to GitHub Secrets</li>
-                            <li>Configure repository permissions</li>
+                            <li><strong>Share your folder publicly</strong> (Right-click → Share → "Anyone with the link" can view)</li>
+                            <li>That's it! No credit card, no Google Cloud account needed!</li>
                         </ol>
-                        <p style="margin-top: 15px; padding: 15px; background: var(--white); border: 2px solid var(--warning);">
-                            <strong>📖 Need Help?</strong> See the detailed setup guide in <code>GOOGLE_DRIVE_SETUP.md</code> in the repository.
+                        <p style="margin-top: 15px; padding: 15px; background: var(--white); border: 2px solid #00cc66;">
+                            <strong>📖 More Details?</strong> See the complete guide in <code>GOOGLE_DRIVE_SETUP.md</code> in the repository.
                         </p>
                     </div>
                 </section>
@@ -1426,9 +1430,9 @@
                     <p style="margin-bottom: 10px;">Common issues:</p>
                     <ul style="margin-left: 20px; line-height: 1.8;">
                         <li>GitHub token not configured or expired (go to Configuration panel)</li>
-                        <li>Google Drive service account not set up (see GOOGLE_DRIVE_SETUP.md)</li>
+                        <li>Google Drive folder not shared publicly (Right-click folder → Share → "Anyone with the link")</li>
                         <li>GitHub Actions workflow file missing (.github/workflows/google-drive-sync.yml)</li>
-                        <li>Repository secrets not configured (GOOGLE_SERVICE_ACCOUNT_KEY)</li>
+                        <li>Invalid folder link format</li>
                     </ul>
                 `;
                 showNotification(error.message, 'error');

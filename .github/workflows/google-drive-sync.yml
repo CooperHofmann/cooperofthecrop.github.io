@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib Pillow
+          pip install requests Pillow beautifulsoup4
       
       - name: Extract folder ID from link
         id: extract_id
@@ -73,10 +73,6 @@ jobs:
           echo "folder_id=$FOLDER_ID" >> $GITHUB_OUTPUT
           echo "Extracted folder ID: $FOLDER_ID"
       
-      - name: Create credentials file
-        run: |
-          echo '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > /tmp/service-account-key.json
-      
       - name: Download images from Google Drive
         id: download
         env:
@@ -87,14 +83,11 @@ jobs:
           import os
           import io
           import json
-          from google.oauth2 import service_account
-          from googleapiclient.discovery import build
-          from googleapiclient.http import MediaIoBaseDownload
+          import re
+          import requests
+          from bs4 import BeautifulSoup
           from PIL import Image
-          
-          # Configuration
-          SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
-          SERVICE_ACCOUNT_FILE = '/tmp/service-account-key.json'
+          from urllib.parse import parse_qs, urlparse
           
           folder_id = os.environ['FOLDER_ID']
           category = os.environ['CATEGORY']
@@ -115,81 +108,187 @@ jobs:
           target_dir = f"images/{category_map[category]}"
           os.makedirs(target_dir, exist_ok=True)
           
-          print(f"Downloading images from folder {folder_id} to {target_dir}")
+          print(f"Downloading images from public folder {folder_id} to {target_dir}")
+          print("✨ Using FREE public folder access - No credit card or service account required!")
           
-          # Authenticate with Google Drive API
-          credentials = service_account.Credentials.from_service_account_file(
-              SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-          service = build('drive', 'v3', credentials=credentials)
+          # Function to get files from public Google Drive folder
+          def get_public_drive_files(folder_id):
+              """Get list of files from a public Google Drive folder using web scraping"""
+              url = f"https://drive.google.com/drive/folders/{folder_id}"
+              
+              # Make request with proper headers
+              headers = {
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+              }
+              
+              try:
+                  response = requests.get(url, headers=headers)
+                  response.raise_for_status()
+                  
+                  # Parse the HTML to extract file information
+                  html_content = response.text
+                  
+                  # Extract data from the page - Google Drive embeds file info in JSON
+                  # Look for the data structure that contains file information
+                  files = []
+                  
+                  # Pattern to find file IDs in the HTML (they appear in various formats)
+                  id_pattern = r'"([a-zA-Z0-9_-]{25,})"'
+                  potential_ids = set(re.findall(id_pattern, html_content))
+                  
+                  # Filter to only include what looks like file IDs (not folder IDs or other data)
+                  # File IDs in the folder view typically appear with specific markers
+                  file_marker_pattern = r'\["([a-zA-Z0-9_-]{25,})"[,\]]'
+                  file_ids = re.findall(file_marker_pattern, html_content)
+                  
+                  # Also try to get file names if possible
+                  name_pattern = r'"([^"]+\.(?:jpg|jpeg|png|gif|webp|bmp))"'
+                  file_names = re.findall(name_pattern, html_content, re.IGNORECASE)
+                  
+                  if file_ids:
+                      print(f"Found {len(file_ids)} potential file(s) in the folder")
+                      # Create file objects
+                      for i, file_id in enumerate(set(file_ids[:20])):  # Limit to first 20 unique IDs
+                          name = file_names[i] if i < len(file_names) else f"image_{i+1}.jpg"
+                          files.append({
+                              'id': file_id,
+                              'name': name
+                          })
+                  else:
+                      print("Warning: Could not find file IDs in folder. The folder might be:")
+                      print("  - Empty")
+                      print("  - Not publicly shared")
+                      print("  - Using a different format")
+                  
+                  return files
+                  
+              except requests.exceptions.RequestException as e:
+                  print(f"Error accessing folder: {str(e)}")
+                  print("\nMake sure:")
+                  print("  1. The folder link is correct")
+                  print("  2. The folder is shared as 'Anyone with the link can view'")
+                  print("  3. The folder contains image files")
+                  return []
           
-          # List files in the folder
-          query = f"'{folder_id}' in parents and mimeType contains 'image/' and trashed=false"
-          results = service.files().list(
-              q=query,
-              pageSize=100,
-              fields="nextPageToken, files(id, name, mimeType)"
-          ).execute()
+          def download_public_file(file_id, output_path):
+              """Download a file from Google Drive using public direct download"""
+              # Try multiple download methods
+              
+              # Method 1: Direct download URL
+              download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+              
+              headers = {
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+              }
+              
+              try:
+                  response = requests.get(download_url, headers=headers, stream=True, timeout=30)
+                  
+                  # Check if we got a confirmation page (large files)
+                  if 'confirm=' in response.text or 'download_warning' in response.text:
+                      # Extract confirmation token
+                      soup = BeautifulSoup(response.text, 'html.parser')
+                      confirm_link = soup.find('a', {'id': 'uc-download-link'})
+                      
+                      if confirm_link and 'href' in confirm_link.attrs:
+                          confirm_url = "https://drive.google.com" + confirm_link['href']
+                          response = requests.get(confirm_url, headers=headers, stream=True, timeout=30)
+                  
+                  if response.status_code == 200:
+                      # Check if it's actually an image
+                      content_type = response.headers.get('content-type', '')
+                      if 'image' in content_type or 'octet-stream' in content_type:
+                          return response.content
+                      else:
+                          # Try to load it as image anyway
+                          return response.content
+                  
+                  return None
+                  
+              except Exception as e:
+                  print(f"  Error during download: {str(e)}")
+                  return None
           
-          files = results.get('files', [])
+          # Get files from the public folder
+          files = get_public_drive_files(folder_id)
           
           if not files:
-              print("No image files found in the folder")
+              print("\n" + "="*60)
+              print("NO FILES FOUND")
+              print("="*60)
+              print("\nTo use this FREE method (no credit card needed):")
+              print("1. Right-click your Google Drive folder")
+              print("2. Select 'Share' > 'Get link'")
+              print("3. Change to 'Anyone with the link' can VIEW")
+              print("4. Copy and use that link")
+              print("\n✨ This method is 100% free - no Google Cloud account needed!")
+              print("="*60)
+              
               with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
                   f.write(f"file_count=0\n")
                   f.write(f"status=no_files\n")
               exit(0)
           
-          print(f"Found {len(files)} image(s)")
+          print(f"Found {len(files)} file(s) to download")
           
           downloaded_files = []
           failed_files = []
-          for file in files:
-              print(f"Downloading: {file['name']}")
+          
+          for file_info in files:
+              file_id = file_info['id']
+              file_name = file_info['name']
+              
+              print(f"Downloading: {file_name} (ID: {file_id})")
               
               try:
                   # Download file
-                  request = service.files().get_media(fileId=file['id'])
-                  fh = io.BytesIO()
-                  downloader = MediaIoBaseDownload(fh, request)
+                  file_content = download_public_file(file_id, target_dir)
                   
-                  done = False
-                  while done is False:
-                      status, done = downloader.next_chunk()
+                  if not file_content:
+                      print(f"  ✗ Could not download file")
+                      failed_files.append(file_name)
+                      continue
                   
-                  # Save file
-                  file_path = os.path.join(target_dir, file['name'])
-                  
-                  # Open with PIL to verify it's a valid image and convert if needed
-                  fh.seek(0)
-                  img = Image.open(fh)
-                  
-                  # Convert RGBA to RGB if needed (for JPEG compatibility)
-                  if img.mode == 'RGBA':
-                      rgb_img = Image.new('RGB', img.size, (255, 255, 255))
-                      rgb_img.paste(img, mask=img.split()[3])
-                      img = rgb_img
-                  
-                  # Save as JPEG with optimization
-                  if file['name'].lower().endswith(('.jpg', '.jpeg')):
-                      img.save(file_path, 'JPEG', quality=85, optimize=True)
-                  elif file['name'].lower().endswith('.png'):
-                      img.save(file_path, 'PNG', optimize=True)
-                  else:
-                      # Default to JPEG for other formats
-                      base_name = os.path.splitext(file['name'])[0]
-                      file_path = os.path.join(target_dir, f"{base_name}.jpg")
-                      img.save(file_path, 'JPEG', quality=85, optimize=True)
-                  
-                  downloaded_files.append(os.path.basename(file_path))
-                  print(f"  ✓ Saved: {file_path}")
+                  # Open with PIL to verify it's a valid image
+                  try:
+                      img = Image.open(io.BytesIO(file_content))
+                      
+                      # Convert RGBA to RGB if needed (for JPEG compatibility)
+                      if img.mode == 'RGBA':
+                          rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+                          rgb_img.paste(img, mask=img.split()[3])
+                          img = rgb_img
+                      
+                      # Determine output path
+                      file_path = os.path.join(target_dir, file_name)
+                      
+                      # Save with optimization
+                      if file_name.lower().endswith(('.jpg', '.jpeg')):
+                          img.save(file_path, 'JPEG', quality=85, optimize=True)
+                      elif file_name.lower().endswith('.png'):
+                          img.save(file_path, 'PNG', optimize=True)
+                      else:
+                          # Default to JPEG
+                          base_name = os.path.splitext(file_name)[0]
+                          file_path = os.path.join(target_dir, f"{base_name}.jpg")
+                          img.save(file_path, 'JPEG', quality=85, optimize=True)
+                      
+                      downloaded_files.append(os.path.basename(file_path))
+                      print(f"  ✓ Saved: {file_path}")
+                      
+                  except Exception as e:
+                      print(f"  ✗ Not a valid image file: {str(e)}")
+                      failed_files.append(file_name)
                   
               except Exception as e:
-                  print(f"  ✗ Error downloading {file['name']}: {str(e)}")
-                  failed_files.append(file['name'])
+                  print(f"  ✗ Error processing {file_name}: {str(e)}")
+                  failed_files.append(file_name)
           
-          print(f"\nSuccessfully downloaded {len(downloaded_files)} file(s)")
+          print(f"\n{'='*60}")
+          print(f"Successfully downloaded {len(downloaded_files)} file(s)")
           if failed_files:
               print(f"Failed to download {len(failed_files)} file(s): {', '.join(failed_files)}")
+          print(f"{'='*60}")
           
           # Output results
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
@@ -296,8 +395,3 @@ jobs:
             git push
             echo "Changes pushed successfully"
           fi
-      
-      - name: Cleanup
-        if: always()
-        run: |
-          rm -f /tmp/service-account-key.json

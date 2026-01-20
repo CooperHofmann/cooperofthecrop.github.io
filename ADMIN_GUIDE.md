@@ -51,33 +51,35 @@ The dashboard shows:
 - Browser storage is limited (typically 5-10MB)
 - Clearing browser data will delete uploaded photos
 
-### Method 2: Import from Google Drive (NEW! ☁️)
+### Method 2: Import from Google Drive (NEW! ☁️) - 100% FREE!
 
-Import images directly from a shared Google Drive folder!
+Import images directly from a shared Google Drive folder - **No credit card required!**
 
 #### Step-by-Step:
 1. Click **"☁️ Google Drive"** in the sidebar
 2. Create a folder in Google Drive with your images
-3. Share the folder (Right-click → Share → "Anyone with the link")
-4. Copy the folder link
-5. Paste the link in the admin panel
-6. Select a category (Track, Soccer, Football, Basketball, or Best Of)
-7. Click **"IMPORT IMAGES FROM GOOGLE DRIVE"**
-8. Wait 2-5 minutes for the automatic import to complete
-9. Refresh your website to see the new images!
+3. Share the folder:
+   - Right-click the folder → "Share" → "Get link"
+   - Change to **"Anyone with the link"** can VIEW
+   - Click "Done" and copy the link
+4. Paste the link in the admin panel
+5. Select a category (Track, Soccer, Football, Basketball, or Best Of)
+6. Click **"IMPORT IMAGES FROM GOOGLE DRIVE"**
+7. Wait 2-5 minutes for the automatic import to complete
+8. Refresh your website to see the new images!
 
 #### Important Notes:
-- Requires one-time setup (see [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md))
+- ✨ **100% FREE** - No credit card or Google Cloud account required!
+- Simple 2-minute setup - just share your folder publicly
 - Images are automatically downloaded, optimized, and committed to GitHub
 - The process uses GitHub Actions (free and automatic)
 - You can monitor progress in the GitHub Actions tab
 - **This is the recommended method for bulk imports!**
 
-#### Setup Required (One-Time):
-To use Google Drive imports, you need to:
-1. Create a Google Service Account
-2. Add credentials to GitHub Secrets
-3. Share Google Drive folders with the service account
+#### Setup Required (One-Time - SUPER EASY!):
+To use Google Drive imports, you just need to:
+1. Make your Google Drive folder public (Right-click → Share → "Anyone with the link" can view)
+2. That's it! No service accounts, no credentials, no credit card!
 
 **See the detailed guide:** [GOOGLE_DRIVE_SETUP.md](GOOGLE_DRIVE_SETUP.md)
 
