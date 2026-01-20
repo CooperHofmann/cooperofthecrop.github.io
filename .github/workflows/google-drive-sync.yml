@@ -87,7 +87,8 @@ jobs:
           import requests
           from bs4 import BeautifulSoup
           from PIL import Image
-          from urllib.parse import parse_qs, urlparse
+          from urllib.parse import parse_qs, urlparse, unquote
+          import time
           
           folder_id = os.environ['FOLDER_ID']
           category = os.environ['CATEGORY']
@@ -113,56 +114,79 @@ jobs:
           
           # Function to get files from public Google Drive folder
           def get_public_drive_files(folder_id):
-              """Get list of files from a public Google Drive folder using web scraping"""
+              """Get list of files from a public Google Drive folder by parsing the page data"""
               url = f"https://drive.google.com/drive/folders/{folder_id}"
               
-              # Make request with proper headers
+              # Make request with proper headers to get the full page
               headers = {
-                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                  'Accept-Language': 'en-US,en;q=0.5',
+                  'Accept-Encoding': 'gzip, deflate',
+                  'Connection': 'keep-alive',
+                  'Upgrade-Insecure-Requests': '1'
               }
               
               try:
-                  response = requests.get(url, headers=headers)
+                  print(f"Fetching folder page: {url}")
+                  response = requests.get(url, headers=headers, timeout=30)
                   response.raise_for_status()
                   
-                  # Parse the HTML to extract file information
                   html_content = response.text
-                  
-                  # Extract data from the page - Google Drive embeds file info in JSON
-                  # Look for the data structure that contains file information
                   files = []
                   
-                  # Pattern to find file IDs in the HTML (they appear in various formats)
-                  id_pattern = r'"([a-zA-Z0-9_-]{25,})"'
-                  potential_ids = set(re.findall(id_pattern, html_content))
+                  # Google Drive embeds data in JavaScript arrays within the HTML
+                  # Look for the pattern that contains file information
+                  # The data is typically in format: ["fileId","fileName",...]
                   
-                  # Filter to only include what looks like file IDs (not folder IDs or other data)
-                  # File IDs in the folder view typically appear with specific markers
-                  file_marker_pattern = r'\["([a-zA-Z0-9_-]{25,})"[,\]]'
-                  file_ids = re.findall(file_marker_pattern, html_content)
+                  # Method 1: Look for embedded JSON data structures
+                  # Drive stores file info in various JS arrays, try to find them
+                  json_pattern = r'\[\"([a-zA-Z0-9_-]{25,44})\",\"([^\"]+?\.(?:jpg|jpeg|png|gif|webp|bmp|JPG|JPEG|PNG|GIF|WEBP|BMP))\"'
+                  matches = re.findall(json_pattern, html_content)
                   
-                  # Also try to get file names if possible
-                  name_pattern = r'"([^"]+\.(?:jpg|jpeg|png|gif|webp|bmp))"'
-                  file_names = re.findall(name_pattern, html_content, re.IGNORECASE)
+                  if matches:
+                      print(f"Found {len(matches)} image file(s) using primary method")
+                      seen_ids = set()
+                      for file_id, file_name in matches:
+                          # Skip duplicates and validate ID format
+                          if file_id not in seen_ids and len(file_id) >= 25 and '_' not in file_id[:10]:
+                              files.append({
+                                  'id': file_id,
+                                  'name': file_name
+                              })
+                              seen_ids.add(file_id)
+                              print(f"  - {file_name} (ID: {file_id})")
                   
-                  if file_ids:
-                      print(f"Found {len(file_ids)} potential file(s) in the folder")
-                      # Create file objects - use unique file IDs
-                      unique_ids = list(set(file_ids[:20]))  # Limit to first 20 unique IDs, preserve as list
-                      unique_names = list(set(file_names[:len(unique_ids)]))  # Get unique names too
+                  # Method 2: Try alternative pattern if Method 1 didn't work
+                  if not files:
+                      print("Trying alternative extraction method...")
+                      # Look for the key-value pattern where file data might be stored
+                      alt_pattern = r'\[\"(1[a-zA-Z0-9_-]{25,43})\",\[\"([^\"]+?\.(?:jpg|jpeg|png|gif|webp|bmp|JPG|JPEG|PNG|GIF|WEBP|BMP))\"'
+                      alt_matches = re.findall(alt_pattern, html_content, re.IGNORECASE)
                       
-                      for i, file_id in enumerate(unique_ids):
-                          # Use corresponding name if available, otherwise generate one
-                          name = unique_names[i] if i < len(unique_names) else f"image_{i+1}.jpg"
-                          files.append({
-                              'id': file_id,
-                              'name': name
-                          })
-                  else:
-                      print("Warning: Could not find file IDs in folder. The folder might be:")
-                      print("  - Empty")
-                      print("  - Not publicly shared")
-                      print("  - Using a different format")
+                      if alt_matches:
+                          print(f"Found {len(alt_matches)} image file(s) using alternative method")
+                          seen_ids = set()
+                          for file_id, file_name in alt_matches:
+                              if file_id not in seen_ids:
+                                  files.append({
+                                      'id': file_id,
+                                      'name': file_name
+                                  })
+                                  seen_ids.add(file_id)
+                                  print(f"  - {file_name} (ID: {file_id})")
+                  
+                  if not files:
+                      print("\n⚠️ Could not find files in the folder.")
+                      print("This could mean:")
+                      print("  1. The folder is empty")
+                      print("  2. The folder is not shared publicly ('Anyone with the link' can view)")
+                      print("  3. The folder contains no image files")
+                      print("  4. Google Drive's HTML structure has changed")
+                      print("\n📝 Please verify:")
+                      print("  - Right-click the folder in Google Drive")
+                      print("  - Click 'Share' → Make sure it says 'Anyone with the link' can VIEW")
+                      print("  - Add image files (JPG, PNG, GIF, etc.) to the folder")
                   
                   return files
                   
@@ -172,6 +196,7 @@ jobs:
                   print("  1. The folder link is correct")
                   print("  2. The folder is shared as 'Anyone with the link can view'")
                   print("  3. The folder contains image files")
+                  print("  4. You have internet connectivity")
                   return []
           
           def download_public_file(file_id, output_path):
