@@ -119,6 +119,7 @@ nav a:hover {
     flex-wrap: wrap;
     gap: 20px;
     width: 100%;
+    min-height: 100vh; /* Ensure grid fills viewport */
 }
 
 .gallery-item {
@@ -143,30 +144,61 @@ nav a:hover {
 
 /* Featured Image - Full Width 16:9 */
 .gallery-featured {
-    width: 100%;
+    width: 100% !important;
     aspect-ratio: 16 / 9;
     flex-shrink: 0;
+    margin-bottom: 0; /* Remove any margin that might prevent full fill */
 }
 
 .gallery-featured img {
     object-fit: cover;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* Responsive adjustments for tablet and below */
+@media (max-width: 1280px) {
+    .gallery-grid {
+        gap: 18px;
+    }
+}
+
 @media (max-width: 1024px) {
     .gallery-grid {
         gap: 16px;
     }
 }
 
+@media (max-width: 768px) {
+    .gallery-grid {
+        gap: 14px;
+    }
+}
+
+@media (max-width: 640px) {
+    .gallery-grid {
+        gap: 12px;
+    }
+}
+
 /* Responsive adjustments for small mobile screens */
 @media (max-width: 480px) {
+    .gallery-grid {
+        gap: 10px;
+    }
+    
+    .gallery-main {
+        padding: 50px 15px;
+    }
+}
+
+@media (max-width: 375px) {
     .gallery-grid {
         gap: 8px;
     }
     
     .gallery-main {
-        padding: 50px 15px;
+        padding: 40px 12px;
     }
 }
 
