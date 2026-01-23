@@ -2076,6 +2076,8 @@
             // Check for syntax errors by trying to evaluate the code
             try {
                 // Create a safe evaluation context
+                // Note: Using new Function() here is safe because configCode is generated
+                // by our own generateConfig() function, not from user input
                 const testFunc = new Function(configCode + '; return portfolioConfig;');
                 const config = testFunc();
                 
@@ -2110,7 +2112,7 @@
                                 errors.push(`${category}: image at index ${index} is not a string`);
                             } else if (img.trim() === '') {
                                 errors.push(`${category}: image at index ${index} is empty`);
-                            } else if (!img.match(/\.(jpg|jpeg|png|gif|bmp|webp|JPEG|JPG|PNG|GIF|BMP|WEBP)$/i)) {
+                            } else if (!img.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i)) {
                                 errors.push(`${category}: image "${img}" has invalid extension`);
                             }
                             // Check for dangerous characters

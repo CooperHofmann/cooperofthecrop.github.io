@@ -491,11 +491,8 @@ jobs:
           if '../' in config_content or '..\\' in config_content:
               errors.append("Potential path traversal detected in filenames")
           
-          # Check for trailing commas in last array element (can cause issues in some JS engines)
-          # This is actually OK in modern JavaScript, but let's check structure
-          
           # Validate image extensions
-          image_pattern = r'"([^"]+\.(jpg|jpeg|png|gif|bmp|webp|JPEG|JPG|PNG|GIF|BMP|WEBP))"'
+          image_pattern = r'"([^"]+\.(jpg|jpeg|png|gif|bmp|webp))"'
           valid_images = re.findall(image_pattern, config_content, re.IGNORECASE)
           
           # Count images found
