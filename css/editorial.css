@@ -244,17 +244,20 @@ nav ul a:hover {
     color: var(--color-text);
 }
 
-/* Vertical stacking - one image per row */
+/* Responsive masonry grid layout */
 .gallery-grid {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
+    column-count: 3;
+    column-gap: var(--space-md);
+    width: 100%;
 }
 
 /* Gallery item - preserve aspect ratio */
 .gallery-item {
+    display: inline-block;
     width: 100%;
+    margin-bottom: var(--space-md);
     cursor: pointer;
+    break-inside: avoid;
 }
 
 .gallery-item img {
@@ -626,7 +629,8 @@ footer p {
     }
     
     .gallery-grid {
-        gap: var(--space-sm);
+        column-count: 2;
+        column-gap: var(--space-sm);
     }
     
     .lightbox-close,
@@ -644,5 +648,10 @@ footer p {
     
     .gallery-index-grid {
         gap: 0.5rem;
+    }
+    
+    .gallery-grid {
+        column-count: 1;
+        column-gap: 0;
     }
 }
