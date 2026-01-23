@@ -13,6 +13,7 @@
         
         :root {
             --color-bg: #FFFFFF;
+            --color-bg-light: #f5f5f5;
             --color-text: #1A1A1A;
             --color-text-light: #666666;
             --color-white: #FFFFFF;
@@ -349,7 +350,7 @@
             border: 1px solid var(--color-border);
             overflow: hidden;
             aspect-ratio: 1;
-            background: #f5f5f5;
+            background: var(--color-bg-light);
             cursor: move;
             transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
         }
@@ -533,7 +534,7 @@
         }
 
         .instructions-box code {
-            background: #f5f5f5;
+            background: var(--color-bg-light);
             padding: 0.125rem 0.375rem;
             border: 1px solid var(--color-border);
             font-family: 'Courier New', Monaco, monospace;

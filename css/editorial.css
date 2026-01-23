@@ -258,7 +258,6 @@ nav ul a:hover {
     margin-bottom: var(--space-md);
     cursor: pointer;
     break-inside: avoid;
-    page-break-inside: avoid;
 }
 
 .gallery-item img {
