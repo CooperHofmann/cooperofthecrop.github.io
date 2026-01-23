@@ -4,407 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COOPEROFTHECROP | Photography</title>
+    <link rel="stylesheet" href="css/cinematic.css">
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --black: #000000;
-            --white: #FFFFFF;
-            --accent: #ED4C24;
-            --accent-blue: #0099DD;
-            --gray: #CECCCC;
-            --light-gray: #F5F5F0;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background: var(--white);
-            color: var(--black);
-            line-height: 1.5;
-            overflow-x: hidden;
-            font-weight: 400;
-        }
-        
-        /* Brutalist Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: var(--black);
-            color: var(--white);
-            padding: 20px 40px;
-            z-index: 1000;
-            border-bottom: 4px solid var(--black);
-        }
-        
-        nav .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        nav .logo {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            text-decoration: none;
-            color: var(--white);
-            text-transform: uppercase;
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 40px;
-        }
-        
-        nav a {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            font-size: 13px;
-            transition: color 0.2s ease;
-        }
-        
-        nav a:hover {
-            color: var(--accent-blue);
-        }
-        
-        /* Hero Section */
-        .hero {
-            margin-top: 80px;
-            padding: 100px 40px;
-            background: var(--white);
-            border-bottom: 4px solid var(--black);
-        }
-        
-        .hero-content {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .hero h1 {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: clamp(48px, 10vw, 140px);
-            font-weight: 800;
-            line-height: 0.9;
-            letter-spacing: -0.04em;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            transition: transform 0.3s ease, color 0.3s ease;
-            cursor: default;
-        }
-        
-        .hero h1:hover {
-            transform: translateX(10px);
-            color: var(--accent);
-        }
-        
-        .hero .subtitle {
-            font-size: clamp(18px, 3vw, 28px);
-            max-width: 600px;
-            font-weight: 300;
-            line-height: 1.5;
-            color: var(--gray);
-        }
-        
-        /* Work Grid */
-        .work-section {
-            padding: 80px 40px;
-            background: var(--light-gray);
-        }
-        
-        .work-section h2 {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: clamp(36px, 6vw, 72px);
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 60px;
-            letter-spacing: -0.03em;
-            transition: transform 0.3s ease, color 0.3s ease;
-            cursor: default;
-        }
-        
-        .work-section h2:hover {
-            transform: scale(1.05);
-            color: var(--accent);
-        }
-        
-        .work-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .work-item {
-            position: relative;
-            background: var(--white);
-            border: 4px solid var(--black);
-            overflow: hidden;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        
-        .work-item:nth-child(1) {
-            grid-column: span 6;
-            grid-row: span 2;
-        }
-        
-        .work-item:nth-child(2) {
-            grid-column: span 6;
-        }
-        
-        .work-item:nth-child(3) {
-            grid-column: span 6;
-        }
-        
-        .work-item:nth-child(4) {
-            grid-column: span 6;
-            grid-row: span 2;
-        }
-        
-        .work-item:nth-child(5) {
-            grid-column: span 6;
-        }
-        
-        .work-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.3s ease;
-            min-height: 300px;
-        }
-        
-        .work-item:hover img {
-            transform: scale(1.05);
-        }
-        
-        .work-item .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--black);
-            color: var(--white);
-            padding: 20px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .work-item:hover .overlay {
-            transform: translateY(0);
-        }
-        
-        .work-item h3 {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .work-item .year {
-            font-size: 14px;
-            color: var(--gray);
-            margin-top: 5px;
-        }
-        
-        /* About Section */
-        .about-section {
-            padding: 80px 40px;
-            background: var(--white);
-            border-top: 4px solid var(--black);
-        }
-        
-        .about-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-        }
-        
-        .about-section h2 {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: clamp(36px, 6vw, 72px);
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 40px;
-            letter-spacing: -0.03em;
-            transition: transform 0.3s ease, color 0.3s ease;
-            cursor: default;
-        }
-        
-        .about-section h2:hover {
-            transform: translateY(-5px);
-            color: var(--accent);
-        }
-        
-        .about-section p {
-            font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            color: var(--black);
-            font-weight: 300;
-        }
-        
-        .about-image {
-            border: 4px solid var(--black);
-            overflow: hidden;
-        }
-        
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        
-        /* Contact Section */
-        .contact-section {
-            padding: 80px 40px;
-            background: var(--black);
-            color: var(--white);
-        }
-        
-        .contact-content {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .contact-section h2 {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: clamp(36px, 6vw, 72px);
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 60px;
-            letter-spacing: -0.03em;
-            transition: transform 0.3s ease, color 0.3s ease;
-            cursor: default;
-        }
-        
-        .contact-section h2:hover {
-            transform: rotate(-2deg) scale(1.05);
-            color: var(--accent);
-        }
-        
-        .contact-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-bottom: 80px;
-        }
-        
-        .contact-item {
-            border: 2px solid var(--white);
-            padding: 30px;
-        }
-        
-        .contact-item h3 {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            margin-bottom: 15px;
-            color: var(--gray);
-            font-weight: 600;
-        }
-        
-        .contact-item p {
-            font-size: 20px;
-            font-weight: 500;
-        }
-        
-        /* Footer */
-        footer {
-            background: var(--black);
-            color: var(--white);
-            padding: 40px;
-            border-top: 4px solid var(--white);
-            text-align: center;
-        }
-        
-        footer p {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-weight: 500;
-        }
-        
-        /* Mobile Menu */
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: 2px solid var(--white);
-            color: var(--white);
-            padding: 10px 15px;
-            font-family: Helvetica, Arial, sans-serif;
-            font-size: 14px;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        
-        @media (max-width: 768px) {
-            nav ul {
-                display: none;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                right: 0;
-                background: var(--black);
-                flex-direction: column;
-                padding: 20px 40px;
-                gap: 20px;
-                border-top: 2px solid var(--white);
-            }
-            
-            nav ul.active {
-                display: flex;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .work-item {
-                grid-column: span 12 !important;
-                grid-row: span 1 !important;
-            }
-            
-            .about-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            
-            .hero {
-                padding: 60px 20px;
-            }
-            
-            nav {
-                padding: 20px;
-            }
-        }
+        /* Page-specific overrides if needed */
     </style>
 </head>
 <body>
@@ -428,11 +31,7 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>
-                COOPER<br>
-                OF THE<br>
-                CROP
-            </h1>
+            <h1>Cooper of the Crop</h1>
             <p class="subtitle">Sports & Creative Photography</p>
         </div>
     </section>
@@ -445,35 +44,24 @@
     </section>
 
     <!-- About Section -->
-    <section class="about-section">
-        <div class="about-content">
-            <div>
-                <h2>ABOUT</h2>
-                <p>Cooper of the Crop specializes in sports and creative photography, capturing the raw energy and emotion of athletic performance.</p>
-                <p>Our brutalist approach strips away the unnecessary, focusing on the decisive moment, powerful composition, and authentic storytelling.</p>
-                <p><strong>Sports photography that hits different.</strong></p>
-            </div>
-            <div class="about-image">
-                <img src="https://images.unsplash.com/photo-1526666923125-b297ddbb7b0e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" alt="About">
-            </div>
-        </div>
+    <section class="text-block">
+        <h2>About</h2>
+        <p>Cooper of the Crop specializes in sports and creative photography, capturing the raw energy and emotion of athletic performance.</p>
+        <p>Our approach focuses on the decisive moment, powerful composition, and authentic storytelling.</p>
     </section>
 
     <!-- Contact Section -->
     <section class="contact-section">
         <div class="contact-content">
-            <h2>CONTACT</h2>
+            <h2>Contact</h2>
             <div class="contact-info">
                 <div class="contact-item">
-                    <h3>Email</h3>
                     <p>studio@cooperofthecrop.com</p>
                 </div>
                 <div class="contact-item">
-                    <h3>Phone</h3>
                     <p>+1 212 555 0199</p>
                 </div>
                 <div class="contact-item">
-                    <h3>Location</h3>
                     <p>New York, USA</p>
                 </div>
             </div>
@@ -485,15 +73,13 @@
         <p>© 2025 COOPEROFTHECROP. All Rights Reserved.</p>
         <!-- Secret Admin Button -->
         <div style="margin-top: 20px;">
-            <a href="admin.html" style="color: var(--gray); font-size: 10px; text-decoration: none; opacity: 0.3; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.3'">•</a>
+            <a href="admin.html" style="color: #666666; font-size: 10px; text-decoration: none; opacity: 0.3; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.3'">•</a>
         </div>
     </footer>
 
+    <script src="js/config.js"></script>
+    <script src="js/cinematic.js"></script>
     <script>
-        function toggleMenu() {
-            document.getElementById('nav-menu').classList.toggle('active');
-        }
-
         // Load gallery images from config.js for homepage
         document.addEventListener('DOMContentLoaded', function() {
             const workGrid = document.getElementById('homeWorkGrid');
@@ -529,32 +115,35 @@
                 workItem.href = gallery.page;
                 workItem.className = 'work-item';
 
+                const imageWrapper = document.createElement('div');
+                imageWrapper.className = 'work-item-image';
+
                 const img = document.createElement('img');
                 img.src = photoSrc;
                 img.alt = gallery.name;
+                img.loading = 'lazy';
                 img.onerror = function() {
                     // Fallback to placeholder if image fails to load
                     this.src = placeholderImages[0];
                 };
 
-                const overlay = document.createElement('div');
-                overlay.className = 'overlay';
+                const caption = document.createElement('div');
+                caption.className = 'work-item-caption';
                 
                 const h3 = document.createElement('h3');
                 h3.textContent = gallery.name;
                 
                 const p = document.createElement('p');
-                p.className = 'year';
                 p.textContent = 'View Gallery';
 
-                overlay.appendChild(h3);
-                overlay.appendChild(p);
-                workItem.appendChild(img);
-                workItem.appendChild(overlay);
+                caption.appendChild(h3);
+                caption.appendChild(p);
+                imageWrapper.appendChild(img);
+                workItem.appendChild(imageWrapper);
+                workItem.appendChild(caption);
                 workGrid.appendChild(workItem);
             });
         });
     </script>
-    <script src="js/config.js"></script>
 </body>
 </html>

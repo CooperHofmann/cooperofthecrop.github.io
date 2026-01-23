@@ -1,0 +1,691 @@
+/**
+ * CINEMATIC PHOTOGRAPHY PORTFOLIO
+ * Inspired by avagyanphoto.com
+ * 
+ * Design principles:
+ * - Minimal, editorial, luxury feel
+ * - Full-width imagery with smooth scroll animations
+ * - Subtle motion: slow, eased, calm
+ * - Typography secondary to imagery
+ * - Generous whitespace and vertical rhythm
+ */
+
+/* ========================================
+   RESET & BASE STYLES
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-bg: #FAFAFA;
+    --color-text: #1A1A1A;
+    --color-text-light: #666666;
+    --color-white: #FFFFFF;
+    --color-black: #000000;
+    
+    /* Timing functions for smooth, cinematic motion */
+    --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+    
+    /* Animation durations */
+    --duration-slow: 1s;
+    --duration-medium: 0.8s;
+    --duration-fast: 0.6s;
+    
+    /* Spacing scale */
+    --space-xs: 1rem;
+    --space-sm: 2rem;
+    --space-md: 4rem;
+    --space-lg: 8rem;
+    --space-xl: 12rem;
+    --space-section: 15vh;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    overflow-x: hidden;
+}
+
+/* ========================================
+   NAVIGATION - MINIMAL & REFINED
+   ======================================== */
+
+nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(250, 250, 250, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    padding: 1.5rem 3rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 100%;
+}
+
+nav .logo {
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    color: var(--color-text);
+    text-transform: uppercase;
+    transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+nav .logo:hover {
+    opacity: 0.6;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+}
+
+nav a {
+    color: var(--color-text-light);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: opacity 0.4s var(--ease-smooth);
+    position: relative;
+}
+
+nav a:hover {
+    opacity: 1;
+    color: var(--color-text);
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--color-text);
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-smooth), opacity 0.5s var(--ease-smooth);
+}
+
+nav a:hover::after {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--color-text);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+/* ========================================
+   HERO SECTION - EDITORIAL & MINIMAL
+   ======================================== */
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl) var(--space-md);
+    margin-top: 80px;
+}
+
+.hero-content {
+    text-align: center;
+    max-width: 1000px;
+}
+
+.hero h1 {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-md);
+    color: var(--color-text);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp var(--duration-slow) var(--ease-smooth) 0.2s forwards;
+}
+
+.hero .subtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 300;
+    color: var(--color-text-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp var(--duration-medium) var(--ease-smooth) 0.5s forwards;
+}
+
+/* ========================================
+   CONTENT SECTIONS - VERTICAL FLOW
+   ======================================== */
+
+.content-section {
+    width: 100%;
+    padding: 0;
+    margin-bottom: var(--space-section);
+}
+
+/* Full-width image blocks */
+.image-block {
+    width: 100%;
+    min-height: 70vh;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-section);
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity var(--duration-slow) var(--ease-smooth),
+                transform var(--duration-slow) var(--ease-smooth);
+}
+
+.image-block.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.image-block img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Variant: Contained images that preserve aspect ratio */
+.image-block.contained {
+    min-height: auto;
+    max-height: 90vh;
+    background: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-block.contained img {
+    object-fit: contain;
+    max-height: 90vh;
+}
+
+/* Subtle hover effect (desktop only) */
+@media (hover: hover) {
+    .image-block.interactive {
+        cursor: pointer;
+    }
+    
+    .image-block.interactive img {
+        transition: transform 0.8s var(--ease-smooth);
+    }
+    
+    .image-block.interactive:hover img {
+        transform: scale(1.02);
+    }
+}
+
+/* ========================================
+   TYPOGRAPHY - REFINED & SECONDARY
+   ======================================== */
+
+.text-block {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-lg) var(--space-md);
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity var(--duration-medium) var(--ease-smooth) 0.2s,
+                transform var(--duration-medium) var(--ease-smooth) 0.2s;
+}
+
+.text-block.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.text-block h2 {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+}
+
+.text-block p {
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--color-text-light);
+    margin-bottom: var(--space-xs);
+    letter-spacing: 0.02em;
+}
+
+.text-block p:last-child {
+    margin-bottom: 0;
+}
+
+/* ========================================
+   GALLERY GRID - VERTICAL STACKING
+   ======================================== */
+
+.work-section {
+    padding: var(--space-section) 0;
+}
+
+.work-grid {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section);
+}
+
+.work-item {
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    position: relative;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity var(--duration-slow) var(--ease-smooth),
+                transform var(--duration-slow) var(--ease-smooth);
+}
+
+.work-item.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.work-item-image {
+    width: 100%;
+    min-height: 70vh;
+    overflow: hidden;
+    position: relative;
+}
+
+.work-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s var(--ease-smooth);
+}
+
+@media (hover: hover) {
+    .work-item:hover .work-item-image img {
+        transform: scale(1.02);
+    }
+}
+
+.work-item-caption {
+    text-align: center;
+    padding: var(--space-sm) var(--space-md);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s var(--ease-smooth) 0.2s,
+                transform 0.6s var(--ease-smooth) 0.2s;
+}
+
+.work-item.animate .work-item-caption {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.work-item-caption h3 {
+    font-size: clamp(1.25rem, 2vw, 1.75rem);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+}
+
+.work-item-caption p {
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--color-text-light);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ========================================
+   GALLERY PAGE - SINGLE COLUMN FLOW
+   ======================================== */
+
+.gallery-main {
+    margin-top: 80px;
+    padding: var(--space-xl) 0;
+    min-height: 100vh;
+}
+
+.gallery-header {
+    text-align: center;
+    padding: var(--space-lg) var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.gallery-header h1 {
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+}
+
+.gallery-grid {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-section);
+}
+
+.gallery-item {
+    width: 100%;
+    min-height: 70vh;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity var(--duration-slow) var(--ease-smooth),
+                transform var(--duration-slow) var(--ease-smooth);
+}
+
+.gallery-item.animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s var(--ease-smooth);
+}
+
+@media (hover: hover) {
+    .gallery-item {
+        cursor: pointer;
+    }
+    
+    .gallery-item:hover img {
+        transform: scale(1.02);
+    }
+}
+
+/* Preserve aspect ratio for certain images */
+.gallery-item.preserve-ratio {
+    min-height: auto;
+    max-height: 90vh;
+}
+
+.gallery-item.preserve-ratio img {
+    object-fit: contain;
+}
+
+/* ========================================
+   CONTACT SECTION
+   ======================================== */
+
+.contact-section {
+    padding: var(--space-xl) var(--space-md);
+    text-align: center;
+    margin-bottom: var(--space-section);
+}
+
+.contact-content h2 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.contact-item p {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    font-weight: 300;
+    color: var(--color-text-light);
+    letter-spacing: 0.02em;
+    transition: color 0.4s var(--ease-smooth);
+}
+
+.contact-item p:hover {
+    color: var(--color-text);
+}
+
+/* ========================================
+   FOOTER - MINIMAL
+   ======================================== */
+
+footer {
+    padding: var(--space-md);
+    text-align: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: var(--color-bg);
+}
+
+footer p {
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+}
+
+/* ========================================
+   LIGHTBOX - REFINED
+   ======================================== */
+
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.98);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-smooth);
+}
+
+.lightbox.active {
+    display: flex;
+    opacity: 1;
+}
+
+.lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    background: none;
+    border: none;
+    color: var(--color-white);
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 1rem;
+    transition: opacity 0.3s var(--ease-smooth);
+    opacity: 0.6;
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    opacity: 1;
+}
+
+.lightbox-close {
+    top: 2rem;
+    right: 2rem;
+}
+
+.lightbox-prev {
+    left: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lightbox-next {
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.lightbox-counter {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--color-white);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.6;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE
+   ======================================== */
+
+@media (max-width: 768px) {
+    :root {
+        --space-md: 2rem;
+        --space-lg: 4rem;
+        --space-xl: 6rem;
+        --space-section: 10vh;
+    }
+    
+    nav {
+        padding: 1rem 1.5rem;
+    }
+    
+    nav ul {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(250, 250, 250, 0.98);
+        backdrop-filter: blur(10px);
+        flex-direction: column;
+        padding: 2rem 1.5rem;
+        gap: 1.5rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    nav ul.active {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .hero {
+        min-height: 80vh;
+        padding: var(--space-lg) var(--space-sm);
+    }
+    
+    .image-block,
+    .gallery-item,
+    .work-item-image {
+        min-height: 60vh;
+    }
+    
+    .text-block {
+        padding: var(--space-md) var(--space-sm);
+    }
+    
+    .work-grid,
+    .gallery-grid {
+        gap: 8vh;
+    }
+    
+    .lightbox-close,
+    .lightbox-prev,
+    .lightbox-next {
+        font-size: 1.5rem;
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --space-section: 8vh;
+    }
+    
+    .work-grid,
+    .gallery-grid {
+        gap: 6vh;
+    }
+}
