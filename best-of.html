@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Best Of | Cooper of the Crop</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/gallery.css">
+    <link rel="stylesheet" href="css/cinematic.css">
+
 </head>
 <body>
     <!-- Navigation -->
@@ -29,12 +27,12 @@
 
     <!-- Gallery Main -->
     <section class="gallery-main">
-        <div class="gallery-container">
-            <h1>BEST<br>OF</h1>
-            
-            <!-- Gallery items will be dynamically inserted here -->
-            <div class="gallery-grid"></div>
+        <div class="gallery-header">
+            <h1>Best Of</h1>
         </div>
+        
+        <!-- Gallery items will be dynamically inserted here -->
+        <div class="gallery-grid"></div>
     </section>
 
     <!-- Footer -->
@@ -42,13 +40,14 @@
         <p>© 2025 COOPER OF THE CROP. All Rights Reserved.</p>
         <!-- Secret Admin Button -->
         <div style="margin-top: 20px;">
-            <a href="admin.html" style="color: var(--gray); font-size: 10px; text-decoration: none; opacity: 0.3; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.3'">•</a>
+            <a href="admin.html" style="color: #666666; font-size: 10px; text-decoration: none; opacity: 0.3; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.3'">•</a>
         </div>
     </footer>
 
     <!-- Scripts -->
     <script src="js/config.js"></script>
-    <script src="js/gallery.js"></script>
+    <script src="js/gallery-cinematic.js"></script>
+    <script src="js/cinematic.js"></script>
     <script>
         // Initialize best-of gallery on page load
         document.addEventListener('DOMContentLoaded', function() {
