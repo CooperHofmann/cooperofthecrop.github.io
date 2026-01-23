@@ -261,35 +261,50 @@ function applyJustifiedLayout() {
         const containerWidth = galleryGrid.offsetWidth;
         if (containerWidth === 0) return;
         
-        // Get breakpoint settings
+        // Get breakpoint settings with more granular control
         const windowWidth = window.innerWidth;
         let targetRowHeight, gutter, idealImagesPerRow;
         
-        if (windowWidth <= 480) {
-            // Small Mobile: 1 image per row
-            targetRowHeight = 250;
+        if (windowWidth <= 375) {
+            // Extra Small Mobile (iPhone SE, small phones): 1 image per row
+            targetRowHeight = 220;
             gutter = 8;
             idealImagesPerRow = 1;
-        } else if (windowWidth <= 768) {
-            // Mobile: 1-2 images per row
-            targetRowHeight = 280;
+        } else if (windowWidth <= 480) {
+            // Small Mobile: 1 image per row
+            targetRowHeight = 250;
+            gutter = 10;
+            idealImagesPerRow = 1;
+        } else if (windowWidth <= 640) {
+            // Medium Mobile: 1-2 images per row
+            targetRowHeight = 270;
             gutter = 12;
             idealImagesPerRow = 1.5;
+        } else if (windowWidth <= 768) {
+            // Large Mobile/Small Tablet: 2 images per row
+            targetRowHeight = 290;
+            gutter = 14;
+            idealImagesPerRow = 2;
         } else if (windowWidth <= 1024) {
             // Tablet: 2-3 images per row
-            targetRowHeight = 300;
+            targetRowHeight = 310;
             gutter = 16;
             idealImagesPerRow = 2.5;
-        } else if (windowWidth <= 1400) {
+        } else if (windowWidth <= 1280) {
             // Small Desktop: 3 images per row
-            targetRowHeight = 320;
+            targetRowHeight = 330;
             gutter = 18;
             idealImagesPerRow = 3;
-        } else {
-            // Large Desktop: 3-4 images per row
-            targetRowHeight = 360;
+        } else if (windowWidth <= 1600) {
+            // Medium Desktop: 3-4 images per row
+            targetRowHeight = 350;
             gutter = 20;
             idealImagesPerRow = 3.5;
+        } else {
+            // Large Desktop: 4+ images per row
+            targetRowHeight = 380;
+            gutter = 22;
+            idealImagesPerRow = 4;
         }
         
         // Calculate justified layout
@@ -312,9 +327,10 @@ function buildJustifiedRows(items, containerWidth, gutter, idealImagesPerRow, ta
     let currentRow = [];
     let currentRowAspectSum = 0;
     
-    // Define min and max row heights to keep rows more consistent
-    const minRowHeight = targetRowHeight * 0.65;
-    const maxRowHeight = targetRowHeight * 1.35;
+    // Define min and max row heights to keep rows more consistent and fill screen better
+    // Allow more flexibility for better space utilization
+    const minRowHeight = targetRowHeight * 0.7;
+    const maxRowHeight = targetRowHeight * 1.5;
     
     items.forEach((item, index) => {
         const aspectRatio = parseFloat(item.getAttribute('data-aspect-ratio')) || DEFAULT_ASPECT_RATIO;
@@ -338,17 +354,17 @@ function buildJustifiedRows(items, containerWidth, gutter, idealImagesPerRow, ta
         if (index === items.length - 1) {
             shouldFinalizeRow = true;
         }
-        // We've reached minimum images and height is reasonable
+        // We've reached ideal images and height is in acceptable range
         else if (currentRow.length >= Math.floor(idealImagesPerRow)) {
             if (potentialRowHeight >= minRowHeight && potentialRowHeight <= maxRowHeight) {
                 shouldFinalizeRow = true;
             }
-            // Or we've exceeded max images per row
+            // Or we've significantly exceeded ideal images per row
             else if (currentRow.length >= Math.ceil(idealImagesPerRow) + 1) {
                 shouldFinalizeRow = true;
             }
         }
-        // Height has dropped below minimum (too many images)
+        // Height has dropped below minimum (too many images in row)
         else if (potentialRowHeight < minRowHeight && currentRow.length >= 2) {
             shouldFinalizeRow = true;
         }
