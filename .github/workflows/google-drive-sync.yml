@@ -448,6 +448,67 @@ jobs:
           print("Config updated successfully")
           PYTHON_SCRIPT
       
+      - name: Validate config.js
+        if: steps.download.outputs.status == 'success'
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import json
+          import re
+          
+          config_path = 'js/config.js'
+          
+          print("Validating config.js...")
+          
+          # Read the config file
+          with open(config_path, 'r') as f:
+              config_content = f.read()
+          
+          # Basic validation checks
+          errors = []
+          
+          # Check for duplicate closing braces (common error)
+          if re.search(r'\}\s*;\s*\}\s*;', config_content):
+              errors.append("Duplicate closing braces detected (}; };)")
+          
+          # Check for syntax issues
+          if config_content.count('const portfolioConfig = {') != 1:
+              errors.append("portfolioConfig should be defined exactly once")
+          
+          if config_content.count('const placeholderImages = [') != 1:
+              errors.append("placeholderImages should be defined exactly once")
+          
+          # Check for each category
+          required_categories = ['track', 'soccer', 'football', 'basketball', 'bestOf']
+          for category in required_categories:
+              if not re.search(rf'{category}:\s*\{{', config_content):
+                  errors.append(f"Missing category: {category}")
+              
+              # Check for images array
+              if not re.search(rf'{category}:\s*\{{[^}}]*?images:\s*\[', config_content, re.DOTALL):
+                  errors.append(f"Missing images array for category: {category}")
+          
+          # Check for path traversal attempts
+          if '../' in config_content or '..\\' in config_content:
+              errors.append("Potential path traversal detected in filenames")
+          
+          # Validate image extensions
+          image_pattern = r'"([^"]+\.(jpg|jpeg|png|gif|bmp|webp))"'
+          valid_images = re.findall(image_pattern, config_content, re.IGNORECASE)
+          
+          # Count images found
+          print(f"Found {len(valid_images)} image references")
+          
+          # Report validation results
+          if errors:
+              print("\n❌ VALIDATION ERRORS:")
+              for error in errors:
+                  print(f"  - {error}")
+              print("\nConfig validation failed! Please review the errors above.")
+              exit(1)
+          else:
+              print("✓ Config validation passed successfully")
+          PYTHON_SCRIPT
+      
       - name: Commit and push changes
         if: steps.download.outputs.status == 'success'
         env:
