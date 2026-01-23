@@ -35,7 +35,9 @@ function initGallery(category) {
 
     // Get images array (use placeholders if empty)
     const images = config.images.length > 0 ? config.images : placeholderImages;
-    const basePath = config.images.length > 0 ? `images/${category}/` : '';
+    // Map category name to directory name (handle bestOf -> best-of)
+    const directoryName = category === 'bestOf' ? 'best-of' : category;
+    const basePath = config.images.length > 0 ? `images/${directoryName}/` : '';
 
     // Generate gallery items
     // Strategy: All images appear in grid. First image gets featured styling (full-width, 16:9).
