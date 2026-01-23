@@ -143,17 +143,17 @@ nav a:hover {
 }
 
 /* Featured Image - Full Width 16:9 */
-.gallery-featured {
-    width: 100% !important;
+.gallery-grid .gallery-featured {
+    width: 100%;
     aspect-ratio: 16 / 9;
     flex-shrink: 0;
     margin-bottom: 0; /* Remove any margin that might prevent full fill */
 }
 
-.gallery-featured img {
+.gallery-grid .gallery-featured img {
     object-fit: cover;
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: 100%;
 }
 
 /* Responsive adjustments for tablet and below */

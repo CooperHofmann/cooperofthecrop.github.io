@@ -368,11 +368,6 @@ function buildJustifiedRows(items, containerWidth, gutter, idealImagesPerRow, ta
         else if (potentialRowHeight < minRowHeight && currentRow.length >= 2) {
             shouldFinalizeRow = true;
         }
-        // Height is getting too tall (too few images, need to add more)
-        else if (potentialRowHeight > maxRowHeight && currentRow.length < idealImagesPerRow) {
-            // Keep adding images to bring height down
-            shouldFinalizeRow = false;
-        }
         
         if (shouldFinalizeRow) {
             // Recalculate final dimensions
