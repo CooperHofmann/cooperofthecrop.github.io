@@ -2069,6 +2069,86 @@
             document.getElementById('statBestOf').textContent = Math.max(indexedDBCounts.bestOf, repoCounts.bestOf);
         }
 
+        // Configuration Validation
+        function validateConfig(configCode) {
+            const errors = [];
+            
+            // Check for syntax errors by trying to evaluate the code
+            try {
+                // Create a safe evaluation context
+                const testFunc = new Function(configCode + '; return portfolioConfig;');
+                const config = testFunc();
+                
+                // Validate structure
+                if (!config || typeof config !== 'object') {
+                    errors.push('portfolioConfig is not defined or not an object');
+                    return { isValid: false, errors };
+                }
+                
+                // Validate required categories
+                const requiredCategories = ['track', 'soccer', 'football', 'basketball', 'bestOf'];
+                for (const category of requiredCategories) {
+                    if (!config[category]) {
+                        errors.push(`Missing category: ${category}`);
+                        continue;
+                    }
+                    
+                    // Validate category structure
+                    const cat = config[category];
+                    if (!cat.title || typeof cat.title !== 'string') {
+                        errors.push(`${category}: missing or invalid title`);
+                    }
+                    if (!cat.description || typeof cat.description !== 'string') {
+                        errors.push(`${category}: missing or invalid description`);
+                    }
+                    if (!Array.isArray(cat.images)) {
+                        errors.push(`${category}: images must be an array`);
+                    } else {
+                        // Validate image filenames
+                        cat.images.forEach((img, index) => {
+                            if (typeof img !== 'string') {
+                                errors.push(`${category}: image at index ${index} is not a string`);
+                            } else if (img.trim() === '') {
+                                errors.push(`${category}: image at index ${index} is empty`);
+                            } else if (!img.match(/\.(jpg|jpeg|png|gif|bmp|webp|JPEG|JPG|PNG|GIF|BMP|WEBP)$/i)) {
+                                errors.push(`${category}: image "${img}" has invalid extension`);
+                            }
+                            // Check for dangerous characters
+                            if (img.includes('../') || img.includes('..\\')) {
+                                errors.push(`${category}: image "${img}" contains path traversal`);
+                            }
+                        });
+                        
+                        // Check for duplicate filenames
+                        const imageSet = new Set();
+                        cat.images.forEach(img => {
+                            if (imageSet.has(img)) {
+                                errors.push(`${category}: duplicate image "${img}"`);
+                            }
+                            imageSet.add(img);
+                        });
+                    }
+                    
+                    // Validate homePagePhoto if set
+                    if (cat.homePagePhoto !== null && cat.homePagePhoto !== undefined) {
+                        if (typeof cat.homePagePhoto !== 'string') {
+                            errors.push(`${category}: homePagePhoto must be a string or null`);
+                        } else if (cat.homePagePhoto && !cat.images.includes(cat.homePagePhoto)) {
+                            errors.push(`${category}: homePagePhoto "${cat.homePagePhoto}" not found in images array`);
+                        }
+                    }
+                }
+                
+            } catch (e) {
+                errors.push(`JavaScript syntax error: ${e.message}`);
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors
+            };
+        }
+
         // Configuration Generator
         function generateConfig() {
             const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
@@ -2123,7 +2203,6 @@ ${(metadata.bestOf || []).map(p => `            "${p.filename}",`).join('\n')}
         ]
     }
 };
-};
 
 // Placeholder images for empty galleries
 const placeholderImages = [
@@ -2133,11 +2212,34 @@ const placeholderImages = [
     "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80",
 ];`;
 
-            document.getElementById('configCode').value = configCode;
+            // Validate the generated config before setting it
+            const validationResult = validateConfig(configCode);
+            if (!validationResult.isValid) {
+                console.error('Config validation failed:', validationResult.errors);
+                showNotification(`❌ Config generation failed: ${validationResult.errors.join(', ')}`, 'error');
+                // Still set the config so user can see what was generated
+                document.getElementById('configCode').value = configCode + '\n\n// ⚠️ VALIDATION ERRORS:\n// ' + validationResult.errors.join('\n// ');
+            } else {
+                document.getElementById('configCode').value = configCode;
+            }
         }
 
         function copyConfig() {
             const configCode = document.getElementById('configCode').value;
+            
+            // Validate before copying
+            const validationResult = validateConfig(configCode);
+            if (!validationResult.isValid) {
+                const proceed = confirm(
+                    'WARNING: The configuration has validation errors:\n\n' + 
+                    validationResult.errors.join('\n') + 
+                    '\n\nDo you still want to copy it? (Not recommended)'
+                );
+                if (!proceed) {
+                    return;
+                }
+            }
+            
             navigator.clipboard.writeText(configCode).then(() => {
                 showNotification('✓ Configuration copied to clipboard!', 'success');
             }).catch(err => {
@@ -2155,6 +2257,20 @@ const placeholderImages = [
 
         function downloadConfig() {
             const configCode = document.getElementById('configCode').value;
+            
+            // Validate before downloading
+            const validationResult = validateConfig(configCode);
+            if (!validationResult.isValid) {
+                const proceed = confirm(
+                    'WARNING: The configuration has validation errors:\n\n' + 
+                    validationResult.errors.join('\n') + 
+                    '\n\nDo you still want to download it? (Not recommended)'
+                );
+                if (!proceed) {
+                    return;
+                }
+            }
+            
             const blob = new Blob([configCode], { type: 'text/javascript' });
             const url = URL.createObjectURL(blob);
             triggerDownload(url, 'config.js');
@@ -2449,6 +2565,20 @@ Your token is stored only in your browser's localStorage.
             statusDiv.style.display = 'block';
             statusDiv.style.background = 'var(--light-gray)';
             statusDiv.innerHTML = '⏳ Starting deployment...';
+
+            // Validate configuration before deploying
+            statusDiv.innerHTML = '⏳ Validating configuration...';
+            const configCode = document.getElementById('configCode').value;
+            const validationResult = validateConfig(configCode);
+            
+            if (!validationResult.isValid) {
+                statusDiv.style.background = 'rgba(204, 0, 0, 0.1)';
+                statusDiv.innerHTML = '❌ Configuration validation failed:<br><ul style="margin: 10px 0; padding-left: 20px;">' + 
+                    validationResult.errors.map(e => `<li>${e}</li>`).join('') + '</ul>' +
+                    'Please fix these errors before deploying.';
+                showNotification('❌ Config validation failed', 'error');
+                return;
+            }
 
             // Get GitHub token
             const token = localStorage.getItem('githubToken');
