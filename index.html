@@ -75,7 +75,7 @@
                 const img = document.createElement('img');
                 img.src = photoSrc;
                 img.alt = gallery.name;
-                img.loading = index < 6 ? 'eager' : 'lazy';
+                img.loading = 'eager'; // All 5 galleries load eagerly
                 img.style.animationDelay = `${index * 0.1}s`;
                 img.onerror = function() {
                     this.src = placeholderImages[0];

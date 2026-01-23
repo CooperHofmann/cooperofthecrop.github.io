@@ -265,14 +265,6 @@ nav ul a:hover {
     animation: fadeIn var(--fade-duration) var(--fade-easing) forwards;
 }
 
-/* Staggered fade-in for images */
-.gallery-item:nth-child(1) img { animation-delay: 0s; }
-.gallery-item:nth-child(2) img { animation-delay: 0.05s; }
-.gallery-item:nth-child(3) img { animation-delay: 0.1s; }
-.gallery-item:nth-child(4) img { animation-delay: 0.15s; }
-.gallery-item:nth-child(5) img { animation-delay: 0.2s; }
-.gallery-item:nth-child(6) img { animation-delay: 0.25s; }
-
 /* Caption below image */
 .gallery-item-caption {
     margin-top: var(--space-xs);

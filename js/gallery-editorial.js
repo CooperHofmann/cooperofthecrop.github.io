@@ -14,10 +14,12 @@ function initGallery(category) {
         return;
     }
 
-    // Update page title (strip HTML tags for clean display)
+    // Update page title (strip HTML tags using DOM for safety)
     const titleElement = document.querySelector('.gallery-header h1');
     if (titleElement) {
-        titleElement.textContent = config.title.replace(/<br>/g, ' ');
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = config.title;
+        titleElement.textContent = tempDiv.textContent || tempDiv.innerText || '';
     }
 
     // Get gallery container
