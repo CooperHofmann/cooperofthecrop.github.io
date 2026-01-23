@@ -4,11 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>COOPEROFTHECROP | Photography</title>
-    <link rel="stylesheet" href="css/cinematic.css">
-
-    <style>
-        /* Page-specific overrides if needed */
-    </style>
+    <link rel="stylesheet" href="css/editorial.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -16,57 +12,21 @@
         <div class="container">
             <a href="index.html" class="logo">COOPEROFTHECROP</a>
             <ul id="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="track.html">Track</a></li>
-                <li><a href="soccer.html">Soccer</a></li>
-                <li><a href="football.html">Football</a></li>
-                <li><a href="basketball.html">Basketball</a></li>
-                <li><a href="best-of.html">Best Of</a></li>
+                <li><a href="index.html">Work</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <button class="mobile-menu-btn" onclick="toggleMenu()">MENU</button>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Cooper of the Crop</h1>
-            <p class="subtitle">Sports & Creative Photography</p>
-        </div>
-    </section>
-
-    <!-- Work Grid -->
-    <section class="work-section">
-        <div class="work-grid" id="homeWorkGrid">
-            <!-- Gallery items will be dynamically loaded from config.js -->
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="text-block">
-        <h2>About</h2>
-        <p>Cooper of the Crop specializes in sports and creative photography, capturing the raw energy and emotion of athletic performance.</p>
-        <p>Our approach focuses on the decisive moment, powerful composition, and authentic storytelling.</p>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="contact-section">
-        <div class="contact-content">
-            <h2>Contact</h2>
-            <div class="contact-info">
-                <div class="contact-item">
-                    <p>studio@cooperofthecrop.com</p>
-                </div>
-                <div class="contact-item">
-                    <p>+1 212 555 0199</p>
-                </div>
-                <div class="contact-item">
-                    <p>New York, USA</p>
-                </div>
+    <!-- Gallery Index Grid -->
+    <main class="home-main">
+        <div class="home-container">
+            <div class="gallery-index-grid" id="galleryIndexGrid">
+                <!-- Gallery items will be dynamically loaded from config.js -->
             </div>
         </div>
-    </section>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -78,12 +38,12 @@
     </footer>
 
     <script src="js/config.js"></script>
-    <script src="js/cinematic.js"></script>
+    <script src="js/editorial.js"></script>
     <script>
-        // Load gallery images from config.js for homepage
+        // Load gallery grid for homepage
         document.addEventListener('DOMContentLoaded', function() {
-            const workGrid = document.getElementById('homeWorkGrid');
-            if (!workGrid) return;
+            const grid = document.getElementById('galleryIndexGrid');
+            if (!grid) return;
 
             const galleries = [
                 { key: 'track', name: 'Track & Field', page: 'track.html' },
@@ -93,55 +53,44 @@
                 { key: 'bestOf', name: 'Best Of', page: 'best-of.html' }
             ];
 
-            galleries.forEach(gallery => {
+            galleries.forEach((gallery, index) => {
                 const config = portfolioConfig[gallery.key];
                 if (!config) return;
 
                 // Determine which photo to use for homepage
                 let photoSrc;
                 if (config.homePagePhoto) {
-                    // Use override photo if set
                     photoSrc = `images/${gallery.key === 'bestOf' ? 'best-of' : gallery.key}/${config.homePagePhoto}`;
                 } else if (config.images && config.images.length > 0) {
-                    // Use first photo from gallery
                     photoSrc = `images/${gallery.key === 'bestOf' ? 'best-of' : gallery.key}/${config.images[0]}`;
                 } else {
-                    // Use placeholder from config
                     photoSrc = placeholderImages[0];
                 }
 
-                // Create work item
-                const workItem = document.createElement('a');
-                workItem.href = gallery.page;
-                workItem.className = 'work-item';
-
-                const imageWrapper = document.createElement('div');
-                imageWrapper.className = 'work-item-image';
+                // Create grid item
+                const item = document.createElement('a');
+                item.href = gallery.page;
+                item.className = 'gallery-index-item';
 
                 const img = document.createElement('img');
                 img.src = photoSrc;
                 img.alt = gallery.name;
-                img.loading = 'lazy';
+                img.loading = index < 6 ? 'eager' : 'lazy';
+                img.style.animationDelay = `${index * 0.1}s`;
                 img.onerror = function() {
-                    // Fallback to placeholder if image fails to load
                     this.src = placeholderImages[0];
                 };
 
-                const caption = document.createElement('div');
-                caption.className = 'work-item-caption';
+                const overlay = document.createElement('div');
+                overlay.className = 'title-overlay';
                 
                 const h3 = document.createElement('h3');
                 h3.textContent = gallery.name;
-                
-                const p = document.createElement('p');
-                p.textContent = 'View Gallery';
 
-                caption.appendChild(h3);
-                caption.appendChild(p);
-                imageWrapper.appendChild(img);
-                workItem.appendChild(imageWrapper);
-                workItem.appendChild(caption);
-                workGrid.appendChild(workItem);
+                overlay.appendChild(h3);
+                item.appendChild(img);
+                item.appendChild(overlay);
+                grid.appendChild(item);
             });
         });
     </script>
