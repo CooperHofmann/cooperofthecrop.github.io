@@ -134,7 +134,6 @@ const portfolioConfig = {
         ]
     }
 };
-};
 
 // Placeholder images for empty galleries
 const placeholderImages = [
