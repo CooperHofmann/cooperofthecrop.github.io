@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Track | Cooper of the Crop</title>
-    <link rel="stylesheet" href="css/cinematic.css">
+    <link rel="stylesheet" href="css/editorial.css">
 </head>
 <body>
     <!-- Navigation -->
@@ -12,12 +12,7 @@
         <div class="container">
             <a href="index.html" class="logo">COOPEROFTHECROP</a>
             <ul id="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="track.html">Track</a></li>
-                <li><a href="soccer.html">Soccer</a></li>
-                <li><a href="football.html">Football</a></li>
-                <li><a href="basketball.html">Basketball</a></li>
-                <li><a href="best-of.html">Best Of</a></li>
+                <li><a href="index.html">Work</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <button class="mobile-menu-btn" onclick="toggleMenu()">MENU</button>
@@ -25,14 +20,16 @@
     </nav>
 
     <!-- Gallery Main -->
-    <section class="gallery-main">
-        <div class="gallery-header">
-            <h1>Track & Field</h1>
+    <main class="gallery-main">
+        <div class="gallery-container">
+            <div class="gallery-header">
+                <h1>Track & Field</h1>
+            </div>
+            
+            <!-- Gallery items will be dynamically inserted here -->
+            <div class="gallery-grid"></div>
         </div>
-        
-        <!-- Gallery items will be dynamically inserted here -->
-        <div class="gallery-grid"></div>
-    </section>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -45,8 +42,8 @@
 
     <!-- Scripts -->
     <script src="js/config.js"></script>
-    <script src="js/gallery-cinematic.js"></script>
-    <script src="js/cinematic.js"></script>
+    <script src="js/gallery-editorial.js"></script>
+    <script src="js/editorial.js"></script>
     <script>
         // Initialize track gallery on page load
         document.addEventListener('DOMContentLoaded', function() {
