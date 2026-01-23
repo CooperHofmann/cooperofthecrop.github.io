@@ -63,6 +63,24 @@ function initGallery(category) {
     initJustifiedLayout();
 }
 
+// Helper function to set aspect ratio and orientation data attributes
+function setAspectRatioAndOrientation(item, aspectRatio) {
+    item.setAttribute('data-aspect-ratio', aspectRatio.toString());
+    
+    // Store orientation for reference
+    if (aspectRatio < 0.7) {
+        item.setAttribute('data-orientation', 'tall-portrait');
+    } else if (aspectRatio < 0.9) {
+        item.setAttribute('data-orientation', 'portrait');
+    } else if (aspectRatio < 1.1) {
+        item.setAttribute('data-orientation', 'square');
+    } else if (aspectRatio < 1.8) {
+        item.setAttribute('data-orientation', 'landscape');
+    } else {
+        item.setAttribute('data-orientation', 'wide-landscape');
+    }
+}
+
 // Create a single gallery item element
 function createGalleryItem(imagePath, index, isFeatured) {
     const item = document.createElement('div');
@@ -85,20 +103,7 @@ function createGalleryItem(imagePath, index, isFeatured) {
             item.setAttribute('data-orientation', 'featured');
         } else if (img.naturalWidth > 0 && img.naturalHeight > 0) {
             const aspectRatio = img.naturalWidth / img.naturalHeight;
-            item.setAttribute('data-aspect-ratio', aspectRatio.toString());
-            
-            // Store orientation for reference
-            if (aspectRatio < 0.7) {
-                item.setAttribute('data-orientation', 'tall-portrait');
-            } else if (aspectRatio < 0.9) {
-                item.setAttribute('data-orientation', 'portrait');
-            } else if (aspectRatio < 1.1) {
-                item.setAttribute('data-orientation', 'square');
-            } else if (aspectRatio < 1.8) {
-                item.setAttribute('data-orientation', 'landscape');
-            } else {
-                item.setAttribute('data-orientation', 'wide-landscape');
-            }
+            setAspectRatioAndOrientation(item, aspectRatio);
         }
     };
     
@@ -231,11 +236,18 @@ function applyJustifiedLayout() {
     const items = Array.from(galleryGrid.querySelectorAll('.gallery-item:not(.gallery-featured)'));
     if (items.length === 0) return;
     
-    // Wait for all images to load before calculating layout
+    // Wait for all images to load AND aspect ratios to be set before calculating layout
     const images = items.map(item => item.querySelector('img'));
     const allImagesLoaded = Promise.all(
-        images.map(img => {
+        images.map((img, index) => {
+            const item = items[index];
+            
             if (img.complete && img.naturalWidth > 0) {
+                // Image is already loaded, but we need to ensure aspect ratio is set
+                if (!item.hasAttribute('data-aspect-ratio')) {
+                    const aspectRatio = img.naturalWidth / img.naturalHeight;
+                    setAspectRatioAndOrientation(item, aspectRatio);
+                }
                 return Promise.resolve();
             }
             return new Promise(resolve => {
