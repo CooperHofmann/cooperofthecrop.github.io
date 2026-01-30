@@ -608,24 +608,7 @@ footer p {
     }
 }
 
-/* Staggered animations for gallery items */
-.gallery-item {
-    animation: fadeInUp 0.6s ease-out forwards;
-    opacity: 0;
-}
-
-.gallery-item:nth-child(1) { animation-delay: 0.05s; }
-.gallery-item:nth-child(2) { animation-delay: 0.1s; }
-.gallery-item:nth-child(3) { animation-delay: 0.15s; }
-.gallery-item:nth-child(4) { animation-delay: 0.2s; }
-.gallery-item:nth-child(5) { animation-delay: 0.25s; }
-.gallery-item:nth-child(6) { animation-delay: 0.3s; }
-.gallery-item:nth-child(7) { animation-delay: 0.35s; }
-.gallery-item:nth-child(8) { animation-delay: 0.4s; }
-.gallery-item:nth-child(9) { animation-delay: 0.45s; }
-.gallery-item:nth-child(n+10) { animation-delay: 0.5s; }
-
-/* Micro animations for gallery items */
+/* Micro animations for gallery items - transitions work for all users */
 .gallery-item img {
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
 }
@@ -651,17 +634,14 @@ footer p {
     transform: scale(1.08);
 }
 
-/* Staggered animations for home gallery grid */
-.gallery-index-item {
-    animation: scaleIn 0.5s ease-out forwards;
-    opacity: 0;
+/* Logo subtle animation */
+nav .logo {
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.gallery-index-item:nth-child(1) { animation-delay: 0.1s; }
-.gallery-index-item:nth-child(2) { animation-delay: 0.15s; }
-.gallery-index-item:nth-child(3) { animation-delay: 0.2s; }
-.gallery-index-item:nth-child(4) { animation-delay: 0.25s; }
-.gallery-index-item:nth-child(5) { animation-delay: 0.3s; }
+nav .logo:hover {
+    transform: translateX(5px);
+}
 
 /* ========================================
    PAGE TRANSITION - SLIDE UP FROM BOTTOM
@@ -676,10 +656,10 @@ footer p {
     background: var(--color-text);
     z-index: 9999;
     pointer-events: none;
-    will-change: transform;
 }
 
 .page-transition-overlay.animating {
+    will-change: top;
     animation: slideUp 0.6s cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
 
@@ -695,6 +675,7 @@ footer p {
 /* Entry animation for new page */
 .page-transition-overlay.exit {
     top: 0%;
+    will-change: top;
     animation: slideUpExit 0.5s cubic-bezier(0.76, 0, 0.24, 1) 0.1s forwards;
 }
 
@@ -705,14 +686,6 @@ footer p {
     100% {
         top: -100%;
     }
-}
-
-/* Page content entrance animation */
-body.page-entering .home-main,
-body.page-entering .gallery-main,
-body.page-entering .contact-main {
-    animation: contentFadeIn 0.5s ease-out 0.3s forwards;
-    opacity: 0;
 }
 
 @keyframes contentFadeIn {
@@ -726,24 +699,82 @@ body.page-entering .contact-main {
     }
 }
 
-/* Logo subtle animation */
-nav .logo {
-    transition: transform 0.3s ease, opacity 0.3s ease;
+/* ========================================
+   ANIMATIONS WITH MOTION PREFERENCE SUPPORT
+   ======================================== */
+
+/* For users who prefer motion - apply staggered animations */
+@media (prefers-reduced-motion: no-preference) {
+    /* Staggered animations for gallery items */
+    .gallery-item {
+        animation: fadeInUp 0.6s ease-out forwards;
+        opacity: 0;
+    }
+
+    .gallery-item:nth-child(1) { animation-delay: 0.05s; }
+    .gallery-item:nth-child(2) { animation-delay: 0.1s; }
+    .gallery-item:nth-child(3) { animation-delay: 0.15s; }
+    .gallery-item:nth-child(4) { animation-delay: 0.2s; }
+    .gallery-item:nth-child(5) { animation-delay: 0.25s; }
+    .gallery-item:nth-child(6) { animation-delay: 0.3s; }
+    .gallery-item:nth-child(7) { animation-delay: 0.35s; }
+    .gallery-item:nth-child(8) { animation-delay: 0.4s; }
+    .gallery-item:nth-child(9) { animation-delay: 0.45s; }
+    .gallery-item:nth-child(n+10) { animation-delay: 0.5s; }
+
+    /* Staggered animations for home gallery grid */
+    .gallery-index-item {
+        animation: scaleIn 0.5s ease-out forwards;
+        opacity: 0;
+    }
+
+    .gallery-index-item:nth-child(1) { animation-delay: 0.1s; }
+    .gallery-index-item:nth-child(2) { animation-delay: 0.15s; }
+    .gallery-index-item:nth-child(3) { animation-delay: 0.2s; }
+    .gallery-index-item:nth-child(4) { animation-delay: 0.25s; }
+    .gallery-index-item:nth-child(5) { animation-delay: 0.3s; }
+
+    /* Gallery header animation */
+    .gallery-header h1 {
+        animation: fadeInUp 0.6s ease-out 0.2s forwards;
+        opacity: 0;
+    }
+
+    /* Footer animation */
+    footer {
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    /* Page content entrance animation */
+    body.page-entering .home-main,
+    body.page-entering .gallery-main,
+    body.page-entering .contact-main {
+        animation: contentFadeIn 0.5s ease-out 0.3s forwards;
+        opacity: 0;
+    }
 }
 
-nav .logo:hover {
-    transform: translateX(5px);
-}
+/* For users who prefer reduced motion - instant display, no animations */
+@media (prefers-reduced-motion: reduce) {
+    .gallery-item,
+    .gallery-index-item,
+    .gallery-header h1,
+    footer {
+        animation: none;
+        opacity: 1;
+    }
 
-/* Gallery header animation */
-.gallery-header h1 {
-    animation: fadeInUp 0.6s ease-out 0.2s forwards;
-    opacity: 0;
-}
+    .page-transition-overlay.animating,
+    .page-transition-overlay.exit {
+        animation: none;
+    }
 
-/* Footer animation on scroll into view */
-footer {
-    animation: fadeIn 0.8s ease-out forwards;
+    body.page-entering .home-main,
+    body.page-entering .gallery-main,
+    body.page-entering .contact-main {
+        animation: none;
+        opacity: 1;
+    }
 }
 
 /* ========================================
