@@ -586,6 +586,166 @@ footer p {
     }
 }
 
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Staggered animations for gallery items */
+.gallery-item {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.gallery-item:nth-child(1) { animation-delay: 0.05s; }
+.gallery-item:nth-child(2) { animation-delay: 0.1s; }
+.gallery-item:nth-child(3) { animation-delay: 0.15s; }
+.gallery-item:nth-child(4) { animation-delay: 0.2s; }
+.gallery-item:nth-child(5) { animation-delay: 0.25s; }
+.gallery-item:nth-child(6) { animation-delay: 0.3s; }
+.gallery-item:nth-child(7) { animation-delay: 0.35s; }
+.gallery-item:nth-child(8) { animation-delay: 0.4s; }
+.gallery-item:nth-child(9) { animation-delay: 0.45s; }
+.gallery-item:nth-child(n+10) { animation-delay: 0.5s; }
+
+/* Micro animations for gallery items */
+.gallery-item img {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.02);
+}
+
+/* Home gallery item hover effects */
+.gallery-index-item {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-index-item:hover {
+    transform: scale(0.98);
+}
+
+.gallery-index-item img {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery-index-item:hover img {
+    transform: scale(1.08);
+}
+
+/* Staggered animations for home gallery grid */
+.gallery-index-item {
+    animation: scaleIn 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.gallery-index-item:nth-child(1) { animation-delay: 0.1s; }
+.gallery-index-item:nth-child(2) { animation-delay: 0.15s; }
+.gallery-index-item:nth-child(3) { animation-delay: 0.2s; }
+.gallery-index-item:nth-child(4) { animation-delay: 0.25s; }
+.gallery-index-item:nth-child(5) { animation-delay: 0.3s; }
+
+/* ========================================
+   PAGE TRANSITION - SLIDE UP FROM BOTTOM
+   ======================================== */
+
+.page-transition-overlay {
+    position: fixed;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--color-text);
+    z-index: 9999;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.page-transition-overlay.animating {
+    animation: slideUp 0.6s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+
+@keyframes slideUp {
+    0% {
+        top: 100%;
+    }
+    100% {
+        top: 0%;
+    }
+}
+
+/* Entry animation for new page */
+.page-transition-overlay.exit {
+    top: 0%;
+    animation: slideUpExit 0.5s cubic-bezier(0.76, 0, 0.24, 1) 0.1s forwards;
+}
+
+@keyframes slideUpExit {
+    0% {
+        top: 0%;
+    }
+    100% {
+        top: -100%;
+    }
+}
+
+/* Page content entrance animation */
+body.page-entering .home-main,
+body.page-entering .gallery-main,
+body.page-entering .contact-main {
+    animation: contentFadeIn 0.5s ease-out 0.3s forwards;
+    opacity: 0;
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Logo subtle animation */
+nav .logo {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+nav .logo:hover {
+    transform: translateX(5px);
+}
+
+/* Gallery header animation */
+.gallery-header h1 {
+    animation: fadeInUp 0.6s ease-out 0.2s forwards;
+    opacity: 0;
+}
+
+/* Footer animation on scroll into view */
+footer {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
 /* ========================================
    RESPONSIVE - MOBILE
    ======================================== */

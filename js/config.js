@@ -32,9 +32,37 @@ const portfolioConfig = {
     soccer: {
         title: "SOCCER",
         description: "Soccer Photography",
-        homePagePhoto: null, // Set to filename to override, null uses first image
+        homePagePhoto: "expo1mp (164 of 430).jpg", // Set to filename to override, null uses first image
         images: [
-
+            "expo1mp (164 of 430).jpg",
+            "expo1mp (163 of 430).jpg",
+            "expo1mp (172 of 430).jpg",
+            "expo1mp (192 of 430).jpg",
+            "expo1mp (20 of 430).jpg",
+            "expo1mp (248 of 430).jpg",
+            "expo1mp (278 of 430).jpg",
+            "expo1mp (28 of 430).jpg",
+            "expo1mp (288 of 430).jpg",
+            "expo1mp (29 of 430).jpg",
+            "expo1mp (292 of 430).jpg",
+            "expo1mp (298 of 430).jpg",
+            "expo1mp (311 of 430).jpg",
+            "expo1mp (313 of 430).jpg",
+            "expo1mp (353 of 430).jpg",
+            "expo1mp (369 of 430).jpg",
+            "expo1mp (38 of 430).jpg",
+            "expo1mp (380 of 430).jpg",
+            "expo1mp (413 of 430).jpg",
+            "expo1mp (49 of 430).jpg",
+            "expo1mp (76 of 430).jpg",
+            "expo2mp (123 of 164).jpg",
+            "expo2mp (133 of 164).jpg",
+            "expo2mp (139 of 164).jpg",
+            "expo2mp (159 of 164).jpg",
+            "expo2mp (162 of 164).jpg",
+            "expo2mp (34 of 164).jpg",
+            "expo2mp (46 of 164).jpg",
+            "expo2mp (58 of 164).jpg",
         ]
     },
     football: {
@@ -103,17 +131,55 @@ const portfolioConfig = {
     basketball: {
         title: "BASKETBALL",
         description: "Basketball Photography",
-        homePagePhoto: null, // Set to filename to override, null uses first image
+        homePagePhoto: "ccsbb (24 of 202).jpg", // Set to filename to override, null uses first image
         images: [
-
+            "ccsbb (24 of 202).jpg",
+            "ccsbb (12 of 202).jpg",
+            "ccsbb (152 of 202).jpg",
+            "ccsbb (154 of 202).jpg",
+            "ccsbb (195 of 202).jpg",
+            "ccsbb (21 of 202).jpg",
+            "ccsbb (29 of 202).jpg",
+            "ccsbb (5 of 202).jpg",
+            "ccsbb (50 of 202).jpg",
+            "ccsbb (60 of 202).jpg",
+            "ccsbb2 (15 of 47).jpg",
+            "ccsbb2 (41 of 47).jpg",
+            "ccsbb2 (43 of 47).jpg",
+            "ccsbb2 (5 of 47).jpg",
+            "ccsbb2 (6 of 47).jpg",
         ]
     },
     bestOf: {
         title: "BEST<br>OF",
         description: "Curated Selection",
-        homePagePhoto: null, // Set to filename to override, null uses first image
+        homePagePhoto: "BMW (55 of 81).jpg", // Set to filename to override, null uses first image
         images: [
-
+            "BMW (55 of 81).jpg",
+            "BANFFEXPO1 (215 of 319).jpg",
+            "BANFFEXPO2 (269 of 408).jpg",
+            "BANFFEXPO3 (131 of 214).jpg",
+            "BANFFEXPO4 (57 of 84).jpg",
+            "BANFFEXPO4 (81 of 84).jpg",
+            "BMW (33 of 81).jpg",
+            "BMW (64 of 81).jpg",
+            "CJD (261 of 265).jpg",
+            "CJD (264 of 265).jpg",
+            "Family Photos 11-15-26 (100 of 201).jpg",
+            "Family Photos 11-15-26 (105 of 201).jpg",
+            "Family Photos 11-15-26 (115 of 201).jpg",
+            "Family Photos 11-15-26 (117 of 201).jpg",
+            "Family Photos 11-15-26 (162 of 201).jpg",
+            "Family Photos 11-15-26 (182 of 201).jpg",
+            "Family Photos 11-15-26 (188 of 201).jpg",
+            "Family Photos 11-15-26 (190 of 201).jpg",
+            "Family Photos 11-15-26 (194 of 201).jpg",
+            "Family Photos 11-15-26 (30 of 201).jpg",
+            "Family Photos 11-15-26 (64 of 201).jpg",
+            "Family Portraits (45 of 55).jpg",
+            "SCTC (73 of 236).JPEG",
+            "Winter Walk (18 of 19).jpg",
+            "ccsbb (195 of 202).jpg",
         ]
     }
 };
