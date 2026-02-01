@@ -163,9 +163,7 @@ body {
     transform: none !important;
 }
 
-.parallax-layer {
-    will-change: transform;
-}
+/* Parallax effect removed for better accessibility and performance */
 
 .hero-overlay {
     position: relative;

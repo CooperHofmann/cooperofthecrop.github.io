@@ -22,7 +22,7 @@
 
     <main class="home-main">
         <section class="hero full-viewport" id="homeHero">
-            <div class="hero-bg parallax-layer" data-speed="0.35"></div>
+            <div class="hero-bg"></div>
             <div class="hero-overlay">
                 <div class="hero-path" aria-hidden="true">
                     <svg viewBox="0 0 600 200" preserveAspectRatio="none">
@@ -110,9 +110,8 @@
                 section.className = 'gallery-hero';
 
                 const bg = document.createElement('div');
-                bg.className = 'gallery-hero-bg parallax-layer';
+                bg.className = 'gallery-hero-bg';
                 bg.style.backgroundImage = `url('${photoSrc}')`;
-                bg.dataset.speed = '0.25';
                 if (reduceMotion) {
                     bg.classList.add('no-motion');
                 }
@@ -157,32 +156,7 @@
                 container.appendChild(section);
             });
 
-            // Enable parallax
-            if (!reduceMotion) {
-                const parallaxLayers = document.querySelectorAll('.parallax-layer');
-                let ticking = false;
-
-                function applyParallax() {
-                    parallaxLayers.forEach(layer => {
-                        const speed = parseFloat(layer.dataset.speed || '0.2');
-                        const rect = layer.getBoundingClientRect();
-                        const offset = window.scrollY + rect.top;
-                        const translateY = (window.scrollY - offset) * speed;
-                        layer.style.transform = `translate3d(0, ${translateY}px, 0)`;
-                    });
-                    ticking = false;
-                }
-
-                function onScroll() {
-                    if (!ticking) {
-                        window.requestAnimationFrame(applyParallax);
-                        ticking = true;
-                    }
-                }
-
-                applyParallax();
-                window.addEventListener('scroll', onScroll, { passive: true });
-            }
+            // Parallax effect has been disabled
         });
     </script>
 </body>
