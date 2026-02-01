@@ -155,8 +155,9 @@ body {
     background-size: cover;
     background-position: center;
     filter: brightness(0.8);
-    transform: scale(1.02);
-    transition: transform 1s ease, filter 0.8s ease;
+    /* Parallax and zoom effects removed for accessibility/performance */
+    transform: none;
+    transition: filter 0.8s ease;
 }
 
 .hero-bg.no-motion {
@@ -368,9 +369,10 @@ body {
 }
 
 .gallery-container {
-    max-width: 1600px; /* Increased from 1000px for better use of wide screens */
+    max-width: 1800px; /* better use of ultra-wide screens */
+    width: 100%;
     margin: 0 auto;
-    padding: 0 var(--space-md);
+    padding: 0 clamp(8px, 2vw, var(--space-md));
 }
 
 .gallery-header {
@@ -390,7 +392,7 @@ body {
 /* Responsive masonry grid layout - optimized for all screen sizes */
 .gallery-grid {
     column-count: 4; /* Increased from 3 for wide screens */
-    column-gap: var(--space-md);
+    column-gap: clamp(0.75rem, 1.5vw, var(--space-md));
     width: 100%;
 }
 
@@ -413,6 +415,20 @@ body {
 @media (min-width: 1024px) and (max-width: 1399px) {
     .gallery-grid {
         column-count: 3;
+    }
+}
+
+/* For tablets, use 2 columns to reduce side dead space */
+@media (max-width: 1023px) {
+    .gallery-grid {
+        column-count: 2;
+    }
+}
+
+/* For small phones, single column */
+@media (max-width: 640px) {
+    .gallery-grid {
+        column-count: 1;
     }
 }
 
