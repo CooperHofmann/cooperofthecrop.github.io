@@ -498,6 +498,36 @@ jobs:
           # Count images found
           print(f"Found {len(valid_images)} image references")
           
+          # Validate homePagePhoto references
+          # Extract each category's configuration and validate homePagePhoto is in images array
+          for category in required_categories:
+              # Extract the category block - improved pattern to match closing brace
+              category_pattern = rf'{category}:\s*\{{(.*?)\n\s*\}}'
+              category_match = re.search(category_pattern, config_content, re.DOTALL)
+              
+              if category_match:
+                  category_block = category_match.group(1)
+                  
+                  # Extract homePagePhoto
+                  homepage_pattern = r'homePagePhoto:\s*"([^"]+)"'
+                  homepage_match = re.search(homepage_pattern, category_block)
+                  
+                  if homepage_match:
+                      homepage_photo = homepage_match.group(1)
+                      
+                      # Extract images array
+                      images_pattern = r'images:\s*\[(.*?)\]'
+                      images_match = re.search(images_pattern, category_block, re.DOTALL)
+                      
+                      if images_match:
+                          images_str = images_match.group(1)
+                          # Extract all image filenames from the array
+                          images_list = re.findall(r'"([^"]+)"', images_str)
+                          
+                          # Check if homePagePhoto is in images array
+                          if homepage_photo not in images_list:
+                              errors.append(f"{category}: homePagePhoto '{homepage_photo}' not found in images array")
+          
           # Report validation results
           if errors:
               print("\n❌ VALIDATION ERRORS:")
