@@ -7,28 +7,50 @@
     <link rel="stylesheet" href="css/editorial.css">
 </head>
 <body>
+    <div class="page-transition-overlay" aria-hidden="true"></div>
     <!-- Navigation -->
-    <nav>
+    <nav class="nav-minimal">
         <div class="container">
             <a href="index.html" class="logo">COOPEROFTHECROP</a>
             <ul id="nav-menu">
                 <li><a href="index.html">Work</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
-            <button class="mobile-menu-btn" onclick="toggleMenu()">MENU</button>
+            <button class="mobile-menu-btn" aria-label="Toggle menu" onclick="toggleMenu()">MENU</button>
         </div>
     </nav>
 
-    <!-- Gallery Index Grid -->
     <main class="home-main">
-        <div class="home-container">
-            <div class="gallery-index-grid" id="galleryIndexGrid">
-                <!-- Gallery items will be dynamically loaded from config.js -->
+        <section class="hero full-viewport" id="homeHero">
+            <div class="hero-bg parallax-layer" data-speed="0.35"></div>
+            <div class="hero-overlay">
+                <div class="hero-path" aria-hidden="true">
+                    <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+                        <path d="M10,180 C120,40 260,200 380,70 C470,-20 560,120 590,40" />
+                        <g class="hero-markers">
+                            <circle cx="80" cy="130" r="5" />
+                            <circle cx="250" cy="150" r="5" />
+                            <circle cx="430" cy="100" r="5" />
+                        </g>
+                    </svg>
+                </div>
+                <div class="hero-content">
+                    <p class="eyebrow">Portfolio / 2025</p>
+                    <h1>Moments in motion,<br>captured with intention.</h1>
+                    <p class="lede">Cinematic sports and lifestyle photography by Cooper Hofmann.</p>
+                    <div class="hero-actions">
+                        <a class="cta" href="#galleryNarrative">View Work</a>
+                        <a class="ghost-link" href="contact.html">Book Cooper</a>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
+
+        <section id="galleryNarrative" class="gallery-narrative">
+            <!-- Gallery hero sections will be injected here -->
+        </section>
     </main>
 
-    <!-- Footer -->
     <footer>
         <p>© 2025 COOPEROFTHECROP. All Rights Reserved.</p>
         <!-- Secret Admin Button -->
@@ -40,58 +62,127 @@
     <script src="js/config.js"></script>
     <script src="js/editorial.js"></script>
     <script>
-        // Load gallery grid for homepage
         document.addEventListener('DOMContentLoaded', function() {
-            const grid = document.getElementById('galleryIndexGrid');
-            if (!grid) return;
+            const container = document.getElementById('galleryNarrative');
+            const heroBg = document.querySelector('#homeHero .hero-bg');
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             const galleries = [
+                { key: 'bestOf', name: 'Best Of', page: 'best-of.html' },
                 { key: 'track', name: 'Track & Field', page: 'track.html' },
                 { key: 'soccer', name: 'Soccer', page: 'soccer.html' },
                 { key: 'football', name: 'Football', page: 'football.html' },
-                { key: 'basketball', name: 'Basketball', page: 'basketball.html' },
-                { key: 'bestOf', name: 'Best Of', page: 'best-of.html' }
+                { key: 'basketball', name: 'Basketball', page: 'basketball.html' }
             ];
+
+            function getImagePath(galleryKey, config) {
+                const folder = galleryKey === 'bestOf' ? 'best-of' : galleryKey;
+                let photoSrc = placeholderImages[0];
+                if (config) {
+                    if (config.homePagePhoto) {
+                        photoSrc = `images/${folder}/${config.homePagePhoto}`;
+                    } else if (config.images && config.images.length > 0) {
+                        photoSrc = `images/${folder}/${config.images[0]}`;
+                    }
+                }
+                return photoSrc;
+            }
+
+            // Set hero background from Best Of (or fallback)
+            const bestOfConfig = portfolioConfig['bestOf'];
+            const heroImage = getImagePath('bestOf', bestOfConfig);
+            if (heroBg) {
+                heroBg.style.backgroundImage = `url('${heroImage}')`;
+                if (reduceMotion) {
+                    heroBg.classList.add('no-motion');
+                }
+            }
+
+            if (!container) return;
 
             galleries.forEach((gallery, index) => {
                 const config = portfolioConfig[gallery.key];
                 if (!config) return;
 
-                // Determine which photo to use for homepage
-                let photoSrc;
-                if (config.homePagePhoto) {
-                    photoSrc = `images/${gallery.key === 'bestOf' ? 'best-of' : gallery.key}/${config.homePagePhoto}`;
-                } else if (config.images && config.images.length > 0) {
-                    photoSrc = `images/${gallery.key === 'bestOf' ? 'best-of' : gallery.key}/${config.images[0]}`;
-                } else {
-                    photoSrc = placeholderImages[0];
+                const photoSrc = getImagePath(gallery.key, config);
+
+                const section = document.createElement('section');
+                section.className = 'gallery-hero';
+
+                const bg = document.createElement('div');
+                bg.className = 'gallery-hero-bg parallax-layer';
+                bg.style.backgroundImage = `url('${photoSrc}')`;
+                bg.dataset.speed = '0.25';
+                if (reduceMotion) {
+                    bg.classList.add('no-motion');
                 }
 
-                // Create grid item
-                const item = document.createElement('a');
-                item.href = gallery.page;
-                item.className = 'gallery-index-item';
-
-                const img = document.createElement('img');
-                img.src = photoSrc;
-                img.alt = gallery.name;
-                img.loading = 'eager'; // All 5 galleries load eagerly
-                img.style.animationDelay = `${index * 0.1}s`;
-                img.onerror = function() {
-                    this.src = placeholderImages[0];
-                };
-
                 const overlay = document.createElement('div');
-                overlay.className = 'title-overlay';
-                
-                const h3 = document.createElement('h3');
-                h3.textContent = gallery.name;
+                overlay.className = 'gallery-hero-overlay';
 
-                overlay.appendChild(h3);
-                item.appendChild(img);
-                item.appendChild(overlay);
-                grid.appendChild(item);
+                const text = document.createElement('div');
+                text.className = 'gallery-hero-text';
+
+                const meta = document.createElement('p');
+                meta.className = 'eyebrow';
+                meta.textContent = `Chapter ${index + 1}`;
+
+                const title = document.createElement('h2');
+                title.innerHTML = config.title || gallery.name;
+
+                const desc = document.createElement('p');
+                desc.className = 'lede';
+                desc.textContent = config.description || 'Explore the series.';
+
+                const actions = document.createElement('div');
+                actions.className = 'hero-actions';
+                const viewLink = document.createElement('a');
+                viewLink.className = 'cta secondary';
+                viewLink.href = gallery.page;
+                viewLink.textContent = 'Enter Gallery';
+                viewLink.setAttribute('data-transition', 'true');
+
+                actions.appendChild(viewLink);
+
+                text.appendChild(meta);
+                text.appendChild(title);
+                text.appendChild(desc);
+                text.appendChild(actions);
+
+                overlay.appendChild(text);
+
+                section.appendChild(bg);
+                section.appendChild(overlay);
+
+                container.appendChild(section);
             });
+
+            // Enable parallax
+            if (!reduceMotion) {
+                const parallaxLayers = document.querySelectorAll('.parallax-layer');
+                let ticking = false;
+
+                function applyParallax() {
+                    parallaxLayers.forEach(layer => {
+                        const speed = parseFloat(layer.dataset.speed || '0.2');
+                        const rect = layer.getBoundingClientRect();
+                        const offset = window.scrollY + rect.top;
+                        const translateY = (window.scrollY - offset) * speed;
+                        layer.style.transform = `translate3d(0, ${translateY}px, 0)`;
+                    });
+                    ticking = false;
+                }
+
+                function onScroll() {
+                    if (!ticking) {
+                        window.requestAnimationFrame(applyParallax);
+                        ticking = true;
+                    }
+                }
+
+                applyParallax();
+                window.addEventListener('scroll', onScroll, { passive: true });
+            }
         });
     </script>
 </body>

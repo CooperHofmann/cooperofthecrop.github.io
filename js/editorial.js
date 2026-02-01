@@ -108,7 +108,7 @@
         }
         
         // Add click handlers to gallery links for page transitions
-        const galleryLinks = document.querySelectorAll('.gallery-index-item');
+        const galleryLinks = document.querySelectorAll('.gallery-index-item, .gallery-hero .cta');
         
         galleryLinks.forEach(link => {
             link.addEventListener('click', function(e) {
