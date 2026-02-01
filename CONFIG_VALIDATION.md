@@ -90,6 +90,7 @@ When importing from Google Drive:
   - Each category and images array present
   - Path traversal attempts
   - Image extensions
+  - **homePagePhoto validation**: Ensures each category's homePagePhoto exists in its images array (added to prevent config generation errors)
 - **Behavior**: Fails the workflow if validation fails
 
 ## Validation Errors Detected
@@ -150,6 +151,7 @@ Potential enhancements:
 2. `.github/workflows/google-drive-sync.yml`:
    - Added "Validate config.js" step after config update
    - Performs Python-based validation
+   - **Enhanced with homePagePhoto validation** (ensures homePagePhoto exists in images array)
    - Fails workflow if validation fails
 
 ## Usage Examples

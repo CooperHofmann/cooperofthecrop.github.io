@@ -501,8 +501,8 @@ jobs:
           # Validate homePagePhoto references
           # Extract each category's configuration and validate homePagePhoto is in images array
           for category in required_categories:
-              # Extract the category block
-              category_pattern = rf'{category}:\s*\{{(.*?)\}},?\s*(?:[a-zA-Z]+:|$)'
+              # Extract the category block - improved pattern to match closing brace
+              category_pattern = rf'{category}:\s*\{{(.*?)\n\s*\}}'
               category_match = re.search(category_pattern, config_content, re.DOTALL)
               
               if category_match:
