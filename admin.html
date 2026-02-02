@@ -2197,6 +2197,7 @@
         // Helper function to merge photos from localStorage and existing config
         function getMergedPhotos(category, metadata) {
             const localPhotos = (metadata[category] || []).map(p => p.filename);
+            // portfolioConfig is loaded globally from js/config.js (included at line 1008)
             const repoPhotos = portfolioConfig?.[category]?.images ?? [];
             
             // Create a Set to track unique filenames, preserving order from localStorage first
@@ -2210,6 +2211,11 @@
             });
             
             return Array.from(photoSet);
+        }
+        
+        // Helper function to format photo array without trailing comma on last element
+        function formatPhotoArray(photos) {
+            return photos.map((p, i, arr) => `            "${p}"${i < arr.length - 1 ? ',' : ''}`).join('\n');
         }
 
         // Configuration Generator
@@ -2239,7 +2245,7 @@ const portfolioConfig = {
         description: "Track & Field Photography",
         homePagePhoto: ${homePagePhotos.track ? `"${homePagePhotos.track}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${mergedPhotos.track.map((p, i, arr) => `            "${p}"${i < arr.length - 1 ? ',' : ''}`).join('\n')}
+${formatPhotoArray(mergedPhotos.track)}
         ]
     },
     soccer: {
@@ -2247,7 +2253,7 @@ ${mergedPhotos.track.map((p, i, arr) => `            "${p}"${i < arr.length - 1 
         description: "Soccer Photography",
         homePagePhoto: ${homePagePhotos.soccer ? `"${homePagePhotos.soccer}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${mergedPhotos.soccer.map((p, i, arr) => `            "${p}"${i < arr.length - 1 ? ',' : ''}`).join('\n')}
+${formatPhotoArray(mergedPhotos.soccer)}
         ]
     },
     football: {
@@ -2255,7 +2261,7 @@ ${mergedPhotos.soccer.map((p, i, arr) => `            "${p}"${i < arr.length - 1
         description: "Football Photography",
         homePagePhoto: ${homePagePhotos.football ? `"${homePagePhotos.football}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${mergedPhotos.football.map((p, i, arr) => `            "${p}"${i < arr.length - 1 ? ',' : ''}`).join('\n')}
+${formatPhotoArray(mergedPhotos.football)}
         ]
     },
     basketball: {
@@ -2263,7 +2269,7 @@ ${mergedPhotos.football.map((p, i, arr) => `            "${p}"${i < arr.length -
         description: "Basketball Photography",
         homePagePhoto: ${homePagePhotos.basketball ? `"${homePagePhotos.basketball}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${mergedPhotos.basketball.map((p, i, arr) => `            "${p}"${i < arr.length - 1 ? ',' : ''}`).join('\n')}
+${formatPhotoArray(mergedPhotos.basketball)}
         ]
     },
     bestOf: {
@@ -2271,7 +2277,7 @@ ${mergedPhotos.basketball.map((p, i, arr) => `            "${p}"${i < arr.length
         description: "Curated Selection",
         homePagePhoto: ${homePagePhotos.bestOf ? `"${homePagePhotos.bestOf}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${mergedPhotos.bestOf.map((p, i, arr) => `            "${p}"${i < arr.length - 1 ? ',' : ''}`).join('\n')}
+${formatPhotoArray(mergedPhotos.bestOf)}
         ]
     }
 };
