@@ -1174,7 +1174,6 @@ footer {
     .gallery-index-item,
     .gallery-header h1,
     footer,
-    .lightbox,
     .page-transition-overlay.animating,
     .page-transition-overlay.exit {
         animation: none;

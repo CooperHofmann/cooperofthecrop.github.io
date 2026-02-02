@@ -175,7 +175,9 @@
         if (themeChannel) {
             themeChannel.postMessage({ type: 'theme-update', theme: normalized });
         } else {
-            localStorage.setItem(`${THEME_KEYS.draft}_ping`, JSON.stringify({ theme: normalized, ts: Date.now() }));
+            const pingKey = `${THEME_KEYS.draft}_ping`;
+            localStorage.setItem(pingKey, JSON.stringify({ theme: normalized, ts: Date.now() }));
+            setTimeout(() => localStorage.removeItem(pingKey), 0);
         }
     }
 
@@ -183,7 +185,9 @@
         if (themeChannel) {
             themeChannel.postMessage({ type: 'theme-request' });
         } else {
-            localStorage.setItem(`${THEME_KEYS.draft}_request`, `${Date.now()}`);
+            const requestKey = `${THEME_KEYS.draft}_request`;
+            localStorage.setItem(requestKey, `${Date.now()}`);
+            setTimeout(() => localStorage.removeItem(requestKey), 0);
         }
     }
 
@@ -200,7 +204,7 @@
                         console.warn(`Theme storage event parse error for ${event.key}`, error);
                     }
                 }
-                if (event.key === `${THEME_KEYS.draft}_request`) {
+                if (event.key === `${THEME_KEYS.draft}_request` && event.newValue) {
                     handler({ type: 'theme-request' });
                 }
             });
@@ -223,7 +227,7 @@
     function initPreviewListener() {
         if (!isPreviewMode()) return;
         initPreviewBadge();
-        const draftTheme = loadTheme(THEME_KEYS.draft) || cloneTheme(DEFAULT_THEME);
+        const draftTheme = loadTheme(THEME_KEYS.draft) ?? cloneTheme(DEFAULT_THEME);
         if (document.documentElement) {
             applyTheme(draftTheme);
         } else {
@@ -239,7 +243,7 @@
 
     function initPublishedTheme() {
         if (isPreviewMode()) return;
-        const published = loadTheme(THEME_KEYS.published) || cloneTheme(DEFAULT_THEME);
+        const published = loadTheme(THEME_KEYS.published) ?? cloneTheme(DEFAULT_THEME);
         if (document.documentElement) {
             applyTheme(published);
         } else {
