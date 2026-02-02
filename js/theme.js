@@ -183,7 +183,7 @@
         } else {
             const pingKey = `${THEME_KEYS.draft}_ping`;
             localStorage.setItem(pingKey, JSON.stringify({ theme: normalized, ts: Date.now() }));
-            setTimeout(() => localStorage.removeItem(pingKey), 0);
+            setTimeout(() => localStorage.removeItem(pingKey), 200);
         }
     }
 
@@ -193,7 +193,7 @@
         } else {
             const requestKey = `${THEME_KEYS.draft}_request`;
             localStorage.setItem(requestKey, `${Date.now()}`);
-            setTimeout(() => localStorage.removeItem(requestKey), 0);
+            setTimeout(() => localStorage.removeItem(requestKey), 200);
         }
     }
 
