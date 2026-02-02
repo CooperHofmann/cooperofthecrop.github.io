@@ -2194,10 +2194,43 @@
             };
         }
 
+        // Helper function to merge photos from localStorage and existing config
+        function getMergedPhotos(category, metadata) {
+            const localPhotos = (metadata[category] || []).map(p => p.filename);
+            // portfolioConfig is loaded globally from js/config.js (included at line 1008)
+            const repoPhotos = portfolioConfig?.[category]?.images ?? [];
+            
+            // Create a Set to track unique filenames, preserving order from localStorage first
+            const photoSet = new Set(localPhotos);
+            
+            // Add photos from repo that aren't already in localStorage
+            repoPhotos.forEach(photo => {
+                if (!photoSet.has(photo)) {
+                    photoSet.add(photo);
+                }
+            });
+            
+            return Array.from(photoSet);
+        }
+        
+        // Helper function to format photo array without trailing comma on last element
+        function formatPhotoArray(photos) {
+            return photos.map((p, i, arr) => `            "${p}"${i < arr.length - 1 ? ',' : ''}`).join('\n');
+        }
+
         // Configuration Generator
         function generateConfig() {
             const metadata = JSON.parse(localStorage.getItem('adminPhotosMetadata') || '{}');
             const homePagePhotos = JSON.parse(localStorage.getItem('homePagePhotos') || '{}');
+            
+            // Merge photos from both localStorage and existing config for each category
+            const mergedPhotos = {
+                track: getMergedPhotos('track', metadata),
+                soccer: getMergedPhotos('soccer', metadata),
+                football: getMergedPhotos('football', metadata),
+                basketball: getMergedPhotos('basketball', metadata),
+                bestOf: getMergedPhotos('bestOf', metadata)
+            };
             
             const configCode = `/**
  * IMAGE CONFIGURATION
@@ -2212,7 +2245,7 @@ const portfolioConfig = {
         description: "Track & Field Photography",
         homePagePhoto: ${homePagePhotos.track ? `"${homePagePhotos.track}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${(metadata.track || []).map(p => `            "${p.filename}",`).join('\n')}
+${formatPhotoArray(mergedPhotos.track)}
         ]
     },
     soccer: {
@@ -2220,7 +2253,7 @@ ${(metadata.track || []).map(p => `            "${p.filename}",`).join('\n')}
         description: "Soccer Photography",
         homePagePhoto: ${homePagePhotos.soccer ? `"${homePagePhotos.soccer}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${(metadata.soccer || []).map(p => `            "${p.filename}",`).join('\n')}
+${formatPhotoArray(mergedPhotos.soccer)}
         ]
     },
     football: {
@@ -2228,7 +2261,7 @@ ${(metadata.soccer || []).map(p => `            "${p.filename}",`).join('\n')}
         description: "Football Photography",
         homePagePhoto: ${homePagePhotos.football ? `"${homePagePhotos.football}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${(metadata.football || []).map(p => `            "${p.filename}",`).join('\n')}
+${formatPhotoArray(mergedPhotos.football)}
         ]
     },
     basketball: {
@@ -2236,7 +2269,7 @@ ${(metadata.football || []).map(p => `            "${p.filename}",`).join('\n')}
         description: "Basketball Photography",
         homePagePhoto: ${homePagePhotos.basketball ? `"${homePagePhotos.basketball}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${(metadata.basketball || []).map(p => `            "${p.filename}",`).join('\n')}
+${formatPhotoArray(mergedPhotos.basketball)}
         ]
     },
     bestOf: {
@@ -2244,7 +2277,7 @@ ${(metadata.basketball || []).map(p => `            "${p.filename}",`).join('\n'
         description: "Curated Selection",
         homePagePhoto: ${homePagePhotos.bestOf ? `"${homePagePhotos.bestOf}"` : 'null'}, // Set to filename to override, null uses first image
         images: [
-${(metadata.bestOf || []).map(p => `            "${p.filename}",`).join('\n')}
+${formatPhotoArray(mergedPhotos.bestOf)}
         ]
     }
 };
