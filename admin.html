@@ -12,19 +12,26 @@
         }
         
         :root {
-            --color-bg: #f5f7fb;
+            --bg: #f5f7fb;
+            --text: #0c1a2a;
+            --accent: #7ec8e3;
+            --border: #e5e5e5;
+            --muted: #4c5766;
+            --surface: #ffffff;
+            --motion-level: subtle;
+            --color-bg: var(--bg);
             --color-bg-light: #f5f5f5;
-            --color-text: #0c1a2a;
-            --color-text-light: #4c5766;
-            --color-white: #FFFFFF;
+            --color-text: var(--text);
+            --color-text-light: var(--muted);
+            --color-white: var(--surface);
             --color-black: #000000;
             --color-gray: #999999;
-            --color-border: rgba(0, 0, 0, 0.08);
+            --color-border: var(--border);
             --success: #00AA00;
             --warning: #FF9900;
             --danger: #CC0000;
-            --color-accent: #7ec8e3;
-            --color-accent-strong: #2c79a5;
+            --color-accent: var(--accent);
+            --color-accent-strong: var(--accent);
         }
         
         body {
@@ -490,6 +497,55 @@
             color: var(--color-white);
         }
 
+        /* Theme Studio */
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .theme-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-text-light);
+        }
+
+        .theme-field input[type="color"] {
+            width: 100%;
+            height: 44px;
+            border: 1px solid var(--color-border);
+            background: var(--color-white);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        .theme-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .theme-meta {
+            font-size: 11px;
+            color: var(--color-text-light);
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .theme-meta span {
+            color: var(--color-text);
+            font-weight: 500;
+        }
+
         /* Config Editor - Editorial Style */
         .config-editor {
             margin-top: 2rem;
@@ -684,6 +740,7 @@
                     <li><a onclick="showPanel('googledrive', event)">☁️ Google Drive</a></li>
                     <li><a onclick="showPanel('manage', event)">🖼️ Manage Photos</a></li>
                     <li><a onclick="showPanel('preview', event)">👁️ Live Preview</a></li>
+                    <li><a onclick="showPanel('theme', event)">🎨 Theme Studio</a></li>
                     <li><a onclick="showPanel('config', event)">⚙️ Configuration</a></li>
                     <li><a onclick="showPanel('help', event)">❓ Help</a></li>
                 </ul>
@@ -866,6 +923,58 @@
                     </div>
                 </section>
 
+                <!-- Theme Studio Panel -->
+                <section id="panelTheme" class="panel-section">
+                    <h2>Theme Studio</h2>
+                    <div class="instructions-box">
+                        <h3>🎨 Customize the site look</h3>
+                        <p>Adjust the theme colors, motion, and presets. Changes broadcast live to preview tabs, but only save when you click Save Draft or Publish.</p>
+                    </div>
+
+                    <div style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
+                        <label class="theme-field">
+                            Preset
+                            <select id="themePreset" class="category-btn" style="width:100%; text-align:left;">
+                                <option value="brutalist-classic">Brutalist Classic</option>
+                                <option value="brutalist-warm">Brutalist Warm</option>
+                                <option value="cool-editorial">Cool Editorial</option>
+                                <option value="night-mode">Night Mode</option>
+                                <option value="clean-minimal">Clean Minimal</option>
+                            </select>
+                        </label>
+
+                        <label class="theme-field">
+                            Motion Level
+                            <select id="themeMotion" class="category-btn" style="width:100%; text-align:left;">
+                                <option value="subtle">Subtle</option>
+                                <option value="reduced">Reduced</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="theme-grid">
+                        <label class="theme-field">Background <input type="color" id="themeBg"></label>
+                        <label class="theme-field">Text <input type="color" id="themeText"></label>
+                        <label class="theme-field">Accent <input type="color" id="themeAccent"></label>
+                        <label class="theme-field">Border <input type="color" id="themeBorder"></label>
+                        <label class="theme-field">Muted <input type="color" id="themeMuted"></label>
+                        <label class="theme-field">Surface <input type="color" id="themeSurface"></label>
+                    </div>
+
+                    <div class="theme-actions">
+                        <button class="btn btn-blue" id="openThemePreview">👁️ Open Live Preview</button>
+                        <button class="btn" id="saveThemeDraft">💾 Save Draft</button>
+                        <button class="btn btn-success" id="publishTheme">🚀 Publish</button>
+                        <button class="btn" id="revertThemeDraft">↩️ Revert Draft → Published</button>
+                        <button class="btn btn-danger" id="resetThemeDefault">♻️ Reset to Default</button>
+                    </div>
+
+                    <div class="theme-meta">
+                        <div>Draft saved at: <span id="themeDraftTimestamp">Not saved yet</span></div>
+                        <div>Published at: <span id="themePublishedTimestamp">Not published yet</span></div>
+                    </div>
+                </section>
+
                 <!-- Config Panel -->
                 <section id="panelConfig" class="panel-section">
                     <h2>Configuration</h2>
@@ -1005,6 +1114,12 @@
             crossorigin="anonymous"></script>
     <!-- Fallback notice will be shown in the downloadPhotosPackage function if JSZip fails to load -->
     
+    <script src="js/theme.js"></script>
+    <script>
+        if (window.COTCTheme) {
+            window.COTCTheme.initPublishedTheme();
+        }
+    </script>
     <script src="js/config.js"></script>
     <script>
         // Admin PIN (change this to your desired PIN)
@@ -1025,6 +1140,7 @@
         let currentCategory = 'track';
         let currentGallery = 'track';
         let photoIdCounter = 0; // Counter to ensure unique photo IDs
+        let themeStudioInitialized = false;
 
         // ========== IndexedDB Photo Storage ==========
         
@@ -1242,6 +1358,7 @@
         // Initialize
         window.addEventListener('DOMContentLoaded', async () => {
             initPinAuth();
+            initThemeStudio();
             
             // Initialize IndexedDB first
             try {
@@ -2411,6 +2528,70 @@ const placeholderImages = [
             } catch (e) {
                 console.error(e);
                 showNotification('❌ Unable to render preview', 'error');
+            }
+        }
+
+        // Theme Studio
+        function initThemeStudio() {
+            if (!window.COTCTheme) return;
+            if (themeStudioInitialized) return;
+            themeStudioInitialized = true;
+            const presetSelect = document.getElementById('themePreset');
+            const motionSelect = document.getElementById('themeMotion');
+            const themeDraftTimestamp = document.getElementById('themeDraftTimestamp');
+            const themePublishedTimestamp = document.getElementById('themePublishedTimestamp');
+            const colorInputs = {
+                bg: document.getElementById('themeBg'),
+                text: document.getElementById('themeText'),
+                accent: document.getElementById('themeAccent'),
+                border: document.getElementById('themeBorder'),
+                muted: document.getElementById('themeMuted'),
+                surface: document.getElementById('themeSurface')
+            };
+
+            const studio = window.COTCTheme.initAdminThemeStudio({
+                presetSelect,
+                colorInputs,
+                motionSelect,
+                draftTimestampEl: themeDraftTimestamp,
+                publishedTimestampEl: themePublishedTimestamp,
+                onUpdate: () => {}
+            });
+
+            const openPreviewBtn = document.getElementById('openThemePreview');
+            const saveDraftBtn = document.getElementById('saveThemeDraft');
+            const publishBtn = document.getElementById('publishTheme');
+            const revertDraftBtn = document.getElementById('revertThemeDraft');
+            const resetDefaultBtn = document.getElementById('resetThemeDefault');
+
+            if (openPreviewBtn) {
+                openPreviewBtn.addEventListener('click', () => {
+                    window.open('index.html?preview=1', '_blank', 'noopener');
+                });
+            }
+            if (saveDraftBtn) {
+                saveDraftBtn.addEventListener('click', () => {
+                    studio.saveDraft();
+                    showNotification('✓ Theme draft saved', 'success');
+                });
+            }
+            if (publishBtn) {
+                publishBtn.addEventListener('click', () => {
+                    studio.publish();
+                    showNotification('✓ Theme published', 'success');
+                });
+            }
+            if (revertDraftBtn) {
+                revertDraftBtn.addEventListener('click', () => {
+                    studio.revertDraft();
+                    showNotification('✓ Draft reverted to published theme', 'success');
+                });
+            }
+            if (resetDefaultBtn) {
+                resetDefaultBtn.addEventListener('click', () => {
+                    studio.resetDefault();
+                    showNotification('✓ Reset to default theme', 'success');
+                });
             }
         }
 

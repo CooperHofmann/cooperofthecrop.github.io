@@ -21,7 +21,7 @@ This is a static website designed for easy image management with a bold, minimal
   gallery.js     - Gallery functionality
 
 /css/
-  gallery.css    - Shared styles
+  editorial.css  - Shared styles
 ```
 
 ## 🖼️ How to Add/Remove/Reorder Images
@@ -128,18 +128,32 @@ A powerful admin panel is now available for managing your portfolio:
 Edit the `<title>` tags and `.logo` content in each HTML file.
 
 ### Change Colors
-Edit CSS variables in `/css/gallery.css`:
+Use the Theme Studio in `admin.html` (Theme Studio panel) or edit the theme tokens in `/css/editorial.css`:
 ```css
 :root {
-    --black: #000000;
-    --white: #FFFFFF;
-    --gray: #808080;
-    --light-gray: #E0E0E0;
+    --bg: #f5f7fb;
+    --text: #0c1a2a;
+    --accent: #7ec8e3;
+    --border: #e5e5e5;
+    --muted: #4c5766;
+    --surface: #ffffff;
 }
 ```
 
 ### Modify Grid Layout
-Edit grid settings in `/css/gallery.css` under `.gallery-grid`
+Edit grid settings in `/css/editorial.css` under `.gallery-grid`
+
+## 🎨 Theme Studio + Live Preview
+
+- Open `admin.html` → **Theme Studio** to manage presets and colors.
+- Use **Open Live Preview** to open real pages in preview mode (`?preview=1`).
+- Preview tabs listen for draft updates (BroadcastChannel or localStorage fallback).
+- Draft and published themes are stored separately in localStorage:
+  - `cotc_theme_draft_v1` (Save Draft)
+  - `cotc_theme_published_v1` (Publish)
+- Published theme is applied on regular pages; preview mode uses draft theme only.
+
+To add a new preset, edit the `THEME_PRESETS` array in `js/theme.js`.
 
 ## 📝 Tips
 
