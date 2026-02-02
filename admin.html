@@ -2197,9 +2197,7 @@
         // Helper function to merge photos from localStorage and existing config
         function getMergedPhotos(category, metadata) {
             const localPhotos = (metadata[category] || []).map(p => p.filename);
-            const repoPhotos = (typeof portfolioConfig !== 'undefined') 
-                ? (portfolioConfig?.[category]?.images ?? [])
-                : [];
+            const repoPhotos = portfolioConfig?.[category]?.images ?? [];
             
             // Create a Set to track unique filenames, preserving order from localStorage first
             const photoSet = new Set(localPhotos);
