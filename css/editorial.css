@@ -1174,16 +1174,12 @@ footer {
     .gallery-index-item,
     .gallery-header h1,
     footer,
-    .lightbox {
-        animation: none;
-        opacity: 1;
-    }
-
+    .lightbox,
     .page-transition-overlay.animating,
-    .page-transition-overlay.exit,
-    .lightbox {
+    .page-transition-overlay.exit {
         animation: none;
         transition: none;
+        opacity: 1;
     }
 
     body.page-entering .home-main,

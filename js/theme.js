@@ -153,7 +153,7 @@
         try {
             return normalizeTheme(JSON.parse(raw));
         } catch (error) {
-            console.warn('Theme parse error', error);
+            console.warn(`Theme parse error for ${key}`, error);
             return null;
         }
     }
@@ -197,7 +197,7 @@
                         const payload = JSON.parse(event.newValue);
                         handler({ type: 'theme-update', theme: payload.theme });
                     } catch (error) {
-                        console.warn('Theme storage event parse error', error);
+                        console.warn(`Theme storage event parse error for ${event.key}`, error);
                     }
                 }
                 if (event.key === `${THEME_KEYS.draft}_request`) {
