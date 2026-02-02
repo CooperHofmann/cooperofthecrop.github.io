@@ -1189,36 +1189,30 @@ footer {
     }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    :root[data-motion-level="reduced"] .gallery-item,
-    :root[data-motion-level="reduced"] .gallery-index-item,
-    :root[data-motion-level="reduced"] .gallery-header h1,
-    :root[data-motion-level="reduced"] footer,
-    :root[data-motion-level="reduced"] .page-transition-overlay.animating,
-    :root[data-motion-level="reduced"] .page-transition-overlay.exit,
-    :root[data-motion-level="reduced"] .hero-path path,
-    :root[data-motion-level="reduced"] .hero-bg,
-    :root[data-motion-level="reduced"] .gallery-hero-bg {
-        animation: none !important;
-        transition: none !important;
-    }
-
-    :root[data-motion-level="reduced"] .gallery-item,
-    :root[data-motion-level="reduced"] .gallery-index-item,
-    :root[data-motion-level="reduced"] .gallery-header h1,
-    :root[data-motion-level="reduced"] footer {
-        opacity: 1;
-    }
-}
-
-:root[data-motion-level="reduced"] .gallery-item img,
+:root[data-motion-level="reduced"] .gallery-item,
 :root[data-motion-level="reduced"] .gallery-index-item,
+:root[data-motion-level="reduced"] .gallery-header h1,
+:root[data-motion-level="reduced"] footer,
+:root[data-motion-level="reduced"] .page-transition-overlay.animating,
+:root[data-motion-level="reduced"] .page-transition-overlay.exit,
+:root[data-motion-level="reduced"] .hero-path path,
+:root[data-motion-level="reduced"] .hero-bg,
+:root[data-motion-level="reduced"] .gallery-hero-bg,
+:root[data-motion-level="reduced"] .gallery-item img,
 :root[data-motion-level="reduced"] .gallery-index-item img,
 :root[data-motion-level="reduced"] .cta,
 :root[data-motion-level="reduced"] .ghost-link,
 :root[data-motion-level="reduced"] .social-link,
 :root[data-motion-level="reduced"] .lightbox {
-    transition: none !important;
+    animation: none;
+    transition: none;
+}
+
+:root[data-motion-level="reduced"] .gallery-item,
+:root[data-motion-level="reduced"] .gallery-index-item,
+:root[data-motion-level="reduced"] .gallery-header h1,
+:root[data-motion-level="reduced"] footer {
+    opacity: 1;
 }
 
 /* ========================================

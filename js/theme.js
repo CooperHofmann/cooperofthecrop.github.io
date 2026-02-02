@@ -129,11 +129,17 @@
         };
     }
 
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let prefersReducedMotion = reducedMotionQuery.matches;
+
+    reducedMotionQuery.addEventListener('change', (event) => {
+        prefersReducedMotion = event.matches;
+    });
+
     function applyTheme(theme, target = document.documentElement) {
         if (!target) return;
         const normalized = normalizeTheme(theme);
-        const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const motionLevel = prefersReduced ? 'reduced' : (normalized.motion || 'subtle');
+        const motionLevel = prefersReducedMotion ? 'reduced' : (normalized.motion || 'subtle');
         normalized.motion = motionLevel;
         const vars = toCssVars(normalized);
         Object.entries(vars).forEach(([key, value]) => {
