@@ -183,7 +183,7 @@
         } else {
             const pingKey = `${THEME_KEYS.draft}_ping`;
             localStorage.setItem(pingKey, JSON.stringify({ theme: normalized, ts: Date.now() }));
-            setTimeout(() => localStorage.removeItem(pingKey), 200);
+            setTimeout(() => localStorage.removeItem(pingKey), 1000);
         }
     }
 
@@ -193,7 +193,7 @@
         } else {
             const requestKey = `${THEME_KEYS.draft}_request`;
             localStorage.setItem(requestKey, `${Date.now()}`);
-            setTimeout(() => localStorage.removeItem(requestKey), 200);
+            setTimeout(() => localStorage.removeItem(requestKey), 1000);
         }
     }
 
@@ -270,12 +270,17 @@
         let draftTheme = loadTheme(THEME_KEYS.draft) || cloneTheme(DEFAULT_THEME);
         let publishedTheme = loadTheme(THEME_KEYS.published) || cloneTheme(DEFAULT_THEME);
 
+        let lastDraftTimestamp = loadTimestamp(THEME_KEYS.draftAt);
+        let lastPublishedTimestamp = loadTimestamp(THEME_KEYS.publishedAt);
+
         function updateTimestamps() {
             if (draftTimestampEl) {
-                draftTimestampEl.textContent = loadTimestamp(THEME_KEYS.draftAt) || 'Not saved yet';
+                lastDraftTimestamp = loadTimestamp(THEME_KEYS.draftAt);
+                draftTimestampEl.textContent = lastDraftTimestamp || 'Not saved yet';
             }
             if (publishedTimestampEl) {
-                publishedTimestampEl.textContent = loadTimestamp(THEME_KEYS.publishedAt) || 'Not published yet';
+                lastPublishedTimestamp = loadTimestamp(THEME_KEYS.publishedAt);
+                publishedTimestampEl.textContent = lastPublishedTimestamp || 'Not published yet';
             }
         }
 
@@ -337,7 +342,12 @@
         }
 
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
+            if (document.visibilityState !== 'visible') return;
+            const nextDraftTimestamp = loadTimestamp(THEME_KEYS.draftAt);
+            const nextPublishedTimestamp = loadTimestamp(THEME_KEYS.publishedAt);
+            const draftChanged = nextDraftTimestamp && nextDraftTimestamp !== lastDraftTimestamp;
+            const publishedChanged = nextPublishedTimestamp && nextPublishedTimestamp !== lastPublishedTimestamp;
+            if (draftChanged || publishedChanged) {
                 publishedTheme = loadTheme(THEME_KEYS.published) || publishedTheme;
                 draftTheme = loadTheme(THEME_KEYS.draft) || draftTheme;
                 refreshInputs(draftTheme);
